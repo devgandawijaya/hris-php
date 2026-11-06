@@ -65,3 +65,4 @@ class GrievanceController extends Controller
         return back()->with('success', 'Pengaduan karyawan telah berhasil diselesaikan.');
     }
 }
+

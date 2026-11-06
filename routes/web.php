@@ -35,6 +35,9 @@ use App\Http\Controllers\Company\DisciplinaryController;
 use App\Http\Controllers\Company\GrievanceController;
 use App\Http\Controllers\Company\AnnouncementController;
 use App\Http\Controllers\Company\HelpdeskController;
+use App\Http\Controllers\Company\MutationController;
+use App\Http\Controllers\Company\TerminationController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -329,5 +332,28 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
     Route::prefix('helpdesk')->name('company.helpdesk.')->group(function () {
         Route::get('/', [HelpdeskController::class, 'index'])->name('index');
         Route::post('/{ticket}/resolve', [HelpdeskController::class, 'resolve'])->name('resolve');
+    });
+
+    // --- PHASE 7: CAREER TRANSITIONS, TERMINATIONS & NOTIFICATIONS ---
+
+    // 26. Employee Mutations, Promotions & Demotions
+    Route::prefix('mutations')->name('company.mutations.')->group(function () {
+        Route::get('/', [MutationController::class, 'index'])->name('index');
+        Route::post('/', [MutationController::class, 'store'])->name('store');
+    });
+
+    // 27. Employee Terminations & Statutory Severance (PP 35/2021)
+    Route::prefix('terminations')->name('company.terminations.')->group(function () {
+        Route::get('/', [TerminationController::class, 'index'])->name('index');
+        Route::post('/calculate', [TerminationController::class, 'calculate'])->name('calculate');
+        Route::post('/', [TerminationController::class, 'store'])->name('store');
+        Route::post('/{termination}/pay', [TerminationController::class, 'markPaid'])->name('pay');
+    });
+
+    // 28. In-App Notification Center
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
+        Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
     });
 });

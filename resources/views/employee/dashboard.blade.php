@@ -129,6 +129,13 @@
             Layanan HR & Aspirasi
         </button>
 
+        <button type="button" @click="activeEssTab = 'career'"
+                :class="activeEssTab === 'career' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="trending-up" class="w-4 h-4"></i>
+            Riwayat Karir
+        </button>
+
         <button type="button" @click="activeEssTab = 'profile'"
                 :class="activeEssTab === 'profile' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
@@ -1170,6 +1177,77 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- TAB 12: RIWAYAT KARIR & MUTASI (PHASE 7) -->
+    <div x-show="activeEssTab === 'career'" x-cloak class="space-y-6">
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+            <div class="pb-3 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                        <i data-lucide="award" class="w-4 h-4 text-emerald-600"></i>
+                        Jejak Karir & Promosi Anda
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Catatan resmi kenaikan jenjang, rotasi divisi, dan pencapaian profesional Anda di perusahaan.</p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                @forelse($myMutations as $mut)
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2 text-xs">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                @if($mut->type === 'promotion')
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">
+                                        Promosi Jabatan
+                                    </span>
+                                @elseif($mut->type === 'transfer')
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-800">
+                                        Mutasi / Rotasi
+                                    </span>
+                                @elseif($mut->type === 'demotion')
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-800">
+                                        Demosi
+                                    </span>
+                                @else
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-100 text-purple-800">
+                                        Penyesuaian Gaji
+                                    </span>
+                                @endif
+                                <span class="text-slate-400">&bull;</span>
+                                <span class="font-bold text-slate-800">Berlaku Efektif: {{ $mut->effective_date->format('d M Y') }}</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white p-3 rounded-lg border border-slate-100 text-[11px] mt-2">
+                            <div>
+                                <span class="text-slate-400 block">Departemen:</span>
+                                <div class="text-slate-700 font-medium">
+                                    {{ $mut->fromDepartment?->name ?? '-' }} &rarr; <strong class="text-slate-900">{{ $mut->toDepartment?->name ?? '-' }}</strong>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block">Posisi / Jabatan:</span>
+                                <div class="text-slate-700 font-medium">
+                                    {{ $mut->fromPosition?->title ?? '-' }} &rarr; <strong class="text-emerald-700">{{ $mut->toPosition?->title ?? '-' }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if($mut->notes)
+                            <div class="text-[11px] text-slate-600 bg-slate-100/60 p-2.5 rounded-lg mt-2">
+                                <strong class="text-slate-700">Catatan SK:</strong> {{ $mut->notes }}
+                            </div>
+                        @endif
+                    </div>
+                @empty
+                    <div class="py-8 text-center text-xs text-slate-400">
+                        <i data-lucide="milestone" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                        Belum ada catatan mutasi atau promosi karir.
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 

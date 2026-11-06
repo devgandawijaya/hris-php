@@ -196,4 +196,11 @@ class Employee extends Model
     {
         return $this->hasMany(HrHelpdeskTicket::class)->latest();
     }
+
+    // --- PHASE 7: TERMINATIONS & SEVERANCE ---
+
+    public function terminations(): HasMany
+    {
+        return $this->hasMany(EmployeeTermination::class)->latest('termination_date');
+    }
 }

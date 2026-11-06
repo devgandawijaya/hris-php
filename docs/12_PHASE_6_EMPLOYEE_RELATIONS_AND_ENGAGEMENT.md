@@ -128,3 +128,4 @@ Berkas pengujian fitur terletak di [tests/Feature/EmployeeRelationsAndEngagement
    - Memverifikasi pembuatan nomor tiket `TICK-YYYYMM-XXXX` dan resolusi penyelesaian tiket oleh staf HR.
 6. `test_web_routes_accessibility_for_hr_and_ess`:
    - Menguji bahwa seluruh 5 rute web (Disiplin, Aduan, Pengumuman, Helpdesk, dan ESS Portal) merespon dengan kode status HTTP 200 OK.
+

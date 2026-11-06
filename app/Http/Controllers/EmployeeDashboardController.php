@@ -22,6 +22,7 @@ use App\Models\CompanyAnnouncement;
 use App\Models\EmployeeWarning;
 use App\Models\EmployeeGrievance;
 use App\Models\HrHelpdeskTicket;
+use App\Models\EmployeeMutation;
 use App\Services\Reimbursement\ReimbursementService;
 use App\Services\Talent\PerformanceService;
 use App\Services\EmployeeRelations\GrievanceService;
@@ -115,6 +116,10 @@ class EmployeeDashboardController extends Controller
             $myWarnings = EmployeeWarning::where('employee_id', $employee->id)->latest('issued_date')->get();
             $myGrievances = EmployeeGrievance::where('employee_id', $employee->id)->latest()->get();
             $myHelpdeskTickets = HrHelpdeskTicket::where('employee_id', $employee->id)->latest()->get();
+            $myMutations = EmployeeMutation::with(['fromDepartment', 'toDepartment', 'fromPosition', 'toPosition'])
+                ->where('employee_id', $employee->id)
+                ->latest('effective_date')
+                ->get();
             $announcements = CompanyAnnouncement::where('tenant_id', $employee->tenant_id)
                 ->where(function ($q) use ($employee) {
                     $q->whereNull('target_department_id')
@@ -129,6 +134,7 @@ class EmployeeDashboardController extends Controller
             $myWarnings = collect();
             $myGrievances = collect();
             $myHelpdeskTickets = collect();
+            $myMutations = collect();
             $announcements = collect();
         }
 
@@ -153,6 +159,7 @@ class EmployeeDashboardController extends Controller
             'myWarnings',
             'myGrievances',
             'myHelpdeskTickets',
+            'myMutations',
             'announcements'
         ));
     }

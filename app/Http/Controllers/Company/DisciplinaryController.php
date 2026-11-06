@@ -75,3 +75,4 @@ class DisciplinaryController extends Controller
         return back()->with('success', "Surat Peringatan {$warning->letter_number} berhasil dicabut.");
     }
 }
+

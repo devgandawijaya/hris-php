@@ -45,6 +45,9 @@ use App\Models\EmployeeWarning;
 use App\Models\EmployeeGrievance;
 use App\Models\CompanyAnnouncement;
 use App\Models\HrHelpdeskTicket;
+use App\Models\EmployeeMutation;
+use App\Models\EmployeeTermination;
+use App\Models\AppNotification;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -858,6 +861,68 @@ class DemoCompanySeeder extends Seeder
                 'investigation_notes' => 'Telah dilakukan pengecekan bersama teknisi Building Management.',
                 'resolution_notes' => 'Kompresor AC lantai 18 telah diperbaiki dan filter pendingin telah diganti per tanggal ' . now()->subDays(3)->format('d/m/Y') . '.',
                 'resolved_at' => now()->subDays(3),
+            ]
+        );
+
+        // 30. Phase 7: Employee Mutation / Promotion
+        EmployeeMutation::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeBudi->id, 'type' => 'promotion'],
+            [
+                'from_department_id' => $deptIt->id ?? null,
+                'to_department_id' => $deptIt->id ?? null,
+                'from_position_id' => $posDeveloper->id ?? null,
+                'to_position_id' => $posLeadDeveloper->id ?? $posDeveloper->id ?? null,
+                'from_salary' => 10000000.00,
+                'to_salary' => 13500000.00,
+                'effective_date' => now()->subMonths(2)->toDateString(),
+                'notes' => 'SK Direksi No. 018/SK-PROM/2026 atas kepemimpinan teknis implementasi arsitektur cloud.',
+                'created_by' => $owner->id,
+            ]
+        );
+
+        // 31. Phase 7: Employee Termination & Statutory Severance (PP 35/2021)
+        EmployeeTermination::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'letter_number' => 'SK-PHK/2026/001'],
+            [
+                'employee_id' => $employeeSiti->id ?? $employeeBudi->id,
+                'termination_type' => 'efficiency',
+                'termination_date' => now()->subMonths(1)->toDateString(),
+                'years_of_service' => 3,
+                'months_of_service' => 4,
+                'last_salary' => 8500000.00,
+                'severance_multiplier' => 0.50,
+                'severance_amount' => 17000000.00,
+                'upmk_amount' => 17000000.00,
+                'uph_amount' => 2023809.52,
+                'separation_pay_amount' => 0.00,
+                'total_severance' => 36023809.52,
+                'status' => 'paid',
+                'notes' => 'Penyelesaian pesangon efisiensi restrukturisasi organisasi sesuai Pasal 43 PP No. 35/2021.',
+                'approved_by_user_id' => $owner->id,
+                'paid_at' => now()->subMonths(1)->addDays(3),
+            ]
+        );
+
+        // 32. Phase 7: In-App System Notifications
+        AppNotification::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'title' => 'Slip Gaji Bulan Ini Telah Diterbitkan'],
+            [
+                'user_id' => $budiUser->id ?? null,
+                'message' => 'Slip gaji periode berjalan telah diverifikasi dan siap diunduh melalui portal ESS Anda.',
+                'type' => 'success',
+                'action_url' => route('ess.dashboard'),
+                'is_read' => false,
+            ]
+        );
+
+        AppNotification::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'title' => 'Pengingat Evaluasi Kinerja Kuartal'],
+            [
+                'user_id' => null,
+                'message' => 'Batas akhir pengisian penilaian mandiri KPI/OKR semester ini adalah tanggal 25 bulan ini.',
+                'type' => 'urgent',
+                'action_url' => route('ess.dashboard'),
+                'is_read' => false,
             ]
         );
     }

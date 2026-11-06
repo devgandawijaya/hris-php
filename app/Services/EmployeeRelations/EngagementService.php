@@ -62,3 +62,4 @@ class EngagementService
         return $ticket->fresh();
     }
 }
+

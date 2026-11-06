@@ -70,6 +70,83 @@
 
                 <!-- Right Profile & Logout -->
                 <div class="flex items-center gap-3">
+                    <!-- Notification Bell Dropdown -->
+                    <div class="relative" x-data="{ 
+                        notifOpen: false, 
+                        unreadCount: 0, 
+                        notifications: [],
+                        fetchNotifs() {
+                            fetch('{{ route('notifications.index') }}', {
+                                headers: { 'Accept': 'application/json' }
+                            })
+                            .then(r => r.json())
+                            .then(data => {
+                                this.unreadCount = data.unread_count || 0;
+                                this.notifications = data.notifications || [];
+                            })
+                            .catch(e => console.error(e));
+                        },
+                        markAllRead() {
+                            fetch('{{ route('notifications.read-all') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(r => r.json())
+                            .then(() => {
+                                this.unreadCount = 0;
+                                this.notifications.forEach(n => n.is_read = true);
+                            });
+                        }
+                    }" x-init="fetchNotifs()">
+                        <button @click="notifOpen = !notifOpen" type="button" class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition" title="Pemberitahuan">
+                            <i data-lucide="bell" class="w-5 h-5"></i>
+                            <template x-if="unreadCount > 0">
+                                <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[9px] font-black text-white" x-text="unreadCount > 9 ? '9+' : unreadCount"></span>
+                            </template>
+                        </button>
+
+                        <div x-show="notifOpen" x-cloak @click.away="notifOpen = false" class="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white border border-slate-200 shadow-2xl p-4 z-50 transform origin-top-right transition-all">
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-xs text-slate-900">Pemberitahuan</span>
+                                    <template x-if="unreadCount > 0">
+                                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black bg-red-100 text-red-700" x-text="unreadCount + ' Baru'"></span>
+                                    </template>
+                                </div>
+                                <button @click="markAllRead" type="button" class="text-[11px] font-bold text-slate-500 hover:text-red-600 transition">
+                                    Tandai Semua Dibaca
+                                </button>
+                            </div>
+
+                            <div class="mt-3 max-h-72 overflow-y-auto space-y-2 text-xs">
+                                <template x-for="n in notifications" :key="n.id">
+                                    <div class="p-2.5 rounded-xl border transition" :class="n.is_read ? 'bg-slate-50/60 border-slate-100' : 'bg-red-50/40 border-red-200'">
+                                        <div class="flex items-start justify-between gap-2">
+                                            <span class="font-bold text-slate-900" x-text="n.title"></span>
+                                            <span class="w-2 h-2 rounded-full shrink-0 mt-1" :class="n.is_read ? 'bg-transparent' : 'bg-red-600'"></span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-600 mt-0.5" x-text="n.message"></p>
+                                        <div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-100 text-[10px] text-slate-400">
+                                            <span x-text="new Date(n.created_at).toLocaleDateString('id-ID')"></span>
+                                            <template x-if="n.action_url">
+                                                <a :href="n.action_url" class="font-bold text-red-600 hover:underline">Buka Tautan &rarr;</a>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template x-if="notifications.length === 0">
+                                    <div class="py-6 text-center text-slate-400 text-xs">
+                                        Belum ada pemberitahuan baru.
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="text-right hidden sm:block">
                         <div class="text-xs font-bold text-slate-900">{{ auth()->user()->name }}</div>
                         <div class="text-[11px] text-slate-500">
@@ -290,6 +367,16 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.helpdesk.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="life-buoy" class="w-4 h-4"></i>
                             HR Helpdesk Layanan
+                        </a>
+                        <a href="{{ route('company.mutations.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.mutations.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="trending-up" class="w-4 h-4"></i>
+                            Mutasi & Promosi Karir
+                        </a>
+                        <a href="{{ route('company.terminations.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.terminations.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="calculator" class="w-4 h-4"></i>
+                            Kompensasi PHK & Pesangon
                         </a>
 
                         <!-- Portal ESS -->

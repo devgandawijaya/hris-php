@@ -47,3 +47,4 @@ class EmployeeWarning extends Model
         return $this->valid_until->isPast();
     }
 }
+
