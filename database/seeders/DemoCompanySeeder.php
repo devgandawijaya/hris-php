@@ -41,6 +41,10 @@ use App\Models\WebhookSubscription;
 use App\Models\CompanyIpWhitelist;
 use App\Models\AuditLog;
 use App\Models\SubscriptionInvoice;
+use App\Models\EmployeeWarning;
+use App\Models\EmployeeGrievance;
+use App\Models\CompanyAnnouncement;
+use App\Models\HrHelpdeskTicket;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -781,6 +785,79 @@ class DemoCompanySeeder extends Seeder
             [
                 'label' => 'Kantor Pusat Menara Mandiri Lt. 18',
                 'is_active' => true,
+            ]
+        );
+
+        // 26. Phase 6: Employee Relations & Disciplinary (SP1)
+        EmployeeWarning::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'letter_number' => 'SP1/DIR-HR/2026/001'],
+            [
+                'employee_id' => $employeeBudi->id,
+                'warning_level' => 'sp1',
+                'issued_date' => now()->subMonths(1)->toDateString(),
+                'valid_until' => now()->subMonths(1)->addMonths(6)->toDateString(),
+                'reason' => 'Keterlambatan hadir berulang tanpa pemberitahuan sah melebihi batas toleransi Pasal 14 PKB Perusahaan.',
+                'action_plan' => 'Karyawan wajib menjaga kehadiran tepat waktu 100% selama 6 bulan masa pembinaan.',
+                'status' => 'active',
+                'authorized_by_user_id' => $hr->id,
+            ]
+        );
+
+        // 27. Phase 6: Company Announcements
+        CompanyAnnouncement::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'title' => 'Pemberitahuan Cuti Bersama Hari Raya Idul Fitri 1447 H & Kebijakan THR 2026'],
+            [
+                'content' => "Sehubungan dengan Keputusan Bersama 3 Menteri tentang Hari Libur Nasional dan Cuti Bersama 2026, Manajemen mengumumkan jadwal libur bersama dan ketentuan pencairan Tunjangan Hari Raya (THR) selambat-lambatnya H-7 sebelum hari raya keagamaan.",
+                'category' => 'holiday',
+                'target_department_id' => null,
+                'is_pinned' => true,
+                'published_at' => now()->subDays(2)->toDateString(),
+                'expires_at' => now()->addMonths(1)->toDateString(),
+                'created_by_user_id' => $hr->id,
+            ]
+        );
+
+        CompanyAnnouncement::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'title' => 'Sosialisasi Program Pelatihan Keamanan Informasi & Kebijakan Remote Work'],
+            [
+                'content' => "Seluruh staf divisi Teknologi dan Operasional diwajibkan mengikuti modul sertifikasi berkala keamanan data ISO 27001 pada LMS internal sebelum akhir kuartal ini.",
+                'category' => 'policy',
+                'target_department_id' => $deptIt->id ?? null,
+                'is_pinned' => false,
+                'published_at' => now()->subDays(1)->toDateString(),
+                'expires_at' => now()->addMonths(2)->toDateString(),
+                'created_by_user_id' => $hr->id,
+            ]
+        );
+
+        // 28. Phase 6: HR Helpdesk Tickets
+        HrHelpdeskTicket::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'ticket_number' => 'TICK-202611-0001'],
+            [
+                'employee_id' => $employeeBudi->id,
+                'category' => 'work_certificate',
+                'subject' => 'Permohonan Surat Keterangan Kerja (Paklaring) untuk KPR Bank',
+                'description' => 'Mohon bantuan HR untuk menerbitkan surat keterangan aktif bekerja untuk kelengkapan berkas KPR di Bank BTN.',
+                'status' => 'resolved',
+                'assigned_to_user_id' => $hr->id,
+                'resolution_notes' => 'Surat Keterangan No. SK/HR-EXT/2026/088 telah diterbitkan dan salinan basah dapat diambil di meja HR lantai 18.',
+                'resolved_at' => now()->subDays(1),
+            ]
+        );
+
+        // 29. Phase 6: Employee Grievance / Whistleblowing
+        EmployeeGrievance::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'subject' => 'Aduan Kerusakan Fasilitas Pendingin Ruangan (AC) Ruang Server Lt. 18'],
+            [
+                'employee_id' => $employeeBudi->id,
+                'category' => 'facility',
+                'description' => 'Suhu ruang kerja server dan operasional terasa melebihi 28C sejak minggu lalu sehingga mengganggu konsentrasi tim engineering.',
+                'is_anonymous' => false,
+                'status' => 'resolved',
+                'resolved_by_user_id' => $hr->id,
+                'investigation_notes' => 'Telah dilakukan pengecekan bersama teknisi Building Management.',
+                'resolution_notes' => 'Kompresor AC lantai 18 telah diperbaiki dan filter pendingin telah diganti per tanggal ' . now()->subDays(3)->format('d/m/Y') . '.',
+                'resolved_at' => now()->subDays(3),
             ]
         );
     }

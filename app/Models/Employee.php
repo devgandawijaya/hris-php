@@ -174,4 +174,26 @@ class Employee extends Model
     {
         return $this->hasMany(TrainingEnrollment::class);
     }
+
+    // --- PHASE 6: RELATIONS & ENGAGEMENT ---
+
+    public function warnings(): HasMany
+    {
+        return $this->hasMany(EmployeeWarning::class)->latest('issued_date');
+    }
+
+    public function activeWarnings(): HasMany
+    {
+        return $this->hasMany(EmployeeWarning::class)->where('status', 'active')->where('valid_until', '>=', now()->toDateString());
+    }
+
+    public function grievances(): HasMany
+    {
+        return $this->hasMany(EmployeeGrievance::class)->latest();
+    }
+
+    public function helpdeskTickets(): HasMany
+    {
+        return $this->hasMany(HrHelpdeskTicket::class)->latest();
+    }
 }

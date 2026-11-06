@@ -31,6 +31,10 @@ use App\Http\Controllers\Company\AnalyticsController;
 use App\Http\Controllers\Company\BillingController;
 use App\Http\Controllers\Company\IntegrationController;
 use App\Http\Controllers\Company\SecurityController;
+use App\Http\Controllers\Company\DisciplinaryController;
+use App\Http\Controllers\Company\GrievanceController;
+use App\Http\Controllers\Company\AnnouncementController;
+use App\Http\Controllers\Company\HelpdeskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -251,6 +255,8 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/self-appraisal', [EmployeeDashboardController::class, 'submitSelfAppraisal'])->name('self-appraisal.submit');
         Route::post('/kpi-progress/{goal}', [EmployeeDashboardController::class, 'updateKpiProgress'])->name('kpi-progress.update');
         Route::post('/profile', [EmployeeDashboardController::class, 'updateProfile'])->name('profile.update');
+        Route::post('/grievance', [EmployeeDashboardController::class, 'submitGrievance'])->name('grievance.submit');
+        Route::post('/helpdesk', [EmployeeDashboardController::class, 'submitHelpdeskTicket'])->name('helpdesk.submit');
         Route::get('/payslip/{payroll}', [PayslipController::class, 'employeePayslip'])->name('payslip.show');
     });
 
@@ -294,5 +300,34 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::get('/', [SecurityController::class, 'index'])->name('index');
         Route::post('/ip-whitelist', [SecurityController::class, 'storeIpWhitelist'])->name('ip-whitelist.store');
         Route::delete('/ip-whitelist/{ipWhitelist}', [SecurityController::class, 'destroyIpWhitelist'])->name('ip-whitelist.destroy');
+    });
+
+    // --- PHASE 6: EMPLOYEE RELATIONS & ENGAGEMENT ROUTES ---
+
+    // 22. Disciplinary & Surat Peringatan (SP1, SP2, SP3)
+    Route::prefix('disciplinary')->name('company.disciplinary.')->group(function () {
+        Route::get('/', [DisciplinaryController::class, 'index'])->name('index');
+        Route::post('/', [DisciplinaryController::class, 'store'])->name('store');
+        Route::post('/{warning}/revoke', [DisciplinaryController::class, 'revoke'])->name('revoke');
+    });
+
+    // 23. Employee Grievances & Whistleblowing
+    Route::prefix('grievances')->name('company.grievances.')->group(function () {
+        Route::get('/', [GrievanceController::class, 'index'])->name('index');
+        Route::post('/{grievance}/status', [GrievanceController::class, 'updateStatus'])->name('status.update');
+        Route::post('/{grievance}/resolve', [GrievanceController::class, 'resolve'])->name('resolve');
+    });
+
+    // 24. Company Announcements & Internal Bulletins
+    Route::prefix('announcements')->name('company.announcements.')->group(function () {
+        Route::get('/', [AnnouncementController::class, 'index'])->name('index');
+        Route::post('/', [AnnouncementController::class, 'store'])->name('store');
+        Route::delete('/{announcement}', [AnnouncementController::class, 'destroy'])->name('destroy');
+    });
+
+    // 25. HR Helpdesk & Internal Service Requests
+    Route::prefix('helpdesk')->name('company.helpdesk.')->group(function () {
+        Route::get('/', [HelpdeskController::class, 'index'])->name('index');
+        Route::post('/{ticket}/resolve', [HelpdeskController::class, 'resolve'])->name('resolve');
     });
 });

@@ -18,8 +18,14 @@ use App\Models\PerformanceCycle;
 use App\Models\PerformanceReview;
 use App\Models\Reimbursement;
 use App\Models\TrainingEnrollment;
+use App\Models\CompanyAnnouncement;
+use App\Models\EmployeeWarning;
+use App\Models\EmployeeGrievance;
+use App\Models\HrHelpdeskTicket;
 use App\Services\Reimbursement\ReimbursementService;
 use App\Services\Talent\PerformanceService;
+use App\Services\EmployeeRelations\GrievanceService;
+use App\Services\EmployeeRelations\EngagementService;
 use App\Tenancy\TenantManager;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -30,7 +36,9 @@ class EmployeeDashboardController extends Controller
     public function __construct(
         protected TenantManager $tenantManager,
         protected ReimbursementService $reimbursementService,
-        protected PerformanceService $performanceService
+        protected PerformanceService $performanceService,
+        protected GrievanceService $grievanceService,
+        protected EngagementService $engagementService
     ) {}
 
     public function index(): View
@@ -102,6 +110,26 @@ class EmployeeDashboardController extends Controller
             $myChecklists = OnboardingOffboardingChecklist::where('employee_id', $employee->id)->get();
             $myTrainings = TrainingEnrollment::with('trainingCourse')->where('employee_id', $employee->id)->get();
             $activeCycles = PerformanceCycle::where('tenant_id', $employee->tenant_id)->where('status', 'active')->get();
+
+            // Phase 6: Relations & Engagement data
+            $myWarnings = EmployeeWarning::where('employee_id', $employee->id)->latest('issued_date')->get();
+            $myGrievances = EmployeeGrievance::where('employee_id', $employee->id)->latest()->get();
+            $myHelpdeskTickets = HrHelpdeskTicket::where('employee_id', $employee->id)->latest()->get();
+            $announcements = CompanyAnnouncement::where('tenant_id', $employee->tenant_id)
+                ->where(function ($q) use ($employee) {
+                    $q->whereNull('target_department_id')
+                      ->orWhere('target_department_id', $employee->department_id);
+                })
+                ->where('published_at', '<=', now()->toDateString())
+                ->orderBy('is_pinned', 'desc')
+                ->latest('published_at')
+                ->take(5)
+                ->get();
+        } else {
+            $myWarnings = collect();
+            $myGrievances = collect();
+            $myHelpdeskTickets = collect();
+            $announcements = collect();
         }
 
         return view('employee.dashboard', compact(
@@ -121,7 +149,11 @@ class EmployeeDashboardController extends Controller
             'assignedAssets',
             'myChecklists',
             'myTrainings',
-            'activeCycles'
+            'activeCycles',
+            'myWarnings',
+            'myGrievances',
+            'myHelpdeskTickets',
+            'announcements'
         ));
     }
 
@@ -368,5 +400,46 @@ class EmployeeDashboardController extends Controller
         }
 
         return back()->with('success', 'Data profil mandiri Anda berhasil diperbarui.');
+    }
+
+    public function submitGrievance(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->first();
+
+        if (!$employee) {
+            return back()->with('error', 'Profil karyawan tidak ditemukan.');
+        }
+
+        $validated = $request->validate([
+            'category' => 'required|in:workplace_conflict,harassment,compensation,facility,unfair_treatment,other',
+            'subject' => 'required|string|max:255',
+            'description' => 'required|string|max:3000',
+            'is_anonymous' => 'nullable|boolean',
+        ]);
+
+        $this->grievanceService->submitGrievance($employee, $validated);
+
+        return back()->with('success', 'Laporan keluhan / aspirasi Anda telah terkirim secara aman ke manajemen HR.');
+    }
+
+    public function submitHelpdeskTicket(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->first();
+
+        if (!$employee) {
+            return back()->with('error', 'Profil karyawan tidak ditemukan.');
+        }
+
+        $validated = $request->validate([
+            'category' => 'required|in:work_certificate,bank_reference,data_correction,bpjs_inquiry,general',
+            'subject' => 'required|string|max:255',
+            'description' => 'required|string|max:2000',
+        ]);
+
+        $ticket = $this->engagementService->createTicket($employee, $validated);
+
+        return back()->with('success', "Tiket layanan HR {$ticket->ticket_number} berhasil dibuat. Tim HR akan segera memproses permohonan Anda.");
     }
 }

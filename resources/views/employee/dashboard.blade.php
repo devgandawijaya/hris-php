@@ -27,6 +27,36 @@
         </div>
     </div>
 
+    <!-- Company Announcements Bulletin (Phase 6) -->
+    @if(isset($announcements) && $announcements->isNotEmpty())
+        <div class="space-y-3">
+            @foreach($announcements as $ann)
+                <div class="p-4 rounded-2xl border {{ $ann->is_pinned ? 'bg-amber-50/70 border-amber-300 ring-2 ring-amber-400/20' : 'bg-white border-slate-200' }} shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-xl {{ $ann->category === 'urgent' ? 'bg-red-100 text-red-600' : ($ann->category === 'holiday' ? 'bg-emerald-100 text-emerald-600' : 'bg-blue-100 text-blue-600') }} flex items-center justify-center shrink-0 mt-0.5">
+                            <i data-lucide="{{ $ann->category === 'urgent' ? 'alert-triangle' : ($ann->category === 'holiday' ? 'calendar-heart' : 'megaphone') }}" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                @if($ann->is_pinned)
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-black bg-amber-200 text-amber-900 uppercase">
+                                        <i data-lucide="pin" class="w-2.5 h-2.5"></i> Penting
+                                    </span>
+                                @endif
+                                <h3 class="text-sm font-bold text-slate-900">{{ $ann->title }}</h3>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">{{ $ann->content }}</p>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-slate-400 shrink-0 sm:text-right">
+                        <div>{{ $ann->published_at->format('d M Y') }}</div>
+                        <div class="text-[10px] font-medium text-slate-500">{{ $ann->createdBy?->name ?? 'HR Management' }}</div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
     <!-- ESS Tab Navigation -->
     <div class="flex items-center gap-2 border-b border-slate-200 overflow-x-auto pb-px">
         <button type="button" @click="activeEssTab = 'clock'"
@@ -90,6 +120,13 @@
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
             <i data-lucide="award" class="w-4 h-4"></i>
             Aset & Pelatihan
+        </button>
+
+        <button type="button" @click="activeEssTab = 'grievance-helpdesk'"
+                :class="activeEssTab === 'grievance-helpdesk' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="life-buoy" class="w-4 h-4"></i>
+            Layanan HR & Aspirasi
         </button>
 
         <button type="button" @click="activeEssTab = 'profile'"
@@ -904,6 +941,235 @@
                     <div class="py-8 text-center text-xs text-slate-400">Belum ada riwayat pelatihan atau sertifikat terdaftar.</div>
                 @endforelse
             </div>
+        </div>
+    </div>
+
+    <!-- TAB 11: LAYANAN HR & PENGADUAN (PHASE 6) -->
+    <div x-show="activeEssTab === 'grievance-helpdesk'" x-cloak class="space-y-6">
+
+        <!-- Disciplinary Standing Card -->
+        <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2 font-bold text-sm text-slate-900">
+                    <i data-lucide="shield" class="w-4 h-4 text-slate-600"></i>
+                    Status Kepatuhan Disiplin Karyawan
+                </div>
+                <span class="text-[11px] text-slate-400">Pasal 161 UU Ketenagakerjaan</span>
+            </div>
+
+            <div class="mt-4">
+                @if($myWarnings->isEmpty())
+                    <div class="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs">
+                        <i data-lucide="check-circle-2" class="w-6 h-6 text-emerald-600 shrink-0"></i>
+                        <div>
+                            <div class="font-bold text-sm">Catatan Disiplin Baik (Good Standing)</div>
+                            <div class="text-[11px] text-emerald-700 mt-0.5">Tidak ada Surat Peringatan (SP) yang aktif atas nama Anda. Pertahankan dedikasi dan profesionalisme kerja Anda!</div>
+                        </div>
+                    </div>
+                @else
+                    <div class="space-y-3">
+                        @foreach($myWarnings as $warn)
+                            <div class="p-4 rounded-xl border {{ $warn->status === 'active' ? 'border-amber-300 bg-amber-50/50' : 'border-slate-200 bg-slate-50' }} text-xs space-y-2">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-900 font-mono">{{ $warn->letter_number }}</span>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase {{ $warn->warning_level === 'sp3' ? 'bg-red-100 text-red-800' : ($warn->warning_level === 'sp2' ? 'bg-orange-100 text-orange-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                            {{ strtoupper($warn->warning_level) }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        @if($warn->status === 'active')
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                                                Aktif hingga {{ $warn->valid_until->format('d/m/Y') }} (Masa berlaku 6 bln)
+                                            </span>
+                                        @elseif($warn->status === 'revoked')
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700">
+                                                Dicabut HR
+                                            </span>
+                                        @else
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-500">
+                                                Kedaluwarsa
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="text-slate-700"><strong class="text-slate-900">Alasan:</strong> {{ $warn->reason }}</div>
+                                @if($warn->action_plan)
+                                    <div class="text-slate-600 bg-white/80 p-2 rounded border border-slate-200/60 text-[11px]">
+                                        <strong class="text-slate-800">Rencana Perbaikan:</strong> {{ $warn->action_plan }}
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- 2-Column Grid: HR Helpdesk & Grievance Whistleblowing -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <!-- COLUMN 1: HR HELPDESK & PERMOHONAN LAYANAN -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-5">
+                <div class="pb-3 border-b border-slate-100">
+                    <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                        <i data-lucide="life-buoy" class="w-4 h-4 text-blue-600"></i>
+                        Permohonan Layanan HR (Helpdesk)
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Ajukan permohonan surat keterangan kerja (paklaring), referensi bank/visa, atau konsultasi BPJS.</p>
+                </div>
+
+                <!-- Form Buat Tiket -->
+                <form action="{{ route('ess.helpdesk.submit') }}" method="POST" class="space-y-3.5">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kategori Layanan <span class="text-red-500">*</span></label>
+                        <select name="category" required class="w-full text-xs rounded-xl border border-slate-200 px-3 py-2.5 bg-slate-50 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <option value="work_certificate">Surat Keterangan Kerja (Paklaring)</option>
+                            <option value="bank_reference">Surat Referensi Pengajuan Bank / Visa / KPR</option>
+                            <option value="data_correction">Permohonan Koreksi Data Karyawan</option>
+                            <option value="bpjs_inquiry">Pertanyaan & Klaim BPJS TK / Kesehatan</option>
+                            <option value="general">Layanan & Pertanyaan Umum Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Subjek Permohonan <span class="text-red-500">*</span></label>
+                        <input type="text" name="subject" required placeholder="Contoh: Mohon Surat Keterangan Kerja untuk Pengajuan KPR BTN" class="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Rincian & Keterangan Tambahan <span class="text-red-500">*</span></label>
+                        <textarea name="description" rows="3" required placeholder="Jelaskan keperluan, instansi tujuan, atau data yang ingin diperbaiki..." class="w-full text-xs rounded-xl border border-slate-200 p-3 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-sm">
+                            Kirim Tiket Layanan HR
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Riwayat Tiket Saya -->
+                <div class="pt-4 border-t border-slate-100">
+                    <h4 class="text-xs font-bold text-slate-800 mb-3">Riwayat Tiket Layanan Saya</h4>
+                    <div class="space-y-2.5">
+                        @forelse($myHelpdeskTickets as $t)
+                            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 text-xs space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-slate-900 font-mono">{{ $t->ticket_number }}</span>
+                                    @if($t->status === 'open')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Menunggu</span>
+                                    @elseif($t->status === 'in_progress')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">Diproses</span>
+                                    @elseif($t->status === 'resolved')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Selesai</span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-600">Ditutup</span>
+                                    @endif
+                                </div>
+                                <div class="font-medium text-slate-800">{{ $t->subject }}</div>
+                                <div class="text-[11px] text-slate-500">{{ $t->description }}</div>
+                                @if($t->resolution_notes)
+                                    <div class="p-2 mt-1 rounded bg-emerald-50 text-emerald-900 border border-emerald-200 text-[11px]">
+                                        <strong class="text-emerald-950">Respon HR:</strong> {{ $t->resolution_notes }}
+                                    </div>
+                                @endif
+                                <div class="text-[10px] text-slate-400 pt-0.5">{{ $t->created_at->format('d M Y H:i') }}</div>
+                            </div>
+                        @empty
+                            <div class="text-center py-4 text-xs text-slate-400">Belum ada riwayat tiket layanan diajukan.</div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN 2: KANAL PENGADUAN & WHISTLEBLOWING -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-5">
+                <div class="pb-3 border-b border-slate-100">
+                    <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600"></i>
+                        Kanal Pengaduan & Aspirasi Karyawan
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Sampaikan keluhan kerja, perlakuan tidak adil, atau pelanggaran etika dengan jaminan kerahasiaan penuh.</p>
+                </div>
+
+                <!-- Form Pengaduan -->
+                <form action="{{ route('ess.grievance.submit') }}" method="POST" class="space-y-3.5">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kategori Masalah <span class="text-red-500">*</span></label>
+                        <select name="category" required class="w-full text-xs rounded-xl border border-slate-200 px-3 py-2.5 bg-slate-50 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <option value="workplace_conflict">Perselisihan / Konflik Rekan Kerja</option>
+                            <option value="harassment">Pelecehan Seksual / Bullying / Intimidasi</option>
+                            <option value="unfair_treatment">Perlakuan Tidak Adil / Diskriminasi Atasan</option>
+                            <option value="compensation">Perselisihan Kompensasi / Jam Kerja / Lembur</option>
+                            <option value="facility">Fasilitas / Kesehatan & Keselamatan Kerja (K3)</option>
+                            <option value="other">Keluhan Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Subjek Pokok Masalah <span class="text-red-500">*</span></label>
+                        <input type="text" name="subject" required placeholder="Contoh: Ketidaksesuaian Pembagian Beban Kerja & Sikap Diskriminatif" class="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kronologi & Rincian Kejadian <span class="text-red-500">*</span></label>
+                        <textarea name="description" rows="3" required placeholder="Ceritakan kronologi, waktu kejadian, pihak yang terlibat, dan bukti terkait jika ada..." class="w-full text-xs rounded-xl border border-slate-200 p-3 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                    </div>
+
+                    <div class="p-3 bg-indigo-50/70 rounded-xl border border-indigo-200/80 flex items-start gap-2.5">
+                        <input type="checkbox" name="is_anonymous" id="is_anonymous" value="1" class="mt-0.5 rounded text-indigo-600 focus:ring-indigo-500">
+                        <label for="is_anonymous" class="text-xs text-indigo-950 font-medium cursor-pointer leading-tight">
+                            <strong class="font-bold">Kirim Secara Anonim (Whistleblowing)</strong><br>
+                            Identitas dan nama Anda akan disamarkan dari pihak terlapor dan atasan demi keamanan Anda.
+                        </label>
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition shadow-sm">
+                            Kirim Aduan Secara Aman
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Riwayat Aduan Saya -->
+                <div class="pt-4 border-t border-slate-100">
+                    <h4 class="text-xs font-bold text-slate-800 mb-3">Riwayat Status Aduan Saya</h4>
+                    <div class="space-y-2.5">
+                        @forelse($myGrievances as $gr)
+                            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 text-xs space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-slate-900 capitalize">{{ str_replace('_', ' ', $gr->category) }}</span>
+                                    @if($gr->status === 'submitted')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">Terkirim</span>
+                                    @elseif($gr->status === 'in_review')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-800">Review HR</span>
+                                    @elseif($gr->status === 'investigating')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-800">Investigasi</span>
+                                    @elseif($gr->status === 'resolved')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Selesai</span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-600">Ditutup</span>
+                                    @endif
+                                </div>
+                                <div class="font-medium text-slate-800">{{ $gr->subject }}</div>
+                                <div class="text-[11px] text-slate-500">{{ $gr->description }}</div>
+                                @if($gr->resolution_notes)
+                                    <div class="p-2 mt-1 rounded bg-emerald-50 text-emerald-900 border border-emerald-200 text-[11px]">
+                                        <strong class="text-emerald-950">Hasil Penyelesaian / Mediasi HR:</strong> {{ $gr->resolution_notes }}
+                                    </div>
+                                @endif
+                                <div class="text-[10px] text-slate-400 pt-0.5">{{ $gr->created_at->format('d M Y H:i') }}</div>
+                            </div>
+                        @empty
+                            <div class="text-center py-4 text-xs text-slate-400">Belum ada aduan atau aspirasi yang diajukan.</div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 

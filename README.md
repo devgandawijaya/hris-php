@@ -12,7 +12,7 @@ RiHRIS adalah aplikasi Software-as-a-Service (SaaS) Multi-Tenant berbasis arsite
 
 ---
 
-## 📑 DAFTAR DOKUMENTASI LENGKAP (11 MODUL TEKNIS)
+## 📑 DAFTAR DOKUMENTASI LENGKAP (12 MODUL TEKNIS)
 
 Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumentasi secara lengkap pada direktori `docs/`:
 
@@ -27,10 +27,11 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 9. [09. REST API v1 & Webhooks Specification](docs/09_REST_API_SPECIFICATION.md)
 10. [10. Backup & Disaster Recovery Guide](docs/10_BACKUP_AND_RESTORE_GUIDE.md)
 11. [11. Production Deployment & Maintenance Guide](docs/11_PRODUCTION_DEPLOYMENT_GUIDE.md)
+12. [12. Phase 6: Employee Relations, Disciplinary & Engagement](docs/12_PHASE_6_EMPLOYEE_RELATIONS_AND_ENGAGEMENT.md)
 
 ---
 
-## 🚀 STATUS IMPLEMENTASI 5 PHASE ROADMAP
+## 🚀 STATUS IMPLEMENTASI 6 PHASE ROADMAP
 
 | Phase | Modul & Cakupan Utama | Status |
 |---|---|---|
@@ -39,6 +40,7 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 | **Phase 3: Payroll & Compliance** | Engine Payroll, BPJS 5 Program, PPh 21 TER (PMK 168/2023), Rekonsiliasi 1721-A1, THR Permenaker 6/2016, Klaim Reimbursement, dan Kompensasi PKWT PP 35/2021. | ✅ Complete |
 | **Phase 4: Talent Management** | Rekrutmen ATS Pipeline, Konversi Pelamar ke Karyawan, Checklist Onboarding/Offboarding, Manajemen Aset, Penilaian Kinerja KPI/OKR 30/70, dan Pelatihan L&D Bersertifikat. | ✅ Complete |
 | **Phase 5: Enterprise Systems** | Workflow Engine Multi-Level, Eksekutif Analitik C-Level & Streaming CSV, SaaS Subscription Billing & Metering, REST API v1, Webhooks, Notifikasi WhatsApp, dan Audit Trail & IP Whitelist. | ✅ Complete |
+| **Phase 6: Relations & Engagement** | Hubungan Industrial & Surat Peringatan (SP1, SP2, SP3, masa berlaku 6 bulan Pasal 161 UU Ketenagakerjaan), Whistleblowing & Aduan Anonim, Papan Pengumuman Internal & Pinning, dan HR Helpdesk Service Request (Paklaring & Surat Keterangan). | ✅ Complete |
 
 ---
 
