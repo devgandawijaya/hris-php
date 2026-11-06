@@ -22,3 +22,4 @@ class CronExecutionLog extends Model
         ];
     }
 }
+

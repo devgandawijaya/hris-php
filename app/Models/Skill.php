@@ -34,3 +34,4 @@ class Skill extends Model
         return $this->hasMany(EmployeeSkill::class);
     }
 }
+

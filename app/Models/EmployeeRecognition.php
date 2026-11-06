@@ -39,3 +39,4 @@ class EmployeeRecognition extends Model
         return $this->belongsTo(Employee::class);
     }
 }
+

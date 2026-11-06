@@ -58,3 +58,4 @@ class EmployeeLoan extends Model
         return $this->hasMany(LoanInstallment::class)->orderBy('installment_number');
     }
 }
+

@@ -114,3 +114,4 @@ class SuccessionController extends Controller
         ]);
     }
 }
+

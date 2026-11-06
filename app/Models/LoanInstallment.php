@@ -41,3 +41,4 @@ class LoanInstallment extends Model
         return $this->belongsTo(PayrollPeriod::class);
     }
 }
+

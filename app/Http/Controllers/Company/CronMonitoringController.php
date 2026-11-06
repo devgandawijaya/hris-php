@@ -72,3 +72,4 @@ class CronMonitoringController extends Controller
             ->with('success', "Perintah [{$command}] berhasil dijalankan secara manual. {$result['summary']}");
     }
 }
+

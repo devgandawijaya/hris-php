@@ -40,3 +40,4 @@ class CompanyEvent extends Model
         return $this->belongsTo(User::class, 'created_by_user_id');
     }
 }
+

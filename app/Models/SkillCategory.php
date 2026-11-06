@@ -21,3 +21,4 @@ class SkillCategory extends Model
         return $this->hasMany(Skill::class);
     }
 }
+

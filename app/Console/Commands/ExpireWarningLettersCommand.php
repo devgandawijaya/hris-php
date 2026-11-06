@@ -19,3 +19,4 @@ class ExpireWarningLettersCommand extends Command
         return Command::SUCCESS;
     }
 }
+

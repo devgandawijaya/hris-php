@@ -84,3 +84,4 @@ class LoanController extends Controller
         return back()->with('success', "Pembayaran angsuran ke-{$installment->installment_number} sebesar Rp " . number_format($installment->amount, 0, ',', '.') . " berhasil dicatat.");
     }
 }
+

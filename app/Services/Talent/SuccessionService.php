@@ -135,3 +135,4 @@ class SuccessionService
         return array_slice($suggestions, 0, 5); // top 5 talent recommendations
     }
 }
+

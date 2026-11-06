@@ -19,3 +19,4 @@ class CheckProbationExpirationsCommand extends Command
         return Command::SUCCESS;
     }
 }
+

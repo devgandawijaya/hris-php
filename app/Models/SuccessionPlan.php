@@ -57,3 +57,4 @@ class SuccessionPlan extends Model
         return ['color' => 'amber', 'label' => 'Beresiko (Belum Ada Suksesor Siap Pakai)'];
     }
 }
+

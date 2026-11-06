@@ -151,3 +151,4 @@ Pengujian komprehensif diimplementasikan pada file `tests/Feature/SkillMatrixAnd
 5. `test_algorithmic_successor_suggestion_api`: Verifikasi kalkulasi algoritma kecerdasan bakat berbasis gabungan 60% KPI dan 40% kesesuaian keahlian.
 6. `test_automated_cron_tasks_execution`: Pengujian langsung eksekusi ke-4 command worker latar belakang dan validasi auto-expiration SP Pasal 161 UU 13/2003.
 7. `test_employee_can_view_personal_skills_in_ess_dashboard`: Verifikasi tab ke-14 portal ESS karyawan untuk melihat profil keahlian mandiri.
+

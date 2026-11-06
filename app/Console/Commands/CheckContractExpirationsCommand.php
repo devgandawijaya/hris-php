@@ -19,3 +19,4 @@ class CheckContractExpirationsCommand extends Command
         return Command::SUCCESS;
     }
 }
+

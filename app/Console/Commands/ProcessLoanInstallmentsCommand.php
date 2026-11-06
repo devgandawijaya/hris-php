@@ -19,3 +19,4 @@ class ProcessLoanInstallmentsCommand extends Command
         return Command::SUCCESS;
     }
 }
+
