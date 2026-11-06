@@ -17,6 +17,12 @@ use App\Models\Shift;
 use App\Models\LeaveType;
 use App\Models\AttendanceRecord;
 use App\Models\LeaveRequest;
+use App\Models\SalaryComponent;
+use App\Models\EmployeeSalaryComponent;
+use App\Models\EmploymentContract;
+use App\Models\Reimbursement;
+use App\Models\PayrollPeriod;
+use App\Services\Payroll\PayrollProcessorService;
 use App\Tenancy\TenantManager;
 use Illuminate\Support\Facades\Hash;
 
@@ -271,6 +277,118 @@ class DemoCompanySeeder extends Seeder
                 'status' => 'pending',
             ]
         );
+
+        // --- PHASE 3 SEEDING: SALARY COMPONENTS, CONTRACTS, REIMBURSEMENT, PAYROLL ---
+
+        // 12. Salary Components Master
+        $compJabatan = SalaryComponent::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Tunjangan Jabatan'],
+            ['type' => 'allowance', 'is_fixed' => true, 'is_taxable' => true]
+        );
+
+        $compTransport = SalaryComponent::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Uang Transport & Makan'],
+            ['type' => 'allowance', 'is_fixed' => false, 'is_taxable' => true]
+        );
+
+        $compKasbon = SalaryComponent::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Potongan Kasbon'],
+            ['type' => 'deduction', 'is_fixed' => false, 'is_taxable' => false]
+        );
+
+        // Assign to Budi
+        EmployeeSalaryComponent::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeBudi->id, 'salary_component_id' => $compJabatan->id],
+            ['amount' => 2500000.00, 'is_active' => true]
+        );
+        EmployeeSalaryComponent::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeBudi->id, 'salary_component_id' => $compTransport->id],
+            ['amount' => 1000000.00, 'is_active' => true]
+        );
+
+        // Assign to Dewi
+        EmployeeSalaryComponent::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeSiti->id, 'salary_component_id' => $compJabatan->id],
+            ['amount' => 1000000.00, 'is_active' => true]
+        );
+        EmployeeSalaryComponent::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeSiti->id, 'salary_component_id' => $compTransport->id],
+            ['amount' => 750000.00, 'is_active' => true]
+        );
+
+        // 13. Contracts (PKWTT for Budi, PKWT for Dewi with PP 35/2021 statutory compensation)
+        EmploymentContract::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'contract_number' => 'PKWTT/SDN/2023/001'],
+            [
+                'employee_id' => $employeeBudi->id,
+                'type' => 'pkwtt',
+                'start_date' => '2023-01-15',
+                'end_date' => null,
+                'monthly_wage' => 15000000.00,
+                'status' => 'active',
+                'compensation_calculated' => 0.00,
+                'compensation_paid' => false,
+                'renewal_count' => 0,
+            ]
+        );
+
+        // Dewi: 24 months PKWT contract
+        EmploymentContract::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'contract_number' => 'PKWT/SDN/2024/002'],
+            [
+                'employee_id' => $employeeSiti->id,
+                'type' => 'pkwt',
+                'start_date' => '2024-01-01',
+                'end_date' => '2025-12-31',
+                'monthly_wage' => 9500000.00,
+                'status' => 'active',
+                // (24 / 12) * 9,500,000 = 19,000,000
+                'compensation_calculated' => 19000000.00,
+                'compensation_paid' => false,
+                'renewal_count' => 0,
+            ]
+        );
+
+        // 14. Reimbursements
+        Reimbursement::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeBudi->id, 'title' => 'Tiket Kereta Cepat Dinas Bandung'],
+            [
+                'category' => 'business_trip',
+                'description' => 'Perjalanan dinas meeting teknis mitra infrastruktur server',
+                'amount' => 500000.00,
+                'expense_date' => now()->subDays(3)->toDateString(),
+                'status' => 'approved_finance',
+                'reviewed_by_manager_id' => $owner->id,
+                'reviewed_by_finance_id' => $hr->id,
+            ]
+        );
+
+        Reimbursement::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeSiti->id, 'title' => 'Klaim Vitamin & Obat Resep'],
+            [
+                'category' => 'medical',
+                'description' => 'Resep dokter klinik rawat jalan',
+                'amount' => 350000.00,
+                'expense_date' => now()->subDays(5)->toDateString(),
+                'status' => 'approved_manager',
+                'reviewed_by_manager_id' => $owner->id,
+            ]
+        );
+
+        // 15. Sample Payroll Period & Run
+        $period = PayrollPeriod::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Gaji Bulan ' . now()->isoFormat('MMMM Y')],
+            [
+                'start_date' => now()->startOfMonth()->toDateString(),
+                'end_date' => now()->endOfMonth()->toDateString(),
+                'payment_date' => now()->endOfMonth()->toDateString(),
+                'status' => 'draft',
+            ]
+        );
+
+        // Trigger payroll processor for the demo period
+        /** @var PayrollProcessorService $processor */
+        $processor = app(PayrollProcessorService::class);
+        $processor->processPeriod($period);
     }
 }
-
