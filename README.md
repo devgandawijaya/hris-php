@@ -12,7 +12,7 @@ RiHRIS adalah aplikasi Software-as-a-Service (SaaS) Multi-Tenant berbasis arsite
 
 ---
 
-## 📑 DAFTAR DOKUMENTASI LENGKAP (14 MODUL TEKNIS)
+## 📑 DAFTAR DOKUMENTASI LENGKAP (15 MODUL TEKNIS)
 
 Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumentasi secara lengkap pada direktori `docs/`:
 
@@ -30,10 +30,11 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 12. [12. Phase 6: Employee Relations, Disciplinary & Engagement](docs/12_PHASE_6_EMPLOYEE_RELATIONS_AND_ENGAGEMENT.md)
 13. [13. Phase 7: Career Transitions, Severance & Notifications](docs/13_PHASE_7_CAREER_TRANSITIONS_AND_SEVERANCE.md)
 14. [14. Phase 8: Financial Well-being & Advanced Engagement](docs/14_PHASE_8_FINANCIAL_WELLBEING_AND_ENGAGEMENT.md)
+15. [15. Phase 9: Competency Skill Matrix, Succession & Background Cron](docs/15_PHASE_9_SKILL_MATRIX_AND_SUCCESSION.md)
 
 ---
 
-## 🚀 STATUS IMPLEMENTASI 8 PHASE ROADMAP
+## 🚀 STATUS IMPLEMENTASI 9 PHASE ROADMAP
 
 | Phase | Modul & Cakupan Utama | Status |
 |---|---|---|
@@ -45,6 +46,7 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 | **Phase 6: Relations & Engagement** | Hubungan Industrial & Surat Peringatan (SP1, SP2, SP3, masa berlaku 6 bulan Pasal 161 UU Ketenagakerjaan), Whistleblowing & Aduan Anonim, Papan Pengumuman Internal & Pinning, dan HR Helpdesk Service Request (Paklaring & Surat Keterangan). | ✅ Complete |
 | **Phase 7: Transitions & Notifications** | Pergerakan Karir (Mutasi, Promosi, Demosi, SK Direksi), Kompensasi PHK & Pesangon (PP 35/2021 & UU Cipta Kerja: UP, UPMK, UPH, Uang Pisah), In-App Notification Center & Unread Badges. | ✅ Complete |
 | **Phase 8: Financial Well-being & Engagement** | Fasilitas Pinjaman Karyawan & Kasbon Darurat (Bunga 0%, Angsuran Payroll), Survei Kepuasan Kerja & Metrik eNPS, Wall of Fame (Kudos), dan Kalender Agenda Acara Perusahaan. | ✅ Complete |
+| **Phase 9: Competency, Succession & Cron** | Kamus Kompetensi & Standar Jabatan (Level 1-5), Matriks Kesenjangan (Skill Gap Analysis), Rencana Suksesi Kepemimpinan (Ready Now / 1 Yr / 2+ Yrs), dan Background Cron Workers Kepatuhan Ketenagakerjaan (PP 35/2021 PKWT H-30, SP 6 Bulan Pasal 161, Probasi 3 Bulan Pasal 60). | ✅ Complete |
 
 ---
 
@@ -178,6 +180,10 @@ docker compose exec app php artisan test
 6. `PayrollAndTaxPhase3Test`: Pengujian payroll run, THP, rekonsiliasi akhir tahun 1721-A1, THR Permenaker 6/2016, dan reimbursement.
 7. `TalentManagementPhase4Test`: Pengujian rekrutmen lowongan, ATS stage, konversi pelamar ke karyawan, onboarding checklist, inventaris aset kantor, review performa 30/70, dan sertifikat pelatihan.
 8. `EnterprisePhase5Test`: Pengujian workflow approval berjenjang, metrik eksekutif analitik, billing invoice, REST API v1, webhook deliveries, dan IP whitelist korporat.
+9. `EmployeeRelationsAndEngagementPhase6Test`: Pengujian surat peringatan (SP 1-3) berpenomoran resmi, masa berlaku 6 bulan Pasal 161 UU 13/2003, aduan whistleblowing anonim, dan HR helpdesk paklaring.
+10. `CareerTransitionsAndSeverancePhase7Test`: Pengujian mutasi/promosi jabatan, kalkulasi kompensasi pesangon PHK PP 35/2021 Pasal 40-52 & Pasal 156 UU Cipta Kerja, dan notification bell real-time.
+11. `FinancialWellbeingAndEngagementPhase8Test`: Pengujian pengajuan kasbon darurat, pembentukan jadwal angsuran payroll PP 36/2021, kalkulasi analitik eNPS (-100 s.d. +100), dan Wall of Recognition.
+12. `SkillMatrixAndSuccessionPhase9Test`: Pengujian kamus keahlian 5 level kemahiran, matriks kesenjangan (skill gap), rekomendasi pelatihan LMS, suksesi posisi kunci Ready Now, dan 4 background worker cron scheduler (PP 35/2021 PKWT H-30, auto-expire SP 6 bulan Pasal 161, monitor probasi PKWTT 3 bulan Pasal 60).
 
 ---
 *RiHRIS — Solusi HRIS SaaS Terpercaya untuk Bisnis Indonesia.*

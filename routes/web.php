@@ -39,6 +39,9 @@ use App\Http\Controllers\Company\MutationController;
 use App\Http\Controllers\Company\TerminationController;
 use App\Http\Controllers\Company\LoanController;
 use App\Http\Controllers\Company\EngagementController;
+use App\Http\Controllers\Company\SkillMatrixController;
+use App\Http\Controllers\Company\SuccessionController;
+use App\Http\Controllers\Company\CronMonitoringController;
 use App\Http\Controllers\NotificationController;
 
 /*
@@ -377,5 +380,32 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/surveys', [EngagementController::class, 'storeSurvey'])->name('surveys.store');
         Route::post('/recognitions', [EngagementController::class, 'storeRecognition'])->name('recognitions.store');
         Route::post('/events', [EngagementController::class, 'storeEvent'])->name('events.store');
+    });
+
+    // --- PHASE 9: COMPETENCY SKILL MATRIX, SUCCESSION & CRON SCHEDULER ---
+
+    // 31. Competency Dictionary, Position Requirements & Employee Skill Matrix
+    Route::prefix('skills')->name('company.skills.')->group(function () {
+        Route::get('/', [SkillMatrixController::class, 'index'])->name('index');
+        Route::post('/categories', [SkillMatrixController::class, 'storeCategory'])->name('categories.store');
+        Route::post('/skills', [SkillMatrixController::class, 'storeSkill'])->name('skills.store');
+        Route::post('/requirements', [SkillMatrixController::class, 'storePositionRequirement'])->name('requirements.store');
+        Route::delete('/requirements/{id}', [SkillMatrixController::class, 'deletePositionRequirement'])->name('requirements.delete');
+        Route::post('/assess', [SkillMatrixController::class, 'storeEmployeeSkill'])->name('assess.store');
+        Route::get('/gap/{employee}', [SkillMatrixController::class, 'gapAnalysis'])->name('gap');
+    });
+
+    // 32. Key Role Succession Planning & Talent Pool
+    Route::prefix('succession')->name('company.succession.')->group(function () {
+        Route::get('/', [SuccessionController::class, 'index'])->name('index');
+        Route::post('/plans', [SuccessionController::class, 'storePlan'])->name('plans.store');
+        Route::post('/candidates', [SuccessionController::class, 'storeCandidate'])->name('candidates.store');
+        Route::get('/suggest/{position}', [SuccessionController::class, 'suggestCandidates'])->name('suggest');
+    });
+
+    // 33. Automated Background Cron Monitoring & Manual Trigger
+    Route::prefix('cron')->name('company.cron.')->group(function () {
+        Route::get('/', [CronMonitoringController::class, 'index'])->name('index');
+        Route::post('/run', [CronMonitoringController::class, 'runCommand'])->name('run');
     });
 });

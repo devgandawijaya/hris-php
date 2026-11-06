@@ -317,6 +317,16 @@
                             <i data-lucide="graduation-cap" class="w-4 h-4"></i>
                             Pelatihan & Sertifikasi
                         </a>
+                        <a href="{{ route('company.skills.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.skills.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="award" class="w-4 h-4"></i>
+                            Matriks Kompetensi & Gap
+                        </a>
+                        <a href="{{ route('company.succession.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.succession.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="git-pull-request" class="w-4 h-4"></i>
+                            Rencana Suksesi & Bench
+                        </a>
 
                         <!-- Enterprise & Sistem (Phase 5) -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Enterprise & Sistem</div>
@@ -344,6 +354,11 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.security.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="shield-check" class="w-4 h-4"></i>
                             Audit Log & Keamanan
+                        </a>
+                        <a href="{{ route('company.cron.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.cron.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="clock-rewind" class="w-4 h-4"></i>
+                            Automasi & Cron Jobs
                         </a>
 
                         <!-- Hubungan Industrial & Engagement (Phase 6) -->

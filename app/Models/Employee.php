@@ -220,4 +220,16 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeRecognition::class)->latest();
     }
+
+    // --- PHASE 9: COMPETENCY & SUCCESSION ---
+
+    public function skills(): HasMany
+    {
+        return $this->hasMany(EmployeeSkill::class);
+    }
+
+    public function successionNominations(): HasMany
+    {
+        return $this->hasMany(SuccessionCandidate::class, 'candidate_employee_id');
+    }
 }

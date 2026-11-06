@@ -54,6 +54,13 @@ use App\Models\EmployeeSurvey;
 use App\Models\EmployeeSurveyResponse;
 use App\Models\EmployeeRecognition;
 use App\Models\CompanyEvent;
+use App\Models\SkillCategory;
+use App\Models\Skill;
+use App\Models\PositionSkillRequirement;
+use App\Models\EmployeeSkill;
+use App\Models\SuccessionPlan;
+use App\Models\SuccessionCandidate;
+use App\Models\CronExecutionLog;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -1035,6 +1042,203 @@ class DemoCompanySeeder extends Seeder
                 'location' => 'Main Auditorium Lt. 18 / Live Streaming Zoom',
                 'target_department_id' => null,
                 'created_by_user_id' => $hr->id,
+            ]
+        );
+
+        // ==========================================
+        // 37. PHASE 9: COMPETENCY & SKILL MATRIX
+        // ==========================================
+
+        // Categories
+        $catTech = SkillCategory::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Teknis & Rekayasa Software'],
+            ['description' => 'Keahlian arsitektur backend, basis data, dan infrastruktur sistem informasi enterprise.']
+        );
+        $catHr = SkillCategory::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Kepatuhan Regulasi & HR'],
+            ['description' => 'Penguasaan regulasi ketenagakerjaan, PP 35/2021, UU Cipta Kerja, dan administrasi payroll.']
+        );
+        $catLead = SkillCategory::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Kepemimpinan & Manajemen'],
+            ['description' => 'Keahlian mengelola tim, delegasi wewenang, resolusi konflik, dan eksekusi roadmap strategis.']
+        );
+
+        // Skills
+        $skillLaravel = Skill::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Laravel & Modern PHP Architecture'],
+            ['skill_category_id' => $catTech->id, 'code' => 'TECH-LARAVEL', 'description' => 'Desain domain service, migration, tenancy isolation, dan security di framework Laravel 11.']
+        );
+        $skillPgsql = Skill::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'PostgreSQL Optimization & Relational Modeling'],
+            ['skill_category_id' => $catTech->id, 'code' => 'TECH-PGSQL', 'description' => 'Indexing, transactional locking, concurrency, and multi-tenant schema partitioning.']
+        );
+        $skillLaborLaw = Skill::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Hukum Ketenagakerjaan & PP 35/2021'],
+            ['skill_category_id' => $catHr->id, 'code' => 'HR-LABORLAW', 'description' => 'Perhitungan kompensasi PKWT, rumus pesangon PHK Pasal 156, serta penegakan SP 6 bulan.']
+        );
+        $skillPayroll = Skill::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Payroll & Pajak PPh 21 Tarif Efektif (TER)'],
+            ['skill_category_id' => $catHr->id, 'code' => 'HR-PAYROLL', 'description' => 'Penghitungan TER bulanan PP 58/2023, BPJS Ketenagakerjaan, dan rekonsiliasi masa Desember.']
+        );
+        $skillLeadership = Skill::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Strategic Leadership & Talent Mentorship'],
+            ['skill_category_id' => $catLead->id, 'code' => 'LEAD-STRAT', 'description' => 'Membina talenta suksesor, memimpin sprint review, dan keselarasan visi perusahaan.']
+        );
+
+        // Position Requirements
+        PositionSkillRequirement::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'position_id' => $posDev->id, 'skill_id' => $skillLaravel->id],
+            ['required_level' => 4, 'is_mandatory' => true, 'notes' => 'Standar wajib untuk arsitek dan tech lead.']
+        );
+        PositionSkillRequirement::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'position_id' => $posDev->id, 'skill_id' => $skillPgsql->id],
+            ['required_level' => 4, 'is_mandatory' => true, 'notes' => 'Dibutuhkan untuk menjaga integritas transaksi multi-tenant.']
+        );
+        PositionSkillRequirement::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'position_id' => $posDev->id, 'skill_id' => $skillLeadership->id],
+            ['required_level' => 3, 'is_mandatory' => true, 'notes' => 'Memimpin sprint engineering dan mentoring tim developer.']
+        );
+
+        PositionSkillRequirement::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'position_id' => $posHr->id, 'skill_id' => $skillLaborLaw->id],
+            ['required_level' => 4, 'is_mandatory' => true, 'notes' => 'Kepatuhan mutlak regulasi ketenagakerjaan Republik Indonesia.']
+        );
+        PositionSkillRequirement::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'position_id' => $posHr->id, 'skill_id' => $skillPayroll->id],
+            ['required_level' => 3, 'is_mandatory' => true, 'notes' => 'Pengoperasian sistem penggajian, BPJS, dan pelaporan pajak.']
+        );
+        PositionSkillRequirement::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'position_id' => $posHr->id, 'skill_id' => $skillLeadership->id],
+            ['required_level' => 2, 'is_mandatory' => false, 'notes' => 'Kemampuan koordinasi lintas departemen.']
+        );
+
+        // Employee Skills & Certified Proficiencies
+        EmployeeSkill::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeBudi->id, 'skill_id' => $skillLaravel->id],
+            [
+                'current_level' => 5,
+                'certification_name' => 'Certified Senior Laravel Engineer',
+                'certification_date' => now()->subYears(1),
+                'valid_until' => now()->addYears(2),
+                'verified_by_user_id' => $hr->id,
+                'assessment_notes' => 'Keahlian luar biasa dalam arsitektur multi-tenancy dan high-performance query.',
+            ]
+        );
+        EmployeeSkill::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeBudi->id, 'skill_id' => $skillPgsql->id],
+            [
+                'current_level' => 4,
+                'certification_name' => 'PostgreSQL Database Professional',
+                'certification_date' => now()->subMonths(8),
+                'valid_until' => now()->addYears(1),
+                'verified_by_user_id' => $hr->id,
+                'assessment_notes' => 'Mampu mendesain skema relasional kompleks dengan optimasi index dan foreign key.',
+            ]
+        );
+        EmployeeSkill::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeBudi->id, 'skill_id' => $skillLeadership->id],
+            [
+                'current_level' => 3,
+                'certification_name' => 'Agile Scrum Master Certified',
+                'certification_date' => now()->subMonths(6),
+                'valid_until' => now()->addYears(2),
+                'verified_by_user_id' => $hr->id,
+                'assessment_notes' => 'Memimpin sprint tim engineering dengan produktivitas tinggi.',
+            ]
+        );
+
+        EmployeeSkill::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeSiti->id, 'skill_id' => $skillLaborLaw->id],
+            [
+                'current_level' => 4,
+                'certification_name' => 'Sertifikasi BNSP Praktisi Hubungan Industrial',
+                'certification_date' => now()->subMonths(10),
+                'valid_until' => now()->addYears(2),
+                'verified_by_user_id' => $hr->id,
+                'assessment_notes' => 'Paham mendalam ketentuan PP 35/2021 dan penyelesaian perselisihan hubungan industrial.',
+            ]
+        );
+        EmployeeSkill::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeSiti->id, 'skill_id' => $skillPayroll->id],
+            [
+                'current_level' => 3,
+                'certification_name' => 'Brevet Pajak A & B Terpadu',
+                'certification_date' => now()->subYears(1),
+                'valid_until' => now()->addYears(1),
+                'verified_by_user_id' => $hr->id,
+                'assessment_notes' => 'Menguasai perhitungan PPh 21 skema TER PP 58/2023 dan integrasi BPJS.',
+            ]
+        );
+
+        // 38. Phase 9: Key Position Succession Plans & Candidate Bench
+        $succPlanDev = SuccessionPlan::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'position_id' => $posDev->id],
+            [
+                'current_holder_employee_id' => $employeeBudi->id,
+                'criticality_level' => 'critical',
+                'emergency_replacement_plan' => 'Jika Lead Engineer berhalangan tetap, koordinasi arsitektur sementara dipegang oleh Senior Consultant hingga suksesor siap.',
+                'notes' => 'Posisi kunci kelangsungan platform RiHRIS dan stabilitas infrastruktur SaaS.',
+                'status' => 'active',
+            ]
+        );
+
+        $succPlanHr = SuccessionPlan::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'position_id' => $posHr->id],
+            [
+                'current_holder_employee_id' => $employeeSiti->id,
+                'criticality_level' => 'high',
+                'emergency_replacement_plan' => 'HR Manager Corporate mengampu operasional harian sementara.',
+                'notes' => 'Posisi vital pemenuhan legalitas tenaga kerja dan hubungan bipartit.',
+                'status' => 'active',
+            ]
+        );
+
+        // Succession Nominations
+        SuccessionCandidate::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'succession_plan_id' => $succPlanHr->id, 'candidate_employee_id' => $employeeBudi->id],
+            [
+                'readiness_level' => 'ready_2_plus_years',
+                'strengths' => 'Pemahaman logis yang sangat kuat terhadap aturan sistem dan workflow HRIS.',
+                'development_needs' => 'Perlu memperdalam negosiasi hubungan industrial langsung dengan serikat pekerja.',
+                'status' => 'active',
+            ]
+        );
+
+        // 39. Phase 9: Cron Execution Logs
+        CronExecutionLog::firstOrCreate(
+            ['command_name' => 'hris:check-contract-expirations'],
+            [
+                'status' => 'success',
+                'items_processed' => 1,
+                'summary' => 'Ditemukan 1 kontrak PKWT yang akan berakhir dalam 30 hari ke depan.',
+                'executed_at' => now()->subHours(6),
+            ]
+        );
+        CronExecutionLog::firstOrCreate(
+            ['command_name' => 'hris:expire-warning-letters'],
+            [
+                'status' => 'success',
+                'items_processed' => 0,
+                'summary' => 'Pengecekan selesai. Tidak ada Surat Peringatan aktif yang melewati masa berlaku 6 bulan.',
+                'executed_at' => now()->subHours(5),
+            ]
+        );
+        CronExecutionLog::firstOrCreate(
+            ['command_name' => 'hris:check-probation-expirations'],
+            [
+                'status' => 'success',
+                'items_processed' => 1,
+                'summary' => 'Ditemukan 1 karyawan PKWTT dalam rentang akhir masa percobaan (probasi) 3 bulan.',
+                'executed_at' => now()->subHours(4),
+            ]
+        );
+        CronExecutionLog::firstOrCreate(
+            ['command_name' => 'hris:process-loan-installments'],
+            [
+                'status' => 'success',
+                'items_processed' => 3,
+                'summary' => 'Ditemukan 3 angsuran pinjaman/kasbon yang jatuh tempo dalam 7 hari dan siap dipotong pada siklus payroll.',
+                'executed_at' => now()->subHours(3),
             ]
         );
     }

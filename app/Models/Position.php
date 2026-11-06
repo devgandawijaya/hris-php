@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Support\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Position extends Model
 {
@@ -26,6 +27,18 @@ class Position extends Model
     public function employees(): HasMany
     {
         return $this->hasMany(Employee::class);
+    }
+
+    // --- PHASE 9: COMPETENCY & SUCCESSION ---
+
+    public function skillRequirements(): HasMany
+    {
+        return $this->hasMany(PositionSkillRequirement::class);
+    }
+
+    public function successionPlan(): HasOne
+    {
+        return $this->hasOne(SuccessionPlan::class);
     }
 }
 

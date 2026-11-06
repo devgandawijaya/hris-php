@@ -143,6 +143,13 @@
             Kasbon & Apresiasi
         </button>
 
+        <button type="button" @click="activeEssTab = 'skills-career'"
+                :class="activeEssTab === 'skills-career' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="award" class="w-4 h-4"></i>
+            Keahlian & Karir
+        </button>
+
         <button type="button" @click="activeEssTab = 'profile'"
                 :class="activeEssTab === 'profile' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
@@ -1542,6 +1549,105 @@
 
         </div>
 
+    </div>
+
+    <!-- TAB 14: KEAHLIAN & JALUR KARIR (PHASE 9) -->
+    <div x-show="activeEssTab === 'skills-career'" x-cloak class="space-y-6">
+        <!-- Overview Card -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between pb-6 border-b border-slate-100 gap-4">
+                <div>
+                    <span class="text-xs font-bold text-red-600 uppercase tracking-wider">Profil Kompetensi Jabatan</span>
+                    <h2 class="text-xl font-black text-slate-900 mt-1">Standar Keahlian: {{ $employee?->position?->title ?? 'Staf' }}</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Departemen {{ $employee?->department?->name ?? 'Umum' }} • Pemetaan kesesuaian target kompetensi dengan tingkat kemahiran aktual.</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-4 shrink-0">
+                    <div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase">Kecocokan Standar</div>
+                        <div class="text-2xl font-black {{ ($mySkillAnalysis['overall_match_percentage'] ?? 0) >= 80 ? 'text-emerald-600' : 'text-amber-600' }}">
+                            {{ $mySkillAnalysis['overall_match_percentage'] ?? 0 }}%
+                        </div>
+                    </div>
+                    <div class="border-l border-slate-200 pl-4">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase">Standar Terpenuhi</div>
+                        <div class="text-sm font-bold text-slate-800">
+                            {{ $mySkillAnalysis['met_requirements'] ?? 0 }} / {{ $mySkillAnalysis['total_requirements'] ?? 0 }} Skill
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skill Breakdown List -->
+            <div class="mt-6">
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Daftar Keahlian & Kesenjangan (Gap)</h3>
+                @if(empty($mySkillAnalysis['skills']))
+                    <div class="py-8 text-center text-xs text-slate-400">
+                        Belum ada standar kompetensi jabatan yang ditetapkan untuk posisi Anda oleh HR.
+                    </div>
+                @else
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @foreach($mySkillAnalysis['skills'] as $sk)
+                            <div class="p-4 rounded-xl border {{ $sk['is_met'] ? 'border-emerald-200 bg-emerald-50/20' : 'border-amber-200 bg-amber-50/20' }} space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-bold text-slate-900 text-xs">{{ $sk['skill_name'] }}</div>
+                                        <div class="text-[10px] text-slate-400">{{ $sk['category_name'] }}</div>
+                                    </div>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full {{ $sk['is_met'] ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">
+                                        {{ $sk['is_met'] ? 'Sesuai Standar' : 'Perlu Peningkatan' }}
+                                    </span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-[11px] font-medium pt-1">
+                                    <span class="text-slate-600">Level Anda: <strong>Lv {{ $sk['current_level'] }}/5</strong></span>
+                                    <span class="text-slate-600">Target Wajib: <strong>Lv {{ $sk['required_level'] }}/5</strong></span>
+                                </div>
+
+                                <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                                    <div class="h-full rounded-full {{ $sk['is_met'] ? 'bg-emerald-500' : 'bg-amber-500' }}"
+                                         style="width: {{ $sk['match_percentage'] }}%"></div>
+                                </div>
+
+                                @if($sk['certification_name'])
+                                    <div class="text-[10px] text-slate-500 flex items-center gap-1 pt-1">
+                                        <i data-lucide="award" class="w-3.5 h-3.5 text-blue-500"></i>
+                                        Sertifikasi: <strong>{{ $sk['certification_name'] }}</strong>
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            <!-- Recommended LMS Training Courses -->
+            @if(!empty($mySkillAnalysis['recommended_trainings']) && count($mySkillAnalysis['recommended_trainings']) > 0)
+                <div class="mt-8 p-5 rounded-xl bg-blue-50/70 border border-blue-200">
+                    <div class="flex items-center gap-2 text-xs font-bold text-blue-900 mb-3">
+                        <i data-lucide="graduation-cap" class="w-4 h-4 text-blue-600"></i>
+                        Rekomendasi Pelatihan Perusahaan Untuk Peningkatan Kompetensi (LMS):
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        @foreach($mySkillAnalysis['recommended_trainings'] as $t)
+                            <div class="p-3 bg-white rounded-lg border border-blue-100 text-xs flex items-center justify-between shadow-2xs">
+                                <div>
+                                    <div class="font-bold text-slate-900">{{ $t->title }}</div>
+                                    <div class="text-[10px] text-slate-500 mt-0.5">
+                                        Trainer: {{ $t->trainer_name ?? 'Internal' }} • {{ $t->location }}
+                                    </div>
+                                    <div class="text-[10px] text-blue-600 font-semibold mt-1">
+                                        Mulai: {{ $t->start_date?->format('d M Y') }}
+                                    </div>
+                                </div>
+                                <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-800">
+                                    Tersedia
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        </div>
     </div>
 
 </div>

@@ -31,6 +31,7 @@ use App\Services\Finance\EmployeeLoanService;
 use App\Services\Engagement\SurveyAndRecognitionService;
 use App\Services\Reimbursement\ReimbursementService;
 use App\Services\Talent\PerformanceService;
+use App\Services\Talent\SkillMatrixService;
 use App\Services\EmployeeRelations\GrievanceService;
 use App\Services\EmployeeRelations\EngagementService;
 use App\Tenancy\TenantManager;
@@ -47,7 +48,8 @@ class EmployeeDashboardController extends Controller
         protected GrievanceService $grievanceService,
         protected EngagementService $engagementService,
         protected EmployeeLoanService $loanService,
-        protected SurveyAndRecognitionService $surveyService
+        protected SurveyAndRecognitionService $surveyService,
+        protected SkillMatrixService $skillMatrixService
     ) {}
 
     public function index(): View
@@ -153,6 +155,9 @@ class EmployeeDashboardController extends Controller
                 ->latest('published_at')
                 ->take(5)
                 ->get();
+
+            // Phase 9: Competency and Skill Gap Analysis
+            $mySkillAnalysis = $this->skillMatrixService->calculateEmployeeSkillGap($employee);
         } else {
             $myWarnings = collect();
             $myGrievances = collect();
@@ -163,6 +168,14 @@ class EmployeeDashboardController extends Controller
             $myRecognitions = collect();
             $upcomingEvents = collect();
             $announcements = collect();
+            $mySkillAnalysis = [
+                'has_requirements' => false,
+                'overall_match_percentage' => 0,
+                'total_requirements' => 0,
+                'met_requirements' => 0,
+                'skills' => [],
+                'recommended_trainings' => collect(),
+            ];
         }
 
         return view('employee.dashboard', compact(
@@ -191,7 +204,8 @@ class EmployeeDashboardController extends Controller
             'activeSurveys',
             'myRecognitions',
             'upcomingEvents',
-            'announcements'
+            'announcements',
+            'mySkillAnalysis'
         ));
     }
 
