@@ -275,3 +275,4 @@ class CareerTransitionsAndSeverancePhase7Test extends TestCase
         $resNotif->assertJsonStructure(['unread_count', 'notifications']);
     }
 }
+

@@ -203,4 +203,21 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeTermination::class)->latest('termination_date');
     }
+
+    // --- PHASE 8: FINANCIAL WELL-BEING & RECOGNITION ---
+
+    public function loans(): HasMany
+    {
+        return $this->hasMany(EmployeeLoan::class)->latest();
+    }
+
+    public function activeLoans(): HasMany
+    {
+        return $this->hasMany(EmployeeLoan::class)->whereIn('status', ['approved', 'active']);
+    }
+
+    public function recognitions(): HasMany
+    {
+        return $this->hasMany(EmployeeRecognition::class)->latest();
+    }
 }

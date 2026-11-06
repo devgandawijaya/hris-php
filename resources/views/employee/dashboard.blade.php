@@ -136,6 +136,13 @@
             Riwayat Karir
         </button>
 
+        <button type="button" @click="activeEssTab = 'loans-wellbeing'"
+                :class="activeEssTab === 'loans-wellbeing' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="wallet" class="w-4 h-4"></i>
+            Kasbon & Apresiasi
+        </button>
+
         <button type="button" @click="activeEssTab = 'profile'"
                 :class="activeEssTab === 'profile' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
@@ -1249,6 +1256,292 @@
                 @endforelse
             </div>
         </div>
+    </div>
+
+    <!-- TAB 13: KASBON, SURVEI & APRESIASI (PHASE 8) -->
+    <div x-show="activeEssTab === 'loans-wellbeing'" x-cloak class="space-y-6">
+
+        <!-- Grid: Kasbon & Pinjaman Karyawan -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Form Pengajuan Kasbon -->
+            <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+                <div class="pb-3 border-b border-slate-100">
+                    <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                        <i data-lucide="wallet" class="w-4 h-4 text-emerald-600"></i>
+                        Pengajuan Kasbon & Pinjaman Darurat
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Fasilitas bantuan keuangan darurat dengan pemotongan angsuran otomatis melalui payroll.</p>
+                </div>
+
+                <form action="{{ route('ess.loan.apply') }}" method="POST" class="space-y-3.5">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tipe Pinjaman <span class="text-red-500">*</span></label>
+                        <select name="loan_type" required class="w-full text-xs rounded-xl border border-slate-200 px-3 py-2.5 bg-slate-50 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <option value="salary_advance">Kasbon Gaji Darurat (Bunga 0%)</option>
+                            <option value="emergency">Bantuan Medis / Kemalangan</option>
+                            <option value="education">Biaya Pendidikan Anak</option>
+                            <option value="housing">Perbaikan Rumah / Tempat Tinggal</option>
+                            <option value="other">Kebutuhan Penting Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nominal Diajukan (Rp) <span class="text-red-500">*</span></label>
+                        <input type="number" step="50000" min="100000" name="amount" required placeholder="Contoh: 2000000" class="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-slate-50 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <span class="text-[10px] text-slate-400">Maksimal 50% dari total gaji pokok bulanan</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Jangka Waktu Angsuran (Bulan) <span class="text-red-500">*</span></label>
+                        <select name="term_months" required class="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 bg-slate-50 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <option value="1">1 Bulan (Potong gaji bulan depan)</option>
+                            <option value="2">2 Bulan</option>
+                            <option value="3" selected>3 Bulan</option>
+                            <option value="6">6 Bulan</option>
+                            <option value="12">12 Bulan</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Keperluan Penggunaan Dana <span class="text-red-500">*</span></label>
+                        <textarea name="reason" rows="2" required placeholder="Jelaskan kebutuhan dana mendesak Anda..." class="w-full text-xs rounded-xl border border-slate-200 p-3 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-sm">
+                            Kirim Pengajuan Kasbon
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Riwayat Pinjaman & Jadwal Cicilan -->
+            <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+                <div class="pb-3 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-900">Riwayat Fasilitas Pinjaman Saya</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Pantau status persetujuan dan rincian angsuran pemotongan gaji.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    @forelse($myLoans as $ln)
+                        <div class="p-4 rounded-xl border {{ $ln->status === 'active' ? 'border-blue-200 bg-blue-50/30' : 'border-slate-200 bg-slate-50/50' }} text-xs space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-slate-900 font-mono">{{ $ln->loan_number }}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-700">
+                                        {{ str_replace('_', ' ', $ln->loan_type) }}
+                                    </span>
+                                </div>
+                                <div>
+                                    @if($ln->status === 'pending')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Menunggu Review</span>
+                                    @elseif($ln->status === 'active')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">Aktif Berjalan</span>
+                                    @elseif($ln->status === 'completed')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Lunas</span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-600">Ditolak</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 bg-white p-3 rounded-lg border border-slate-100 text-[11px]">
+                                <div>
+                                    <span class="text-slate-400 block">Pokok Pinjaman:</span>
+                                    <strong class="text-slate-800">Rp {{ number_format($ln->amount, 0, ',', '.') }}</strong>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block">Cicilan per Bulan:</span>
+                                    <strong class="text-slate-800">Rp {{ number_format($ln->monthly_installment, 0, ',', '.') }} ({{ $ln->term_months }}x)</strong>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block">Sisa Kewajiban:</span>
+                                    <strong class="text-blue-700 font-bold">Rp {{ number_format($ln->remaining_amount, 0, ',', '.') }}</strong>
+                                </div>
+                            </div>
+
+                            <!-- Installment pills -->
+                            @if($ln->installments->isNotEmpty())
+                                <div class="pt-1">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Status Cicilan:</span>
+                                    <div class="flex flex-wrap gap-1.5">
+                                        @foreach($ln->installments as $ins)
+                                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold
+                                                {{ $ins->status === 'paid' || $ins->status === 'deducted_from_payroll' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700' }}">
+                                                #{{ $ins->installment_number }}: {{ $ins->status === 'paid' || $ins->status === 'deducted_from_payroll' ? 'Lunas' : 'Rp ' . number_format($ins->amount, 0, ',', '.') }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    @empty
+                        <div class="py-8 text-center text-xs text-slate-400">
+                            <i data-lucide="shield-check" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                            Anda tidak memiliki riwayat pinjaman aktif.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Section: Survei Kepuasan Kerja & eNPS Aktif -->
+        @if(isset($activeSurveys) && $activeSurveys->isNotEmpty())
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+                <div class="pb-3 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                            <i data-lucide="smile" class="w-4 h-4 text-amber-500"></i>
+                            Survei Suara Karyawan & eNPS (Sedang Berlangsung)
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Suara dan aspirasi Anda sangat berharga untuk membangun lingkungan kerja yang lebih baik.</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                        {{ $activeSurveys->count() }} Survei Tersedia
+                    </span>
+                </div>
+
+                <div class="space-y-4">
+                    @foreach($activeSurveys as $survey)
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-bold text-sm text-slate-900">{{ $survey->title }}</h4>
+                                <span class="text-[10px] text-slate-400">Berakhir: {{ $survey->end_date->format('d M Y') }}</span>
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">{{ $survey->description }}</p>
+
+                            <!-- Form Response -->
+                            <form action="{{ route('ess.surveys.submit', $survey->id) }}" method="POST" class="pt-2 border-t border-slate-200 space-y-3 text-xs">
+                                @csrf
+                                <div>
+                                    <label class="block font-bold text-slate-800 mb-1.5">
+                                        Seberapa besar kemungkinan Anda merekomendasikan perusahaan ini sebagai tempat bekerja yang baik? (Skor 0 - 10)
+                                    </label>
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        @for($i = 0; $i <= 10; $i++)
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="enps_score" value="{{ $i }}" class="peer sr-only" required>
+                                                <div class="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center font-bold text-xs peer-checked:bg-red-600 peer-checked:text-white peer-checked:border-red-600 hover:bg-slate-100 transition">
+                                                    {{ $i }}
+                                                </div>
+                                            </label>
+                                        @endfor
+                                    </div>
+                                    <div class="flex justify-between text-[10px] text-slate-400 mt-1 max-w-sm">
+                                        <span>0: Sangat Tidak Mungkin</span>
+                                        <span>10: Sangat Mungkin (Promoter)</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block font-bold text-slate-800 mb-1">
+                                        Kritik, Masukan & Saran Perbaikan Anda (Opsional, Terjamin Anonim):
+                                    </label>
+                                    <textarea name="feedback" rows="2" placeholder="Bagikan pendapat jujur Anda demi kemajuan bersama..." class="w-full text-xs rounded-xl border border-slate-200 p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                                </div>
+
+                                <div class="flex justify-end">
+                                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition shadow-sm">
+                                        Kirim Tanggapan Survei
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        <!-- 2-Column: Wall of Recognition & Agenda Acara -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <!-- Wall of Recognition (Kudos Saya) -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+                <div class="pb-3 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                            <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
+                            Apresiasi & Penghargaan Saya (Kudos)
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Pujian dan ucapan terima kasih atas kerja keras Anda.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    @forelse($myRecognitions as $rec)
+                        <div class="p-3.5 rounded-xl border border-amber-200/60 bg-amber-50/40 text-xs space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-800">
+                                    {{ str_replace('_', ' ', $rec->badge_type) }}
+                                </span>
+                                <span class="text-[10px] text-slate-400">{{ $rec->created_at->format('d M Y') }}</span>
+                            </div>
+                            <div class="font-bold text-slate-900">{{ $rec->title }}</div>
+                            <p class="text-[11px] text-slate-600 italic">"{{ $rec->message }}"</p>
+                            <div class="text-[10px] text-slate-500 pt-1">
+                                Pemberi: <strong class="text-slate-800">{{ $rec->sender?->name ?? 'HR Team' }}</strong>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-8 text-center text-xs text-slate-400">
+                            <i data-lucide="sparkles" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                            Belum ada lencana apresiasi yang diterima. Terus berikan karya terbaik Anda!
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Kalender Agenda Perusahaan -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+                <div class="pb-3 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4 text-blue-600"></i>
+                            Agenda & Kegiatan Perusahaan Mendatang
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Jadwal Town Hall, gathering, dan kegiatan resmi internal.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    @forelse($upcomingEvents as $evt)
+                        <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/60 text-xs space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-slate-900 text-sm">{{ $evt->title }}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-blue-100 text-blue-800">
+                                    {{ $evt->event_type }}
+                                </span>
+                            </div>
+                            <div class="text-slate-600 text-[11px]">{{ $evt->description }}</div>
+                            <div class="flex items-center gap-3 pt-1 text-[10px] text-slate-500 font-medium">
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3 h-3 text-slate-400"></i>
+                                    {{ $evt->start_time->format('d M Y, H:i') }} WIB
+                                </span>
+                                @if($evt->location)
+                                    <span class="flex items-center gap-1">
+                                        <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i>
+                                        {{ $evt->location }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-8 text-center text-xs text-slate-400">
+                            <i data-lucide="calendar-check" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                            Tidak ada agenda kegiatan terdekat yang dijadwalkan.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
 </div>

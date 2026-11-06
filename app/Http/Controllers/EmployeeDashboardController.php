@@ -23,6 +23,12 @@ use App\Models\EmployeeWarning;
 use App\Models\EmployeeGrievance;
 use App\Models\HrHelpdeskTicket;
 use App\Models\EmployeeMutation;
+use App\Models\EmployeeLoan;
+use App\Models\EmployeeSurvey;
+use App\Models\EmployeeRecognition;
+use App\Models\CompanyEvent;
+use App\Services\Finance\EmployeeLoanService;
+use App\Services\Engagement\SurveyAndRecognitionService;
 use App\Services\Reimbursement\ReimbursementService;
 use App\Services\Talent\PerformanceService;
 use App\Services\EmployeeRelations\GrievanceService;
@@ -39,7 +45,9 @@ class EmployeeDashboardController extends Controller
         protected ReimbursementService $reimbursementService,
         protected PerformanceService $performanceService,
         protected GrievanceService $grievanceService,
-        protected EngagementService $engagementService
+        protected EngagementService $engagementService,
+        protected EmployeeLoanService $loanService,
+        protected SurveyAndRecognitionService $surveyService
     ) {}
 
     public function index(): View
@@ -120,6 +128,21 @@ class EmployeeDashboardController extends Controller
                 ->where('employee_id', $employee->id)
                 ->latest('effective_date')
                 ->get();
+
+            // Phase 8: Financial Well-being & Engagement
+            $myLoans = EmployeeLoan::with('installments')->where('employee_id', $employee->id)->latest()->get();
+            $activeSurveys = EmployeeSurvey::where('tenant_id', $employee->tenant_id)->where('status', 'active')->where('end_date', '>=', now()->toDateString())->get();
+            $myRecognitions = EmployeeRecognition::with('sender')->where('employee_id', $employee->id)->latest()->get();
+            $upcomingEvents = CompanyEvent::where('tenant_id', $employee->tenant_id)
+                ->where(function ($q) use ($employee) {
+                    $q->whereNull('target_department_id')
+                      ->orWhere('target_department_id', $employee->department_id);
+                })
+                ->where('start_time', '>=', now()->subHours(12))
+                ->orderBy('start_time')
+                ->take(5)
+                ->get();
+
             $announcements = CompanyAnnouncement::where('tenant_id', $employee->tenant_id)
                 ->where(function ($q) use ($employee) {
                     $q->whereNull('target_department_id')
@@ -135,6 +158,10 @@ class EmployeeDashboardController extends Controller
             $myGrievances = collect();
             $myHelpdeskTickets = collect();
             $myMutations = collect();
+            $myLoans = collect();
+            $activeSurveys = collect();
+            $myRecognitions = collect();
+            $upcomingEvents = collect();
             $announcements = collect();
         }
 
@@ -160,6 +187,10 @@ class EmployeeDashboardController extends Controller
             'myGrievances',
             'myHelpdeskTickets',
             'myMutations',
+            'myLoans',
+            'activeSurveys',
+            'myRecognitions',
+            'upcomingEvents',
             'announcements'
         ));
     }
@@ -448,5 +479,41 @@ class EmployeeDashboardController extends Controller
         $ticket = $this->engagementService->createTicket($employee, $validated);
 
         return back()->with('success', "Tiket layanan HR {$ticket->ticket_number} berhasil dibuat. Tim HR akan segera memproses permohonan Anda.");
+    }
+
+    public function applyLoan(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->first();
+        if (!$employee) {
+            return back()->with('error', 'Profil karyawan tidak ditemukan.');
+        }
+
+        $validated = $request->validate([
+            'loan_type' => 'required|in:emergency,salary_advance,education,housing,other',
+            'amount' => 'required|numeric|min:100000',
+            'term_months' => 'required|integer|min:1|max:24',
+            'reason' => 'required|string|max:1000',
+        ]);
+
+        $loan = $this->loanService->applyLoan($employee, $validated);
+
+        return back()->with('success', "Pengajuan pinjaman/kasbon {$loan->loan_number} berhasil dikirim ke HR/Finance.");
+    }
+
+    public function submitSurvey(Request $request, EmployeeSurvey $survey): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->first();
+
+        $validated = $request->validate([
+            'enps_score' => 'nullable|integer|min:0|max:10',
+            'satisfaction_rating' => 'nullable|integer|min:1|max:5',
+            'feedback' => 'nullable|string|max:2000',
+        ]);
+
+        $this->surveyService->submitSurveyResponse($survey, $employee, $validated);
+
+        return back()->with('success', 'Terima kasih! Tanggapan survei Anda telah berhasil tersimpan secara aman.');
     }
 }

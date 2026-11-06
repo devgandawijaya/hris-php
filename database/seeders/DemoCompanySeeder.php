@@ -48,6 +48,12 @@ use App\Models\HrHelpdeskTicket;
 use App\Models\EmployeeMutation;
 use App\Models\EmployeeTermination;
 use App\Models\AppNotification;
+use App\Models\EmployeeLoan;
+use App\Models\LoanInstallment;
+use App\Models\EmployeeSurvey;
+use App\Models\EmployeeSurveyResponse;
+use App\Models\EmployeeRecognition;
+use App\Models\CompanyEvent;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -923,6 +929,112 @@ class DemoCompanySeeder extends Seeder
                 'type' => 'urgent',
                 'action_url' => route('ess.dashboard'),
                 'is_read' => false,
+            ]
+        );
+
+        // 33. Phase 8: Employee Loans & Kasbon
+        $loanBudi = EmployeeLoan::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'loan_number' => 'LOAN-2026-0001'],
+            [
+                'employee_id' => $employeeBudi->id,
+                'loan_type' => 'salary_advance',
+                'amount' => 3000000.00,
+                'interest_rate' => 0.00,
+                'term_months' => 3,
+                'monthly_installment' => 1000000.00,
+                'total_payable' => 3000000.00,
+                'remaining_amount' => 2000000.00,
+                'status' => 'active',
+                'reason' => 'Kebutuhan dana darurat perbaikan tempat tinggal.',
+                'approved_by_user_id' => $hr->id,
+                'approved_at' => now()->subMonth(),
+                'disbursed_at' => now()->subMonth(),
+            ]
+        );
+
+        LoanInstallment::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_loan_id' => $loanBudi->id, 'installment_number' => 1],
+            [
+                'due_date' => now()->subMonth()->addDays(25)->toDateString(),
+                'amount' => 1000000.00,
+                'status' => 'paid',
+                'paid_at' => now()->subMonth()->addDays(25),
+            ]
+        );
+
+        LoanInstallment::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_loan_id' => $loanBudi->id, 'installment_number' => 2],
+            [
+                'due_date' => now()->addDays(20)->toDateString(),
+                'amount' => 1000000.00,
+                'status' => 'pending',
+            ]
+        );
+
+        LoanInstallment::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_loan_id' => $loanBudi->id, 'installment_number' => 3],
+            [
+                'due_date' => now()->addMonths(1)->addDays(20)->toDateString(),
+                'amount' => 1000000.00,
+                'status' => 'pending',
+            ]
+        );
+
+        // 34. Phase 8: Employee Surveys & eNPS
+        $surveyQ1 = EmployeeSurvey::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'title' => 'Survei Kepuasan Kerja & Budaya Perusahaan Q1 2026'],
+            [
+                'description' => 'Evaluasi berkala kepuasan fasilitas, keseimbangan kerja, dan transparansi manajemen.',
+                'survey_type' => 'enps',
+                'start_date' => now()->subDays(10)->toDateString(),
+                'end_date' => now()->addDays(20)->toDateString(),
+                'is_anonymous' => true,
+                'status' => 'active',
+                'created_by_user_id' => $hr->id,
+            ]
+        );
+
+        EmployeeSurveyResponse::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_survey_id' => $surveyQ1->id, 'enps_score' => 10],
+            [
+                'satisfaction_rating' => 5,
+                'feedback' => 'Lingkungan kerja sangat suportif dan fasilitas teknologi modern memudahkan pekerjaan.',
+                'submitted_at' => now()->subDays(5),
+            ]
+        );
+
+        EmployeeSurveyResponse::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_survey_id' => $surveyQ1->id, 'enps_score' => 9],
+            [
+                'satisfaction_rating' => 5,
+                'feedback' => 'Program pelatihan dan kompensasi sudah sangat transparan.',
+                'submitted_at' => now()->subDays(3),
+            ]
+        );
+
+        // 35. Phase 8: Employee Recognition / Kudos
+        EmployeeRecognition::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeBudi->id, 'title' => 'Star Performer Peluncuran HRIS v2'],
+            [
+                'sender_user_id' => $owner->id,
+                'badge_type' => 'star_performer',
+                'message' => 'Dedikasi luar biasa dalam memimpin arsitektur sistem dan menjaga kualitas kode di level tertinggi.',
+                'reward_amount' => 1500000.00,
+                'is_public' => true,
+            ]
+        );
+
+        // 36. Phase 8: Company Events
+        CompanyEvent::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'title' => 'All-Hands Townhall Meeting Q1 2026'],
+            [
+                'description' => 'Pemaparan capaian bisnis kuartal 1, roadmap produk baru, dan sesi tanya jawab bersama direksi.',
+                'event_type' => 'townhall',
+                'start_time' => now()->addDays(7)->setTime(14, 0),
+                'end_time' => now()->addDays(7)->setTime(16, 30),
+                'location' => 'Main Auditorium Lt. 18 / Live Streaming Zoom',
+                'target_department_id' => null,
+                'created_by_user_id' => $hr->id,
             ]
         );
     }

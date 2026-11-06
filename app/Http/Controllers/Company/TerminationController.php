@@ -104,3 +104,4 @@ class TerminationController extends Controller
         return back()->with('success', "Kompensasi pesangon {$termination->letter_number} telah ditandai lunas (Paid).");
     }
 }
+

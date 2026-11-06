@@ -12,7 +12,7 @@ RiHRIS adalah aplikasi Software-as-a-Service (SaaS) Multi-Tenant berbasis arsite
 
 ---
 
-## 📑 DAFTAR DOKUMENTASI LENGKAP (13 MODUL TEKNIS)
+## 📑 DAFTAR DOKUMENTASI LENGKAP (14 MODUL TEKNIS)
 
 Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumentasi secara lengkap pada direktori `docs/`:
 
@@ -29,10 +29,11 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 11. [11. Production Deployment & Maintenance Guide](docs/11_PRODUCTION_DEPLOYMENT_GUIDE.md)
 12. [12. Phase 6: Employee Relations, Disciplinary & Engagement](docs/12_PHASE_6_EMPLOYEE_RELATIONS_AND_ENGAGEMENT.md)
 13. [13. Phase 7: Career Transitions, Severance & Notifications](docs/13_PHASE_7_CAREER_TRANSITIONS_AND_SEVERANCE.md)
+14. [14. Phase 8: Financial Well-being & Advanced Engagement](docs/14_PHASE_8_FINANCIAL_WELLBEING_AND_ENGAGEMENT.md)
 
 ---
 
-## 🚀 STATUS IMPLEMENTASI 7 PHASE ROADMAP
+## 🚀 STATUS IMPLEMENTASI 8 PHASE ROADMAP
 
 | Phase | Modul & Cakupan Utama | Status |
 |---|---|---|
@@ -43,6 +44,7 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 | **Phase 5: Enterprise Systems** | Workflow Engine Multi-Level, Eksekutif Analitik C-Level & Streaming CSV, SaaS Subscription Billing & Metering, REST API v1, Webhooks, Notifikasi WhatsApp, dan Audit Trail & IP Whitelist. | ✅ Complete |
 | **Phase 6: Relations & Engagement** | Hubungan Industrial & Surat Peringatan (SP1, SP2, SP3, masa berlaku 6 bulan Pasal 161 UU Ketenagakerjaan), Whistleblowing & Aduan Anonim, Papan Pengumuman Internal & Pinning, dan HR Helpdesk Service Request (Paklaring & Surat Keterangan). | ✅ Complete |
 | **Phase 7: Transitions & Notifications** | Pergerakan Karir (Mutasi, Promosi, Demosi, SK Direksi), Kompensasi PHK & Pesangon (PP 35/2021 & UU Cipta Kerja: UP, UPMK, UPH, Uang Pisah), In-App Notification Center & Unread Badges. | ✅ Complete |
+| **Phase 8: Financial Well-being & Engagement** | Fasilitas Pinjaman Karyawan & Kasbon Darurat (Bunga 0%, Angsuran Payroll), Survei Kepuasan Kerja & Metrik eNPS, Wall of Fame (Kudos), dan Kalender Agenda Acara Perusahaan. | ✅ Complete |
 
 ---
 
@@ -75,6 +77,8 @@ RiHRIS dibangun dengan kepatuhan hukum sebagai pilar utama tanpa mengunci tarif 
    - SP 1, SP 2, SP 3 dengan masa berlaku otomatis 6 bulan, penomoran terstandar, dan perlindungan aduan anonim (zero-retaliation).
 8. **Kompensasi PHK & Pesangon (PP No. 35/2021 Pasal 40-52 & Pasal 156 UU Cipta Kerja)**:
    - Otomatisasi Uang Pesangon (UP 1-9 bulan upah), Uang Penghargaan Masa Kerja (UPMK 2-10 bulan upah), Uang Penggantian Hak (UPH sisa cuti dll), dan faktor pengali alasan PHK (0.0x s.d. 2.0x).
+9. **Fasilitas Pinjaman Karyawan & Pemotongan Upah (PP 36/2021 tentang Pengupahan)**:
+   - Batasan pemotongan upah berkala untuk cicilan pinjaman karyawan secara tertib dan transparan tanpa melanggar ketentuan batas upah minimum.
 
 ---
 

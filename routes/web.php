@@ -37,6 +37,8 @@ use App\Http\Controllers\Company\AnnouncementController;
 use App\Http\Controllers\Company\HelpdeskController;
 use App\Http\Controllers\Company\MutationController;
 use App\Http\Controllers\Company\TerminationController;
+use App\Http\Controllers\Company\LoanController;
+use App\Http\Controllers\Company\EngagementController;
 use App\Http\Controllers\NotificationController;
 
 /*
@@ -260,6 +262,8 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/profile', [EmployeeDashboardController::class, 'updateProfile'])->name('profile.update');
         Route::post('/grievance', [EmployeeDashboardController::class, 'submitGrievance'])->name('grievance.submit');
         Route::post('/helpdesk', [EmployeeDashboardController::class, 'submitHelpdeskTicket'])->name('helpdesk.submit');
+        Route::post('/loan', [EmployeeDashboardController::class, 'applyLoan'])->name('loan.apply');
+        Route::post('/surveys/{survey}/submit', [EmployeeDashboardController::class, 'submitSurvey'])->name('surveys.submit');
         Route::get('/payslip/{payroll}', [PayslipController::class, 'employeePayslip'])->name('payslip.show');
     });
 
@@ -355,5 +359,23 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
         Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
         Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
+    });
+
+    // --- PHASE 8: FINANCIAL WELL-BEING & ADVANCED ENGAGEMENT ---
+
+    // 29. Employee Loans & Kasbon
+    Route::prefix('loans')->name('company.loans.')->group(function () {
+        Route::get('/', [LoanController::class, 'index'])->name('index');
+        Route::post('/', [LoanController::class, 'store'])->name('store');
+        Route::post('/{loan}/approve', [LoanController::class, 'approve'])->name('approve');
+        Route::post('/installments/{installment}/pay', [LoanController::class, 'payInstallment'])->name('installments.pay');
+    });
+
+    // 30. Engagement: Surveys, Recognitions (Wall of Fame) & Events
+    Route::prefix('engagement')->name('company.engagement.')->group(function () {
+        Route::get('/', [EngagementController::class, 'index'])->name('index');
+        Route::post('/surveys', [EngagementController::class, 'storeSurvey'])->name('surveys.store');
+        Route::post('/recognitions', [EngagementController::class, 'storeRecognition'])->name('recognitions.store');
+        Route::post('/events', [EngagementController::class, 'storeEvent'])->name('events.store');
     });
 });

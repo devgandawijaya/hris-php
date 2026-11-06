@@ -88,3 +88,4 @@ class MutationController extends Controller
         return back()->with('success', "Surat Keputusan {$typeLabel} atas nama {$employee->full_name} berhasil diterbitkan dan data karyawan telah diperbarui.");
     }
 }
+
