@@ -110,3 +110,4 @@ class OrganizationController extends Controller
         return back()->with('success', 'Kantor cabang berhasil dihapus.');
     }
 }
+

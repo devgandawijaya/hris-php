@@ -60,3 +60,4 @@ class ThrController extends Controller
         return back()->with('success', 'Status pembayaran THR berhasil diperbarui menjadi Lunas (Paid).');
     }
 }
+

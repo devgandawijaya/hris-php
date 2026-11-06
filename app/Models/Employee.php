@@ -142,4 +142,36 @@ class Employee extends Model
     {
         return $this->hasMany(TaxReconciliation::class);
     }
+
+    // --- PHASE 4: TALENT RELATIONS ---
+
+    public function companyAssets(): HasMany
+    {
+        return $this->hasMany(CompanyAsset::class, 'assigned_employee_id');
+    }
+
+    public function checklists(): HasMany
+    {
+        return $this->hasMany(OnboardingOffboardingChecklist::class);
+    }
+
+    public function exitInterview(): HasOne
+    {
+        return $this->hasOne(ExitInterview::class);
+    }
+
+    public function kpiGoals(): HasMany
+    {
+        return $this->hasMany(KpiGoal::class);
+    }
+
+    public function performanceReviews(): HasMany
+    {
+        return $this->hasMany(PerformanceReview::class);
+    }
+
+    public function trainingEnrollments(): HasMany
+    {
+        return $this->hasMany(TrainingEnrollment::class);
+    }
 }

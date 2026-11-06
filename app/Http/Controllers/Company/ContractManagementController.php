@@ -99,3 +99,4 @@ class ContractManagementController extends Controller
         return back()->with('success', 'Uang kompensasi PKWT per PP 35/2021 berhasil ditandai Lunas dibayarkan kepada pekerja.');
     }
 }
+

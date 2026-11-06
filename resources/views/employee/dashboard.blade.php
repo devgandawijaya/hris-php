@@ -78,6 +78,20 @@
             Kontrak Kerja
         </button>
 
+        <button type="button" @click="activeEssTab = 'performance'"
+                :class="activeEssTab === 'performance' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="target" class="w-4 h-4"></i>
+            Kinerja & Evaluasi
+        </button>
+
+        <button type="button" @click="activeEssTab = 'assets-training'"
+                :class="activeEssTab === 'assets-training' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="award" class="w-4 h-4"></i>
+            Aset & Pelatihan
+        </button>
+
         <button type="button" @click="activeEssTab = 'profile'"
                 :class="activeEssTab === 'profile' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
@@ -590,6 +604,307 @@
                 Simpan Perubahan
             </button>
         </form>
+    </div>
+
+    <!-- TAB 9: KINERJA & EVALUASI SAYA -->
+    <div x-show="activeEssTab === 'performance'" x-cloak class="space-y-6">
+        <!-- Section A: Target Sasaran Kerja (KPI / OKR) -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div>
+                    <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                        <i data-lucide="target" class="w-4 h-4 text-red-600"></i>
+                        Sasaran Kinerja Individu (KPI / OKR)
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Perbarui realisasi pencapaian indikator kinerja utama Anda secara berkala.</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                @forelse($kpiGoals as $goal)
+                    @php
+                        $target = (float) $goal->target_value;
+                        $current = (float) $goal->current_value;
+                        $pct = $target > 0 ? min(100, round(($current / $target) * 100)) : 0;
+                    @endphp
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div class="space-y-0.5">
+                                <span class="font-black text-slate-900 text-sm">{{ $goal->title }}</span>
+                                <div class="text-xs text-slate-500">{{ $goal->description ?? 'Tidak ada catatan sasaran.' }}</div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-200 text-slate-700">
+                                    Bobot: {{ $goal->weight }}%
+                                </span>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold 
+                                    @if($goal->status === 'achieved') bg-emerald-100 text-emerald-800
+                                    @elseif($goal->status === 'in_progress') bg-blue-100 text-blue-800
+                                    @else bg-slate-200 text-slate-700 @endif">
+                                    {{ ucfirst(str_replace('_', ' ', $goal->status)) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between text-xs font-semibold">
+                                <span class="text-slate-500">Pencapaian: {{ number_format($current) }} / {{ number_format($target) }} {{ $goal->unit }}</span>
+                                <span class="font-bold {{ $pct >= 100 ? 'text-emerald-600' : 'text-slate-700' }}">{{ $pct }}%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                                <div class="h-2.5 rounded-full {{ $pct >= 100 ? 'bg-emerald-600' : ($pct >= 50 ? 'bg-blue-600' : 'bg-amber-500') }}" style="width: {{ $pct }}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Update Progress Form -->
+                        <form action="{{ route('ess.kpi-progress.update', $goal->id) }}" method="POST" class="pt-2 border-t border-slate-200/80 flex items-center gap-2 justify-end">
+                            @csrf
+                            <label class="text-[11px] font-bold text-slate-500">Update Realisasi:</label>
+                            <input type="number" step="any" name="current_value" value="{{ $current }}" required class="w-24 px-2 py-1 text-xs rounded-lg border border-slate-300 font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-red-500">
+                            <span class="text-[11px] text-slate-400 font-medium">{{ $goal->unit }}</span>
+                            <button type="submit" class="px-3 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-bold hover:bg-slate-800 transition">
+                                Simpan
+                            </button>
+                        </form>
+                    </div>
+                @empty
+                    <div class="py-8 text-center text-xs text-slate-400">Belum ada sasaran KPI/OKR yang ditetapkan untuk periode ini.</div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Section B: Evaluasi Mandiri (Self-Appraisal) -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+            <div class="pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                    <i data-lucide="edit-3" class="w-4 h-4 text-purple-600"></i>
+                    Formulir Evaluasi Mandiri (Self-Appraisal)
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Sampaikan penilaian refleksi diri Anda (skala 0 - 100) dan catatan pencapaian selama siklus evaluasi.</p>
+            </div>
+
+            @if($activeCycles->isNotEmpty())
+                <form action="{{ route('ess.self-appraisal.submit') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Pilih Siklus Evaluasi <span class="text-red-500">*</span></label>
+                            <select name="performance_cycle_id" required class="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                @foreach($activeCycles as $cycle)
+                                    <option value="{{ $cycle->id }}">{{ $cycle->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Skor Penilaian Diri (0 - 100) <span class="text-red-500">*</span></label>
+                            <input type="number" step="0.1" min="0" max="100" name="self_rating" required placeholder="Contoh: 85.0" class="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Uraian Refleksi & Pencapaian Utama <span class="text-red-500">*</span></label>
+                        <textarea name="self_feedback" rows="4" required placeholder="Jelaskan kontribusi, keberhasilan proyek, kendala yang dihadapi, serta rencana pengembangan diri Anda..." class="w-full text-xs rounded-xl border border-slate-200 px-3 py-2 text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                    </div>
+
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#DC2626] hover:bg-[#991B1B] text-white text-xs font-bold transition shadow-sm shadow-red-500/20">
+                        Kirimkan Evaluasi Mandiri
+                    </button>
+                </form>
+            @else
+                <div class="p-6 text-center text-xs text-slate-400 bg-slate-50 rounded-xl">
+                    Saat ini tidak ada siklus evaluasi kinerja yang berstatus aktif.
+                </div>
+            @endif
+        </div>
+
+        <!-- Section C: Riwayat Hasil Evaluasi (Performance Reviews) -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+            <h3 class="font-bold text-sm text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
+                <i data-lucide="award" class="w-4 h-4 text-emerald-600"></i>
+                Riwayat Hasil Penilaian Kinerja
+            </h3>
+
+            <div class="space-y-3">
+                @forelse($performanceReviews as $rev)
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3 text-xs">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <span class="font-bold text-slate-900 text-sm">Siklus: {{ $rev->performanceCycle?->name ?? 'Periode Evaluasi' }}</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold 
+                                @if($rev->status === 'completed') bg-emerald-100 text-emerald-800
+                                @elseif($rev->status === 'manager_reviewed') bg-blue-100 text-blue-800
+                                @else bg-amber-100 text-amber-800 @endif">
+                                {{ ucfirst(str_replace('_', ' ', $rev->status)) }}
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-white p-3 rounded-lg border border-slate-100 text-center">
+                            <div>
+                                <span class="text-slate-400 block text-[10px] uppercase font-bold">Skor Mandiri</span>
+                                <span class="font-black text-slate-900 text-base">{{ $rev->self_rating !== null ? number_format($rev->self_rating, 1) : '-' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-[10px] uppercase font-bold">Skor Atasan</span>
+                                <span class="font-black text-blue-600 text-base">{{ $rev->manager_rating !== null ? number_format($rev->manager_rating, 1) : '-' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-[10px] uppercase font-bold">Nilai Akhir (Weighted)</span>
+                                <span class="font-black text-emerald-600 text-base">{{ $rev->final_score !== null ? number_format($rev->final_score, 1) : '-' }}</span>
+                            </div>
+                        </div>
+
+                        @if($rev->manager_feedback)
+                            <div class="p-3 rounded-lg bg-emerald-50/60 border border-emerald-100 text-slate-700">
+                                <span class="font-bold text-emerald-900 block text-[11px] mb-0.5">Ulasan & Rekomendasi Atasan:</span>
+                                {{ $rev->manager_feedback }}
+                            </div>
+                        @endif
+                    </div>
+                @empty
+                    <div class="py-6 text-center text-xs text-slate-400">Belum ada hasil penilaian kinerja yang diterbitkan.</div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 10: ASET & PELATIHAN SAYA -->
+    <div x-show="activeEssTab === 'assets-training'" x-cloak class="space-y-6">
+        <!-- Section A: Fasilitas & Aset Perusahaan -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+            <div class="pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                    <i data-lucide="laptop" class="w-4 h-4 text-blue-600"></i>
+                    Aset & Fasilitas Kerja yang Dipinjamkan
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Daftar inventaris dan perangkat operasional yang menjadi tanggung jawab Anda.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @forelse($assignedAssets as $asset)
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-900">{{ $asset->name }}</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-blue-100 text-blue-800">
+                                {{ $asset->category }}
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-600">
+                            <div>
+                                <span class="text-slate-400 block">Kode Aset:</span>
+                                <strong class="font-mono text-slate-800">{{ $asset->asset_code }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block">Nomor Seri:</span>
+                                <strong class="font-mono text-slate-800">{{ $asset->serial_number ?? '-' }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block">Tanggal Serah Terima:</span>
+                                <strong class="text-slate-800">{{ $asset->assigned_date ? $asset->assigned_date->format('d M Y') : '-' }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block">Status:</span>
+                                <strong class="capitalize text-slate-800">{{ $asset->status }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-2 py-6 text-center text-xs text-slate-400">Tidak ada aset atau inventaris yang terdaftar atas nama Anda saat ini.</div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Section B: Onboarding / Offboarding Checklist Saya -->
+        @if($myChecklists->isNotEmpty())
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+                <div class="pb-3 border-b border-slate-100">
+                    <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                        <i data-lucide="check-square" class="w-4 h-4 text-emerald-600"></i>
+                        Checklist Orientasi & Serah Terima
+                    </h3>
+                </div>
+
+                <div class="divide-y divide-slate-100">
+                    @foreach($myChecklists as $chk)
+                        <div class="py-3 flex items-center justify-between gap-4 text-xs">
+                            <div class="space-y-0.5">
+                                <span class="font-bold text-slate-900">{{ $chk->title }}</span>
+                                <div class="text-[11px] text-slate-500 capitalize">Tipe: {{ $chk->type }} • Status: {{ $chk->is_completed ? 'Selesai' : 'Pending' }}</div>
+                            </div>
+                            <div>
+                                @if($chk->is_completed)
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                        <i data-lucide="check" class="w-3 h-3"></i>
+                                        Selesai
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                                        <i data-lucide="clock" class="w-3 h-3"></i>
+                                        Menunggu
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        <!-- Section C: Riwayat Pelatihan & Sertifikat Digital -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+            <div class="pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                    <i data-lucide="graduation-cap" class="w-4 h-4 text-purple-600"></i>
+                    Program Pelatihan & Sertifikat Digital
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Riwayat partisipasi pengembangan kompetensi dan nomor sertifikat yang telah diterbitkan.</p>
+            </div>
+
+            <div class="space-y-3">
+                @forelse($myTrainings as $trn)
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3 text-xs">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div>
+                                <span class="font-bold text-slate-900 text-sm">{{ $trn->trainingCourse?->title }}</span>
+                                <div class="text-xs text-slate-500 mt-0.5">
+                                    Trainer: {{ $trn->trainingCourse?->trainer_name ?? 'Internal HR' }} • Lokasi: {{ $trn->trainingCourse?->location }}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-purple-100 text-purple-800">
+                                    {{ $trn->trainingCourse?->category }}
+                                </span>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold 
+                                    {{ $trn->status === 'completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">
+                                    {{ $trn->status === 'completed' ? 'Lulus' : 'Terdaftar' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-white p-3 rounded-lg border border-slate-100 text-[11px]">
+                            <div>
+                                <span class="text-slate-400 block">Jadwal:</span>
+                                <strong class="text-slate-800">{{ $trn->trainingCourse?->start_date?->format('d M Y') }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block">Nilai Kelulusan:</span>
+                                <strong class="text-slate-800">{{ $trn->score !== null ? number_format($trn->score, 1) : '-' }}</strong>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block">Nomor Sertifikat:</span>
+                                <strong class="font-mono text-purple-700 font-bold">{{ $trn->certificate_number ?? '-' }}</strong>
+                            </div>
+                        </div>
+
+                        @if($trn->feedback)
+                            <div class="text-[11px] text-slate-600 bg-slate-100/60 p-2.5 rounded-lg">
+                                <span class="font-bold text-slate-700">Catatan/Feedback:</span> {{ $trn->feedback }}
+                            </div>
+                        @endif
+                    </div>
+                @empty
+                    <div class="py-8 text-center text-xs text-slate-400">Belum ada riwayat pelatihan atau sertifikat terdaftar.</div>
+                @endforelse
+            </div>
+        </div>
     </div>
 
 </div>

@@ -276,3 +276,4 @@ class EmployeeController extends Controller
         return back()->with('success', 'Mutasi / Promosi karier karyawan berhasil dicatat dan diterapkan.');
     }
 }
+

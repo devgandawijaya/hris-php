@@ -24,3 +24,4 @@ class Holiday extends Model
         ];
     }
 }
+

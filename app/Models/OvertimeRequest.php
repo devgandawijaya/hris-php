@@ -36,3 +36,4 @@ class OvertimeRequest extends Model
         return $this->belongsTo(Employee::class);
     }
 }
+

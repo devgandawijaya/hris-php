@@ -84,3 +84,4 @@ class SalaryComponentController extends Controller
         return back()->with('success', 'Komponen gaji berhasil dihapus.');
     }
 }
+

@@ -22,7 +22,18 @@ use App\Models\EmployeeSalaryComponent;
 use App\Models\EmploymentContract;
 use App\Models\Reimbursement;
 use App\Models\PayrollPeriod;
+use App\Models\JobPosting;
+use App\Models\JobCandidate;
+use App\Models\JobApplication;
+use App\Models\CompanyAsset;
+use App\Models\OnboardingOffboardingChecklist;
+use App\Models\PerformanceCycle;
+use App\Models\KpiGoal;
+use App\Models\PerformanceReview;
+use App\Models\TrainingCourse;
+use App\Models\TrainingEnrollment;
 use App\Services\Payroll\PayrollProcessorService;
+use App\Services\Talent\OnboardingOffboardingService;
 use App\Tenancy\TenantManager;
 use Illuminate\Support\Facades\Hash;
 
@@ -390,5 +401,268 @@ class DemoCompanySeeder extends Seeder
         /** @var PayrollProcessorService $processor */
         $processor = app(PayrollProcessorService::class);
         $processor->processPeriod($period);
+
+        // --- PHASE 4: TALENT MANAGEMENT DEMO DATA ---
+
+        // 16. Recruitment (Job Postings & Candidates Pipeline)
+        $jobPosting = JobPosting::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'title' => 'Senior Full-Stack Engineer (PHP / Laravel)'],
+            [
+                'department_id' => $deptTech->id,
+                'position_id' => $posDev->id,
+                'employment_type' => 'full_time',
+                'location' => 'Jakarta Selatan / Hybrid',
+                'description' => 'Membangun arsitektur multi-tenant SaaS HRIS berkinerja tinggi menggunakan Laravel 11, PostgreSQL, Redis, dan Tailwind CSS.',
+                'requirements' => "1. Pengalaman minimal 4 tahun PHP modern & Laravel.\n2. Pemahaman arsitektur SaaS multi-tenant.\n3. Mahir database tuning & queue processing.",
+                'salary_min' => 12000000.00,
+                'salary_max' => 18000000.00,
+                'status' => 'published',
+                'deadline' => now()->addDays(30)->toDateString(),
+            ]
+        );
+
+        $cand1 = JobCandidate::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'email' => 'reza.pratama@example.com'],
+            [
+                'first_name' => 'Reza',
+                'last_name' => 'Pratama',
+                'phone' => '+62 812-9988-7711',
+                'linkedin_url' => 'https://linkedin.com/in/rezapratama',
+                'notes' => 'Portofolio SaaS kuat, pernah memimpin tim 5 engineer.',
+            ]
+        );
+
+        $cand2 = JobCandidate::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'email' => 'faisal.tanjung@example.com'],
+            [
+                'first_name' => 'Faisal',
+                'last_name' => 'Tanjung',
+                'phone' => '+62 813-5544-3322',
+                'linkedin_url' => 'https://linkedin.com/in/faisaltanjung',
+                'notes' => 'Pengalaman FinTech & payment gateway.',
+            ]
+        );
+
+        JobApplication::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'job_posting_id' => $jobPosting->id, 'job_candidate_id' => $cand1->id],
+            [
+                'stage' => 'interview',
+                'interview_scheduled_at' => now()->addDays(2),
+                'interview_score' => 88.50,
+                'interview_notes' => 'Sangat menguasai database transaction & concurrency.',
+            ]
+        );
+
+        JobApplication::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'job_posting_id' => $jobPosting->id, 'job_candidate_id' => $cand2->id],
+            [
+                'stage' => 'offered',
+                'offered_salary' => 15000000.00,
+                'interview_score' => 92.00,
+                'interview_notes' => 'Offering letter dikirimkan per hari ini.',
+            ]
+        );
+
+        // 17. Company Assets (Hardware & Office Equipment)
+        CompanyAsset::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'asset_code' => 'LAPTOP-MBP-001'],
+            [
+                'name' => 'MacBook Pro 14 M3 Pro (18GB/512GB)',
+                'category' => 'laptop',
+                'serial_number' => 'C02G9988HJK1',
+                'status' => 'assigned',
+                'assigned_employee_id' => $employeeBudi->id,
+                'assigned_date' => '2023-01-15',
+                'notes' => 'Laptop operasional Tech Lead',
+            ]
+        );
+
+        CompanyAsset::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'asset_code' => 'LAPTOP-DELL-002'],
+            [
+                'name' => 'Dell Latitude 5440 i7 (16GB/512GB)',
+                'category' => 'laptop',
+                'serial_number' => 'DL-998822-ID',
+                'status' => 'assigned',
+                'assigned_employee_id' => $employeeSiti->id,
+                'assigned_date' => '2024-01-01',
+                'notes' => 'Laptop operasional People Operations Specialist',
+            ]
+        );
+
+        CompanyAsset::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'asset_code' => 'MON-LEN-001'],
+            [
+                'name' => 'Lenovo ThinkVision 27" 4K Monitor',
+                'category' => 'other',
+                'serial_number' => 'LV-TV27-4K01',
+                'status' => 'available',
+                'notes' => 'Monitor docking workstation meja engineering',
+            ]
+        );
+
+        CompanyAsset::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'asset_code' => 'CARD-ACC-001'],
+            [
+                'name' => 'Kartu Akses Gedung & Lift RFID',
+                'category' => 'access_card',
+                'serial_number' => 'RFID-SDN-001',
+                'status' => 'assigned',
+                'assigned_employee_id' => $employeeBudi->id,
+                'assigned_date' => '2023-01-15',
+                'notes' => 'Akses lantai 18 Menara Mandiri',
+            ]
+        );
+
+        // 18. Onboarding Checklists
+        /** @var OnboardingOffboardingService $onboardingService */
+        $onboardingService = app(OnboardingOffboardingService::class);
+        $onboardingService->initializeOnboarding($employeeBudi, $hr);
+        $onboardingService->initializeOnboarding($employeeSiti, $hr);
+
+        // Mark Budi's onboarding tasks as completed
+        OnboardingOffboardingChecklist::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->id)
+            ->where('employee_id', $employeeBudi->id)
+            ->update([
+                'is_completed' => true,
+                'completed_at' => '2023-01-20 17:00:00',
+            ]);
+
+        // Mark partial tasks for Dewi Siti
+        OnboardingOffboardingChecklist::withoutGlobalScopes()
+            ->where('tenant_id', $tenant->id)
+            ->where('employee_id', $employeeSiti->id)
+            ->take(3)
+            ->update([
+                'is_completed' => true,
+                'completed_at' => '2024-01-05 14:30:00',
+            ]);
+
+        // 19. Performance Management (Cycle, KPI / OKR Goals & Appraisals)
+        $cycle = PerformanceCycle::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Penilaian Kinerja Semester 1 ' . date('Y')],
+            [
+                'start_date' => date('Y') . '-01-01',
+                'end_date' => date('Y') . '-06-30',
+                'status' => 'active',
+            ]
+        );
+
+        // KPI for Budi
+        KpiGoal::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeBudi->id, 'title' => 'Uptime & Keandalan Server Platform RiHRIS'],
+            [
+                'performance_cycle_id' => $cycle->id,
+                'type' => 'kpi',
+                'target_value' => 99.90,
+                'current_value' => 99.95,
+                'unit' => '%',
+                'weight' => 50.00,
+                'status' => 'achieved',
+            ]
+        );
+
+        KpiGoal::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeBudi->id, 'title' => 'Penyelesaian Sprint Fitur Payroll & Talent Module'],
+            [
+                'performance_cycle_id' => $cycle->id,
+                'type' => 'okr',
+                'target_value' => 100.00,
+                'current_value' => 85.00,
+                'unit' => '%',
+                'weight' => 50.00,
+                'status' => 'in_progress',
+            ]
+        );
+
+        // KPI for Dewi Siti
+        KpiGoal::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeSiti->id, 'title' => 'Perekrutan & Pemenuhan Formasi Tim Engineering'],
+            [
+                'performance_cycle_id' => $cycle->id,
+                'type' => 'kpi',
+                'target_value' => 10.00,
+                'current_value' => 8.00,
+                'unit' => 'Kandidat',
+                'weight' => 60.00,
+                'status' => 'in_progress',
+            ]
+        );
+
+        KpiGoal::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_id' => $employeeSiti->id, 'title' => 'Skor Kepuasan Karyawan Onboarding (CSAT)'],
+            [
+                'performance_cycle_id' => $cycle->id,
+                'type' => 'kpi',
+                'target_value' => 90.00,
+                'current_value' => 94.00,
+                'unit' => 'Poin',
+                'weight' => 40.00,
+                'status' => 'achieved',
+            ]
+        );
+
+        // Performance Review for Budi
+        PerformanceReview::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'performance_cycle_id' => $cycle->id, 'employee_id' => $employeeBudi->id],
+            [
+                'reviewer_id' => $owner->id,
+                'self_rating' => 92.00,
+                'self_feedback' => 'Infrastruktur berjalan stabil dan arsitektur multi-tenant berhasil diimplementasikan sesuai standar industri.',
+                'manager_rating' => 90.00,
+                'manager_feedback' => 'Hasil kerja sangat memuaskan, SLA sistem tercapai di atas target kuartal.',
+                'final_score' => 90.60,
+                'status' => 'completed',
+            ]
+        );
+
+        // 20. Training Courses & Certifications (L&D)
+        $course1 = TrainingCourse::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'title' => 'Advanced Cloud Security & Microservices Architecture'],
+            [
+                'trainer_name' => 'Eko Kurniawan Khannedy',
+                'category' => 'technical',
+                'location' => 'Online Workshop Zoom',
+                'start_date' => now()->subDays(20),
+                'end_date' => now()->subDays(18),
+                'capacity' => 25,
+                'description' => 'Pendalaman arsitektur cloud AWS/GCP, containerization, dan enkripsi data multi-tenant.',
+                'status' => 'completed',
+            ]
+        );
+
+        $course2 = TrainingCourse::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'title' => 'Strategic Human Resource Management & BPJS Compliance'],
+            [
+                'trainer_name' => 'Agus Prasetyo',
+                'category' => 'compliance',
+                'location' => 'Ruang Training Lt. 18 Menara Mandiri',
+                'start_date' => now()->addDays(5),
+                'end_date' => now()->addDays(6),
+                'capacity' => 15,
+                'description' => 'Tata kelola kepatuhan ketenagakerjaan, UU Cipta Kerja, dan regulasi pajak PPh 21 TER.',
+                'status' => 'scheduled',
+            ]
+        );
+
+        // Enroll Budi in Course 1 (completed with certificate)
+        TrainingEnrollment::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'training_course_id' => $course1->id, 'employee_id' => $employeeBudi->id],
+            [
+                'status' => 'completed',
+                'score' => 95.00,
+                'certificate_number' => 'CERT-' . date('Y') . '-' . str_pad($course1->id, 4, '0', STR_PAD_LEFT) . '-' . str_pad($employeeBudi->id, 4, '0', STR_PAD_LEFT),
+                'feedback' => 'Menguasai seluruh silabus dengan predikat kelulusan Sangat Baik.',
+            ]
+        );
+
+        // Enroll Dewi Siti in Course 2 (scheduled)
+        TrainingEnrollment::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'training_course_id' => $course2->id, 'employee_id' => $employeeSiti->id],
+            [
+                'status' => 'enrolled',
+            ]
+        );
     }
 }

@@ -6,13 +6,20 @@ use Illuminate\Http\Request;
 use App\Models\Employee;
 use App\Models\AttendanceRecord;
 use App\Models\AttendanceCorrection;
+use App\Models\CompanyAsset;
 use App\Models\EmploymentContract;
+use App\Models\KpiGoal;
 use App\Models\LeaveRequest;
 use App\Models\LeaveType;
+use App\Models\OnboardingOffboardingChecklist;
 use App\Models\OvertimeRequest;
 use App\Models\Payroll;
+use App\Models\PerformanceCycle;
+use App\Models\PerformanceReview;
 use App\Models\Reimbursement;
+use App\Models\TrainingEnrollment;
 use App\Services\Reimbursement\ReimbursementService;
+use App\Services\Talent\PerformanceService;
 use App\Tenancy\TenantManager;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -22,7 +29,8 @@ class EmployeeDashboardController extends Controller
 {
     public function __construct(
         protected TenantManager $tenantManager,
-        protected ReimbursementService $reimbursementService
+        protected ReimbursementService $reimbursementService,
+        protected PerformanceService $performanceService
     ) {}
 
     public function index(): View
@@ -40,6 +48,12 @@ class EmployeeDashboardController extends Controller
         $recentPayrolls = collect();
         $reimbursements = collect();
         $contracts = collect();
+        $kpiGoals = collect();
+        $performanceReviews = collect();
+        $assignedAssets = collect();
+        $myChecklists = collect();
+        $myTrainings = collect();
+        $activeCycles = collect();
 
         if ($employee) {
             $todayRecord = AttendanceRecord::where('employee_id', $employee->id)
@@ -81,6 +95,13 @@ class EmployeeDashboardController extends Controller
             $contracts = EmploymentContract::where('employee_id', $employee->id)
                 ->latest('start_date')
                 ->get();
+
+            $kpiGoals = KpiGoal::where('employee_id', $employee->id)->get();
+            $performanceReviews = PerformanceReview::with('performanceCycle')->where('employee_id', $employee->id)->get();
+            $assignedAssets = CompanyAsset::where('assigned_employee_id', $employee->id)->get();
+            $myChecklists = OnboardingOffboardingChecklist::where('employee_id', $employee->id)->get();
+            $myTrainings = TrainingEnrollment::with('trainingCourse')->where('employee_id', $employee->id)->get();
+            $activeCycles = PerformanceCycle::where('tenant_id', $employee->tenant_id)->where('status', 'active')->get();
         }
 
         return view('employee.dashboard', compact(
@@ -94,7 +115,13 @@ class EmployeeDashboardController extends Controller
             'leaveTypes',
             'recentPayrolls',
             'reimbursements',
-            'contracts'
+            'contracts',
+            'kpiGoals',
+            'performanceReviews',
+            'assignedAssets',
+            'myChecklists',
+            'myTrainings',
+            'activeCycles'
         ));
     }
 
@@ -270,6 +297,51 @@ class EmployeeDashboardController extends Controller
         );
 
         return back()->with('success', 'Pengajuan reimbursement berhasil dikirim dan menunggu persetujuan.');
+    }
+
+    public function submitSelfAppraisal(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->first();
+
+        if (!$employee) {
+            return back()->with('error', 'Profil karyawan tidak ditemukan.');
+        }
+
+        $validated = $request->validate([
+            'performance_cycle_id' => 'required|exists:performance_cycles,id',
+            'self_rating' => 'required|numeric|min:0|max:100',
+            'self_feedback' => 'required|string|max:2000',
+        ]);
+
+        $cycle = PerformanceCycle::where('tenant_id', $employee->tenant_id)->findOrFail($validated['performance_cycle_id']);
+
+        $this->performanceService->submitSelfReview(
+            $cycle,
+            $employee,
+            (float) $validated['self_rating'],
+            $validated['self_feedback']
+        );
+
+        return back()->with('success', 'Evaluasi mandiri (Self-Appraisal) berhasil dikirim.');
+    }
+
+    public function updateKpiProgress(Request $request, KpiGoal $goal): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->first();
+
+        if (!$employee || $goal->employee_id !== $employee->id) {
+            return back()->with('error', 'Akses ditolak.');
+        }
+
+        $validated = $request->validate([
+            'current_value' => 'required|numeric|min:0',
+        ]);
+
+        $this->performanceService->updateGoalProgress($goal, (float) $validated['current_value']);
+
+        return back()->with('success', 'Pencapaian KPI Anda berhasil diperbarui.');
     }
 
     public function updateProfile(Request $request): RedirectResponse

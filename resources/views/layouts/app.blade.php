@@ -96,7 +96,6 @@
     <div class="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 flex py-6 gap-8">
 
         <!-- Sidebar Navigation (Desktop Fixed, Mobile Drawer) -->
-        <!-- Mobile Backdrop -->
         <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm lg:hidden"></div>
 
         <!-- Sidebar Body -->
@@ -217,6 +216,29 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.contracts.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="file-signature" class="w-4 h-4"></i>
                             Manajemen Kontrak PKWT
+                        </a>
+
+                        <!-- Talenta & Pengembangan SDM (Phase 4) -->
+                        <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Manajemen Talenta</div>
+                        <a href="{{ route('company.recruitment.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.recruitment.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="briefcase" class="w-4 h-4"></i>
+                            Rekrutmen & Pelamar
+                        </a>
+                        <a href="{{ route('company.onboarding.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.onboarding.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+                            Onboarding & Aset Kantor
+                        </a>
+                        <a href="{{ route('company.performance.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.performance.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="target" class="w-4 h-4"></i>
+                            Manajemen Kinerja (KPI/OKR)
+                        </a>
+                        <a href="{{ route('company.training.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.training.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                            Pelatihan & Sertifikasi
                         </a>
 
                         <!-- Portal ESS -->

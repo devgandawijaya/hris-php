@@ -22,6 +22,10 @@ use App\Http\Controllers\Company\ThrController;
 use App\Http\Controllers\Company\TaxReconciliationController;
 use App\Http\Controllers\Company\ReimbursementController;
 use App\Http\Controllers\Company\ContractManagementController;
+use App\Http\Controllers\Company\RecruitmentController;
+use App\Http\Controllers\Company\OnboardingOffboardingController;
+use App\Http\Controllers\Company\PerformanceController;
+use App\Http\Controllers\Company\TrainingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -191,7 +195,47 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/{contract}/mark-compensation', [ContractManagementController::class, 'markCompensation'])->name('mark-compensation');
     });
 
-    // 12. Employee Self-Service (ESS)
+    // --- PHASE 4: TALENT MANAGEMENT ROUTES ---
+
+    // 12. Recruitment (Job Postings & Candidate Pipeline)
+    Route::prefix('recruitment')->name('company.recruitment.')->group(function () {
+        Route::get('/', [RecruitmentController::class, 'index'])->name('index');
+        Route::post('/', [RecruitmentController::class, 'store'])->name('store');
+        Route::get('/{jobPosting}', [RecruitmentController::class, 'show'])->name('show');
+        Route::post('/{jobPosting}/apply', [RecruitmentController::class, 'applyCandidate'])->name('apply');
+        Route::post('/applications/{application}/stage', [RecruitmentController::class, 'updateStage'])->name('stage.update');
+        Route::post('/applications/{application}/convert', [RecruitmentController::class, 'convertToEmployee'])->name('convert');
+    });
+
+    // 13. Onboarding, Offboarding & Assets
+    Route::prefix('onboarding')->name('company.onboarding.')->group(function () {
+        Route::get('/', [OnboardingOffboardingController::class, 'index'])->name('index');
+        Route::post('/initialize', [OnboardingOffboardingController::class, 'initialize'])->name('initialize');
+        Route::post('/tasks/{task}/complete', [OnboardingOffboardingController::class, 'completeTask'])->name('task.complete');
+        Route::post('/assets', [OnboardingOffboardingController::class, 'storeAsset'])->name('assets.store');
+        Route::post('/assets/{asset}/assign', [OnboardingOffboardingController::class, 'assignAsset'])->name('assets.assign');
+        Route::post('/assets/{asset}/return', [OnboardingOffboardingController::class, 'returnAsset'])->name('assets.return');
+        Route::post('/exit-interview', [OnboardingOffboardingController::class, 'recordExitInterview'])->name('exit-interview.store');
+    });
+
+    // 14. Performance Management (KPI / OKR & Appraisals)
+    Route::prefix('performance')->name('company.performance.')->group(function () {
+        Route::get('/', [PerformanceController::class, 'index'])->name('index');
+        Route::post('/cycles', [PerformanceController::class, 'storeCycle'])->name('cycles.store');
+        Route::post('/goals', [PerformanceController::class, 'storeGoal'])->name('goals.store');
+        Route::post('/goals/{goal}/progress', [PerformanceController::class, 'updateProgress'])->name('goals.progress');
+        Route::post('/appraisal', [PerformanceController::class, 'submitManagerAppraisal'])->name('appraisal.submit');
+    });
+
+    // 15. Learning & Development (Training)
+    Route::prefix('training')->name('company.training.')->group(function () {
+        Route::get('/', [TrainingController::class, 'index'])->name('index');
+        Route::post('/', [TrainingController::class, 'store'])->name('store');
+        Route::post('/{course}/enroll', [TrainingController::class, 'enroll'])->name('enroll');
+        Route::post('/enrollments/{enrollment}/complete', [TrainingController::class, 'complete'])->name('complete');
+    });
+
+    // 16. Employee Self-Service (ESS)
     Route::prefix('ess')->name('ess.')->group(function () {
         Route::get('/dashboard', [EmployeeDashboardController::class, 'index'])->name('dashboard');
         Route::post('/clock', [EmployeeDashboardController::class, 'clock'])->name('clock');
@@ -199,6 +243,8 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/corrections', [EmployeeDashboardController::class, 'submitCorrection'])->name('correction.submit');
         Route::post('/overtime', [EmployeeDashboardController::class, 'submitOvertime'])->name('overtime.submit');
         Route::post('/reimbursement', [EmployeeDashboardController::class, 'submitReimbursement'])->name('reimbursement.submit');
+        Route::post('/self-appraisal', [EmployeeDashboardController::class, 'submitSelfAppraisal'])->name('self-appraisal.submit');
+        Route::post('/kpi-progress/{goal}', [EmployeeDashboardController::class, 'updateKpiProgress'])->name('kpi-progress.update');
         Route::post('/profile', [EmployeeDashboardController::class, 'updateProfile'])->name('profile.update');
         Route::get('/payslip/{payroll}', [PayslipController::class, 'employeePayslip'])->name('payslip.show');
     });

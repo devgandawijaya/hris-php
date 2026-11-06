@@ -70,3 +70,4 @@ class ShiftController extends Controller
         return back()->with('success', 'Hari libur berhasil dihapus.');
     }
 }
+

@@ -31,3 +31,4 @@ class SalaryComponent extends Model
         return $this->hasMany(EmployeeSalaryComponent::class);
     }
 }
+

@@ -59,3 +59,4 @@ class TaxReconciliationController extends Controller
         return view('company.payroll.1721_a1', compact('reconciliation', 'company'));
     }
 }
+

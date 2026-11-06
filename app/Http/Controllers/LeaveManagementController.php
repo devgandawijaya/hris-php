@@ -98,3 +98,4 @@ class LeaveManagementController extends Controller
         return back()->with('success', 'Jenis cuti berhasil dihapus.');
     }
 }
+

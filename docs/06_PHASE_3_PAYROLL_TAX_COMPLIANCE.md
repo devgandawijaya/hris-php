@@ -95,3 +95,4 @@ $$\text{PPh 21 Desember} = \text{PPh 21 Setahun (Pasal 17)} - \sum_{m=1}^{11} \t
 7. **Reimbursement & Biaya (`company/reimbursement/index.blade.php`):** Alur verifikasi berjenjang: Pengajuan &rarr; Persetujuan Manajer &rarr; Persetujuan Finance &rarr; Cair (masuk payroll / lunas).
 8. **Manajemen Kontrak PKWT & Kompensasi PP 35/2021 (`company/contracts/index.blade.php`):** Peringatan kontrak berakhir (&le; 30 hari), perhitungan otomatis uang kompensasi Pasal 61A, dan addendum perpanjangan kontrak.
 9. **Employee Self-Service (ESS):** Portal mandiri karyawan untuk melihat slip gaji, mengajukan reimbursement beserta unggah kuitansi, dan memeriksa sisa masa kontrak.
+

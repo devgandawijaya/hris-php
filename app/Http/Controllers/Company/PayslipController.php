@@ -36,3 +36,4 @@ class PayslipController extends Controller
         return view('company.payroll.payslip', compact('payroll', 'company', 'breakdown'));
     }
 }
+

@@ -114,3 +114,4 @@ class ContractService
         $contract->update(['compensation_paid' => true]);
     }
 }
+

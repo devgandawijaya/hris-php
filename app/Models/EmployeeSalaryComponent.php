@@ -36,3 +36,4 @@ class EmployeeSalaryComponent extends Model
         return $this->belongsTo(SalaryComponent::class);
     }
 }
+

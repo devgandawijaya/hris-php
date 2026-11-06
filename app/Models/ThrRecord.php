@@ -37,3 +37,4 @@ class ThrRecord extends Model
         return $this->belongsTo(Employee::class);
     }
 }
+
