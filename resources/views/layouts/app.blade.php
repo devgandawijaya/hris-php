@@ -241,6 +241,34 @@
                             Pelatihan & Sertifikasi
                         </a>
 
+                        <!-- Enterprise & Sistem (Phase 5) -->
+                        <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Enterprise & Sistem</div>
+                        <a href="{{ route('company.analytics.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.analytics.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                            Eksekutif Analitik
+                        </a>
+                        <a href="{{ route('company.workflows.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.workflows.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="git-branch" class="w-4 h-4"></i>
+                            Workflow Engine
+                        </a>
+                        <a href="{{ route('company.billing.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.billing.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="credit-card" class="w-4 h-4"></i>
+                            Paket & Langganan
+                        </a>
+                        <a href="{{ route('company.integrations.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.integrations.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="cpu" class="w-4 h-4"></i>
+                            Integrasi, API & WA
+                        </a>
+                        <a href="{{ route('company.security.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.security.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i>
+                            Audit Log & Keamanan
+                        </a>
+
                         <!-- Portal ESS -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Portal Karyawan</div>
                         <a href="{{ route('ess.dashboard') }}"

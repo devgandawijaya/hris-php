@@ -32,8 +32,19 @@ use App\Models\KpiGoal;
 use App\Models\PerformanceReview;
 use App\Models\TrainingCourse;
 use App\Models\TrainingEnrollment;
+use App\Models\Workflow;
+use App\Models\WorkflowStep;
+use App\Models\ApprovalRequest;
+use App\Models\ApprovalHistory;
+use App\Models\ApiKey;
+use App\Models\WebhookSubscription;
+use App\Models\CompanyIpWhitelist;
+use App\Models\AuditLog;
+use App\Models\SubscriptionInvoice;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
+use App\Services\Workflow\WorkflowEngineService;
+use App\Services\Integration\EnterpriseApiService;
 use App\Tenancy\TenantManager;
 use Illuminate\Support\Facades\Hash;
 
@@ -662,6 +673,114 @@ class DemoCompanySeeder extends Seeder
             ['tenant_id' => $tenant->id, 'training_course_id' => $course2->id, 'employee_id' => $employeeSiti->id],
             [
                 'status' => 'enrolled',
+            ]
+        );
+
+        // --- PHASE 5: ENTERPRISE DEMO DATA ---
+
+        // 21. Configurable Multi-Level Approval Workflows
+        $leaveWf = Workflow::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'entity_type' => 'leave'],
+            [
+                'name' => 'Leave Approval 2-Tier Standard',
+                'is_active' => true,
+            ]
+        );
+        WorkflowStep::firstOrCreate(
+            ['workflow_id' => $leaveWf->id, 'step_order' => 1],
+            ['approver_role_slug' => 'hr-manager']
+        );
+        WorkflowStep::firstOrCreate(
+            ['workflow_id' => $leaveWf->id, 'step_order' => 2],
+            ['approver_role_slug' => 'company-owner']
+        );
+
+        $reimburseWf = Workflow::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'entity_type' => 'reimbursement'],
+            [
+                'name' => 'Reimbursement Expense Multi-Approval',
+                'is_active' => true,
+            ]
+        );
+        WorkflowStep::firstOrCreate(
+            ['workflow_id' => $reimburseWf->id, 'step_order' => 1],
+            ['approver_role_slug' => 'hr-manager']
+        );
+        WorkflowStep::firstOrCreate(
+            ['workflow_id' => $reimburseWf->id, 'step_order' => 2],
+            ['approver_role_slug' => 'company-owner']
+        );
+
+        // 22. SaaS Subscription Invoices
+        $sub = $tenant->subscription;
+        if ($sub) {
+            SubscriptionInvoice::withoutGlobalScopes()->firstOrCreate(
+                ['tenant_id' => $tenant->id, 'invoice_number' => 'INV-' . date('Ym') . '-0001'],
+                [
+                    'subscription_id' => $sub->id,
+                    'amount' => 750000.00,
+                    'tax_amount' => 82500.00,
+                    'total_amount' => 832500.00,
+                    'status' => 'paid',
+                    'due_date' => now()->subDays(5)->toDateString(),
+                    'paid_at' => now()->subDays(5),
+                    'payment_method' => 'bank_transfer',
+                ]
+            );
+        }
+
+        // 23. Enterprise API Key
+        ApiKey::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Mesin Presensi RFID Lobby Lt. 18'],
+            [
+                'key_prefix' => 'ri_live_',
+                'key_hash' => hash('sha256', 'ri_live_demobiometrickey1234567890'),
+                'permissions' => ['attendance:read', 'attendance:write'],
+                'is_active' => true,
+            ]
+        );
+
+        // 24. Webhook Subscription
+        WebhookSubscription::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'name' => 'Slack Corporate HR Alerts'],
+            [
+                'target_url' => 'https://hooks.slack.com/services/DEMO/COMPANY/ALERTS',
+                'secret' => 'whsec_demosecret998877',
+                'events' => ['employee.created', 'leave.approved', 'payroll.finalized'],
+                'is_active' => true,
+            ]
+        );
+
+        // 25. Security Audit Trail Logs & IP Whitelist
+        AuditLog::create([
+            'tenant_id' => $tenant->id,
+            'user_id' => $owner->id,
+            'action' => 'payroll_processed',
+            'auditable_type' => 'App\Models\PayrollPeriod',
+            'auditable_id' => $period->id,
+            'old_values' => ['status' => 'draft'],
+            'new_values' => ['status' => 'processed'],
+            'ip_address' => '180.252.12.8',
+            'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0',
+        ]);
+
+        AuditLog::create([
+            'tenant_id' => $tenant->id,
+            'user_id' => $hr->id,
+            'action' => 'employee_created',
+            'auditable_type' => 'App\Models\Employee',
+            'auditable_id' => $employeeBudi->id,
+            'old_values' => null,
+            'new_values' => ['nik' => $employeeBudi->employee_number, 'name' => $employeeBudi->full_name],
+            'ip_address' => '180.252.12.8',
+            'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0',
+        ]);
+
+        CompanyIpWhitelist::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'ip_address' => '180.252.12.8'],
+            [
+                'label' => 'Kantor Pusat Menara Mandiri Lt. 18',
+                'is_active' => true,
             ]
         );
     }

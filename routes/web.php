@@ -26,6 +26,11 @@ use App\Http\Controllers\Company\RecruitmentController;
 use App\Http\Controllers\Company\OnboardingOffboardingController;
 use App\Http\Controllers\Company\PerformanceController;
 use App\Http\Controllers\Company\TrainingController;
+use App\Http\Controllers\Company\WorkflowManagementController;
+use App\Http\Controllers\Company\AnalyticsController;
+use App\Http\Controllers\Company\BillingController;
+use App\Http\Controllers\Company\IntegrationController;
+use App\Http\Controllers\Company\SecurityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -247,5 +252,47 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/kpi-progress/{goal}', [EmployeeDashboardController::class, 'updateKpiProgress'])->name('kpi-progress.update');
         Route::post('/profile', [EmployeeDashboardController::class, 'updateProfile'])->name('profile.update');
         Route::get('/payslip/{payroll}', [PayslipController::class, 'employeePayslip'])->name('payslip.show');
+    });
+
+    // --- PHASE 5: ENTERPRISE ROUTES ---
+
+    // 17. Workflow Engine & Multi-Level Approvals
+    Route::prefix('workflows')->name('company.workflows.')->group(function () {
+        Route::get('/', [WorkflowManagementController::class, 'index'])->name('index');
+        Route::post('/', [WorkflowManagementController::class, 'store'])->name('store');
+        Route::post('/{approvalRequest}/approve', [WorkflowManagementController::class, 'approve'])->name('approve');
+        Route::post('/{approvalRequest}/reject', [WorkflowManagementController::class, 'reject'])->name('reject');
+    });
+
+    // 18. Executive HR Analytics & Reporting
+    Route::prefix('analytics')->name('company.analytics.')->group(function () {
+        Route::get('/', [AnalyticsController::class, 'index'])->name('index');
+        Route::get('/export/headcount', [AnalyticsController::class, 'exportHeadcount'])->name('export.headcount');
+        Route::get('/export/attendance', [AnalyticsController::class, 'exportAttendance'])->name('export.attendance');
+        Route::get('/export/payroll', [AnalyticsController::class, 'exportPayroll'])->name('export.payroll');
+    });
+
+    // 19. SaaS Subscription & Billing
+    Route::prefix('billing')->name('company.billing.')->group(function () {
+        Route::get('/', [BillingController::class, 'index'])->name('index');
+        Route::post('/plan', [BillingController::class, 'changePlan'])->name('change-plan');
+        Route::post('/invoices/{invoice}/pay', [BillingController::class, 'payInvoice'])->name('pay');
+    });
+
+    // 20. Enterprise API & Integrations (Webhooks & WhatsApp)
+    Route::prefix('integrations')->name('company.integrations.')->group(function () {
+        Route::get('/', [IntegrationController::class, 'index'])->name('index');
+        Route::post('/api-keys', [IntegrationController::class, 'storeApiKey'])->name('api-keys.store');
+        Route::post('/api-keys/{apiKey}/revoke', [IntegrationController::class, 'revokeApiKey'])->name('api-keys.revoke');
+        Route::post('/webhooks', [IntegrationController::class, 'storeWebhook'])->name('webhooks.store');
+        Route::post('/webhooks/{webhook}/test', [IntegrationController::class, 'testWebhook'])->name('webhooks.test');
+        Route::post('/whatsapp/test', [IntegrationController::class, 'testWhatsApp'])->name('whatsapp.test');
+    });
+
+    // 21. Corporate Security & Audit Logs
+    Route::prefix('security')->name('company.security.')->group(function () {
+        Route::get('/', [SecurityController::class, 'index'])->name('index');
+        Route::post('/ip-whitelist', [SecurityController::class, 'storeIpWhitelist'])->name('ip-whitelist.store');
+        Route::delete('/ip-whitelist/{ipWhitelist}', [SecurityController::class, 'destroyIpWhitelist'])->name('ip-whitelist.destroy');
     });
 });
