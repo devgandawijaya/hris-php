@@ -52,3 +52,4 @@ class KpiGoal extends Model
         return min(100.0, round(($this->current_value / $this->target_value) * 100, 1));
     }
 }
+

@@ -12,15 +12,33 @@ RiHRIS adalah aplikasi Software-as-a-Service (SaaS) Multi-Tenant berbasis arsite
 
 ---
 
-## 📑 DAFTAR DOKUMENTASI ARSITEKTUR LENGKAP
+## 📑 DAFTAR DOKUMENTASI LENGKAP (11 MODUL TEKNIS)
 
-Seluruh rancangan arsitektur dan spesifikasi sistem telah didokumentasikan secara komprehensif pada direktori `docs/`:
+Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumentasi secara lengkap pada direktori `docs/`:
 
 1. [01. Software Requirements Specification (SRS)](docs/01_SOFTWARE_REQUIREMENTS_SPECIFICATION.md)
 2. [02. System Architecture Document (SAD)](docs/02_SYSTEM_ARCHITECTURE.md)
 3. [03. Multi-Tenant Architecture & Data Isolation Blueprint](docs/03_MULTI_TENANT_ARCHITECTURE.md)
 4. [04. Database ERD & PostgreSQL Data Dictionary](docs/04_DATABASE_ERD_AND_DATA_DICTIONARY.md)
 5. [05. UI/UX Design System & Layout Guidelines](docs/05_UI_UX_DESIGN_SYSTEM.md)
+6. [06. Phase 3: Payroll, Tax & Indonesian Compliance](docs/06_PHASE_3_PAYROLL_TAX_COMPLIANCE.md)
+7. [07. Phase 4: Talent Management, ATS & Appraisals](docs/07_PHASE_4_TALENT_MANAGEMENT.md)
+8. [08. Phase 5: Enterprise Systems, Workflow & Security](docs/08_PHASE_5_ENTERPRISE_SYSTEMS.md)
+9. [09. REST API v1 & Webhooks Specification](docs/09_REST_API_SPECIFICATION.md)
+10. [10. Backup & Disaster Recovery Guide](docs/10_BACKUP_AND_RESTORE_GUIDE.md)
+11. [11. Production Deployment & Maintenance Guide](docs/11_PRODUCTION_DEPLOYMENT_GUIDE.md)
+
+---
+
+## 🚀 STATUS IMPLEMENTASI 5 PHASE ROADMAP
+
+| Phase | Modul & Cakupan Utama | Status |
+|---|---|---|
+| **Phase 1: Foundation & SaaS** | Multi-Tenancy (`TenantScope`), RBAC 14 Roles, CMS Landing Page, Super Admin Panel, Registrasi SaaS & Onboarding Perusahaan. | ✅ Complete |
+| **Phase 2: Core HR** | Master Karyawan, Struktur Organisasi, Presensi Geofencing GPS, Shift Kerja, Manajemen Cuti, SPL Lembur, dan Portal Mandiri ESS. | ✅ Complete |
+| **Phase 3: Payroll & Compliance** | Engine Payroll, BPJS 5 Program, PPh 21 TER (PMK 168/2023), Rekonsiliasi 1721-A1, THR Permenaker 6/2016, Klaim Reimbursement, dan Kompensasi PKWT PP 35/2021. | ✅ Complete |
+| **Phase 4: Talent Management** | Rekrutmen ATS Pipeline, Konversi Pelamar ke Karyawan, Checklist Onboarding/Offboarding, Manajemen Aset, Penilaian Kinerja KPI/OKR 30/70, dan Pelatihan L&D Bersertifikat. | ✅ Complete |
+| **Phase 5: Enterprise Systems** | Workflow Engine Multi-Level, Eksekutif Analitik C-Level & Streaming CSV, SaaS Subscription Billing & Metering, REST API v1, Webhooks, Notifikasi WhatsApp, dan Audit Trail & IP Whitelist. | ✅ Complete |
 
 ---
 
@@ -37,7 +55,7 @@ RiHRIS dibangun dengan kepatuhan hukum sebagai pilar utama tanpa mengunci tarif 
    - **JHT (Jaminan Hari Tua)**: Pemberi Kerja 3.70%, Pekerja 2.00%.
    - **JKM (Jaminan Kematian)**: Pemberi Kerja 0.30%.
    - **JKK (Jaminan Kecelakaan Kerja)**: Tarif bertingkat sesuai kelas risiko (0.24% s.d. 1.74%).
-   - **JP (Jaminan Pensiun)**: Pemberi Kerja 2.00%, Pekerja 1.00% dengan batas atas upah (cap) resmi.
+   - **JP (Jaminan Pensiun)**: Pemberi Kerja 2.00%, Pekerja 1.00% dengan batas atas upah (cap) resmi Rp 10.042.300.
    - **JKP (Jaminan Kehilangan Pekerjaan)**.
 3. **BPJS Kesehatan**:
    - Iuran total 5% (Pemberi Kerja 4.00%, Pekerja 1.00%) dengan batas atas upah Rp 12.000.000.
@@ -45,10 +63,10 @@ RiHRIS dibangun dengan kepatuhan hukum sebagai pilar utama tanpa mengunci tarif 
    - Upah sejam lembur dihitung berdasarkan rumus resmi: $\frac{1}{173} \times \text{Upah Sebulan}$.
    - Hari kerja biasa: Jam ke-1 x 1.5, jam ke-2 dst x 2.0.
    - Hari istirahat/libur resmi: Perhitungan bertingkat hingga x 4.0.
-5. **Uang Kompensasi PKWT (Pasal 61A UU Cipta Kerja)**:
-   - Kalkulasi otomatis saat kontrak berakhir: $\frac{\text{Masa Kerja (Bulan)}}{12} \times 1\text{ Bulan Upah}$.
+5. **Uang Kompensasi PKWT (Pasal 61A UU Cipta Kerja & PP 35/2021)**:
+   - Kalkulasi otomatis saat kontrak berakhir atau diperpanjang: $\frac{\text{Masa Kerja (Bulan)}}{12} \times 1\text{ Bulan Upah}$.
 6. **Tunjangan Hari Raya (THR) Keagamaan (Permenaker No. 6/2016)**:
-   - Masa kerja $\ge 12$ bulan = 1 bulan upah penuh; < 12 bulan dihitung pro-rata.
+   - Masa kerja $\ge 12$ bulan = 1 bulan upah penuh; 1 s.d. < 12 bulan dihitung pro-rata.
 
 ---
 
@@ -71,7 +89,7 @@ Mengikuti pedoman warna dan layout yang presisi:
   - Landing Page: Centered Container max-width `1200px`.
   - Dashboard Content: Centered Container max-width `1440px`.
   - Mobile: Slide drawer sidebar yang responsif tanpa pergeseran layout.
-- **Komponen**: Lucide SVG Icons, Alpine.js interactive toggles & sliders.
+- **Komponen**: Lucide SVG Icons, Alpine.js interactive toggles & sliders, Chart.js graphs.
 
 ---
 
@@ -107,42 +125,47 @@ docker compose exec app php artisan optimize:clear
 
 ## 🔑 KREDENSIAL BAWAAN (DEFAULT ACCOUNTS)
 
-Setelah menjalankan `php artisan db:seed`, akun berikut siap digunakan untuk uji coba:
+Setelah menjalankan `php artisan db:seed`, akun berikut siap digunakan untuk demonstrasi:
 
 ### A. Super Administrator Platform
 - **URL Login**: [http://localhost:8080/login](http://localhost:8080/login)
 - **Email**: `superadmin@rihris.id`
 - **Password**: `Password123#`
-- **Akses**: Pengelolaan seluruh tenant, penangguhan (suspend/activate), manajemen CMS landing page, dan audit logs.
+- **Akses**: Pengelolaan seluruh tenant, penangguhan (suspend/activate), manajemen CMS landing page, dan audit logs platform.
 
 ### B. Demo Perusahaan (PT Solusi Digital Nusantara)
 - **Company Owner**:
   - **Email**: `owner@solusidigital.id`
   - **Password**: `Password123#`
+  - **Akses**: Seluruh fitur HR, Payroll approval, billing invoice, manajemen KPI, dan eksekutif analitik.
 - **HR Manager**:
   - **Email**: `hr@solusidigital.id`
   - **Password**: `Password123#`
+  - **Akses**: Operasional karyawan, absensi, cuti, rekrutmen, onboarding aset, penggajian, dan integrasi API.
 - **Employee (Budi Santoso - Lead Developer)**:
   - **Email**: `budi@solusidigital.id`
   - **Password**: `Password123#`
-  - **Akses**: Portal Employee Self-Service (ESS), clock-in/out GPS simulasi, pengajuan cuti, dan cek slip gaji.
+  - **Akses**: Portal Employee Self-Service (ESS), clock-in/out GPS simulasi, pengajuan cuti, klaim reimbursement, evaluasi mandiri KPI, dan cek slip gaji.
 
 ---
 
 ## 🧪 MENJALANKAN AUTOMATED TESTS
 
-Untuk menjalankan pengujian unit dan fitur:
+Untuk menjalankan seluruh suite pengujian otomatis:
 
 ```bash
 docker compose exec app php artisan test
 ```
 
-Pengujian mencakup:
+### Cakupan Pengujian:
 1. `ComplianceCalculationTest`: Verifikasi akurasi matematis PPh 21 TER (Kategori A, B, C), batas atas upah BPJS Kesehatan & Ketenagakerjaan, lembur 1/173 PP 35/2021, dan kompensasi PKWT.
 2. `MultiTenancyIsolationTest`: Verifikasi pemisahan data antar-perusahaan via `TenantScope`.
 3. `AuthenticationAndRegistrationTest`: Verifikasi auto-provisioning SaaS multi-tenant saat registrasi.
 4. `LandingPageCmsTest`: Verifikasi rendering dinamis CMS landing page dan form konsultasi.
+5. `CoreHrPhase2Test`: Pengujian CRUD karyawan, shift jadwal, koreksi presensi geofencing, dan approval cuti.
+6. `PayrollAndTaxPhase3Test`: Pengujian payroll run, THP, rekonsiliasi akhir tahun 1721-A1, THR Permenaker 6/2016, dan reimbursement.
+7. `TalentManagementPhase4Test`: Pengujian rekrutmen lowongan, ATS stage, konversi pelamar ke karyawan, onboarding checklist, inventaris aset kantor, review performa 30/70, dan sertifikat pelatihan.
+8. `EnterprisePhase5Test`: Pengujian workflow approval berjenjang, metrik eksekutif analitik, billing invoice, REST API v1, webhook deliveries, dan IP whitelist korporat.
 
 ---
 *RiHRIS — Solusi HRIS SaaS Terpercaya untuk Bisnis Indonesia.*
-

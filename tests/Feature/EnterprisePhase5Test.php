@@ -412,3 +412,4 @@ class EnterprisePhase5Test extends TestCase
         $response->assertStatus(200);
     }
 }
+

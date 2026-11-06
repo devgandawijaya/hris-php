@@ -71,3 +71,4 @@ class AuditService
         $whitelist->delete();
     }
 }
+

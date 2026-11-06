@@ -18,3 +18,4 @@ class WorkflowStep extends Model
         return $this->belongsTo(Workflow::class);
     }
 }
+

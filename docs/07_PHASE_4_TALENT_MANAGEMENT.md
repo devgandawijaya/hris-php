@@ -168,3 +168,4 @@ Mencakup 6 skenario uji:
 4. `test_performance_cycle_kpi_and_weighted_appraisal_scoring`: Verifikasi perhitungan progres KPI dan kalkulasi matematis skor terbobot 30/70.
 5. `test_training_enrollment_and_certificate_generation`: Verifikasi pembuatan course, pendaftaran karyawan, kelulusan, dan format nomor sertifikat.
 6. `test_talent_management_web_views_return_ok`: Aksesibilitas seluruh rute web HR dan portal ESS (HTTP 200).
+

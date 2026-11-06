@@ -151,3 +151,4 @@ class OnboardingOffboardingController extends Controller
         return back()->with('success', "Hasil Exit Interview untuk {$employee->full_name} berhasil disimpan.");
     }
 }
+

@@ -41,3 +41,4 @@ class ApprovalRequest extends Model
         return $this->workflow?->steps()->where('step_order', $this->current_step)->first();
     }
 }
+

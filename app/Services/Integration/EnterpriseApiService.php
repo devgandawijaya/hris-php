@@ -66,3 +66,4 @@ class EnterpriseApiService
         $apiKey->update(['is_active' => false]);
     }
 }
+

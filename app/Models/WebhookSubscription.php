@@ -32,3 +32,4 @@ class WebhookSubscription extends Model
         return $this->hasMany(WebhookDelivery::class);
     }
 }
+

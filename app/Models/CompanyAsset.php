@@ -34,3 +34,4 @@ class CompanyAsset extends Model
         return $this->belongsTo(Employee::class, 'assigned_employee_id');
     }
 }
+

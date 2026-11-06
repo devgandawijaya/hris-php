@@ -115,3 +115,4 @@ class IntegrationController extends Controller
         return back()->with('success', "Pesan notifikasi WhatsApp simulasi berhasil dikirim ke {$validated['phone']}.");
     }
 }
+

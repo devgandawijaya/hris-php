@@ -81,3 +81,4 @@ class AttendanceApiController extends Controller
         ], 201);
     }
 }
+

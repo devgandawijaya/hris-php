@@ -50,3 +50,4 @@ class JobPosting extends Model
         return $this->hasMany(JobApplication::class);
     }
 }
+

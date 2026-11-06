@@ -44,3 +44,4 @@ class VerifyEnterpriseApiKey
         return $next($request);
     }
 }
+

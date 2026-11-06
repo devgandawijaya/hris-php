@@ -134,3 +134,4 @@ class PerformanceController extends Controller
         return back()->with('success', "Penilaian kinerja untuk {$employee->full_name} berhasil difinalisasi dengan Skor: {$review->final_score}.");
     }
 }
+

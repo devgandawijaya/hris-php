@@ -58,3 +58,4 @@ class SecurityController extends Controller
         return back()->with('success', 'Alamat IP berhasil dihapus dari whitelist.');
     }
 }
+

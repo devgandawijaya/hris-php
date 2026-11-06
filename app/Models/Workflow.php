@@ -34,3 +34,4 @@ class Workflow extends Model
         return $this->hasMany(ApprovalRequest::class);
     }
 }
+

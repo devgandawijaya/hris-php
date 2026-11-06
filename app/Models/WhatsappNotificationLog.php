@@ -18,3 +18,4 @@ class WhatsappNotificationLog extends Model
         'error_message',
     ];
 }
+

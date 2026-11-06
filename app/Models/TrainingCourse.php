@@ -37,3 +37,4 @@ class TrainingCourse extends Model
         return $this->hasMany(TrainingEnrollment::class);
     }
 }
+

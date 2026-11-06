@@ -47,3 +47,4 @@ class JobApplication extends Model
         return $this->belongsTo(Employee::class, 'converted_employee_id');
     }
 }
+

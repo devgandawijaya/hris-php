@@ -82,3 +82,4 @@ class WorkflowManagementController extends Controller
         return back()->with('success', "Permohonan berhasil ditolak.");
     }
 }
+

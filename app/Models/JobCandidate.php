@@ -32,3 +32,4 @@ class JobCandidate extends Model
         return $this->hasMany(JobApplication::class);
     }
 }
+

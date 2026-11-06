@@ -38,3 +38,4 @@ class ExitInterview extends Model
         return $this->belongsTo(User::class, 'interviewer_user_id');
     }
 }
+

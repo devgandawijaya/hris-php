@@ -36,3 +36,4 @@ class PerformanceCycle extends Model
         return $this->hasMany(KpiGoal::class);
     }
 }
+

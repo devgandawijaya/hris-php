@@ -144,3 +144,4 @@ class RecruitmentController extends Controller
             ->with('success', "Kandidat {$employee->full_name} berhasil dikonversi menjadi Karyawan resmi (NIK: {$employee->employee_number}).");
     }
 }
+

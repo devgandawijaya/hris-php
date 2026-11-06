@@ -30,3 +30,4 @@ class ApiKey extends Model
         ];
     }
 }
+
