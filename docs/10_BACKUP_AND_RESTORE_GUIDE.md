@@ -143,3 +143,4 @@ docker compose exec app php artisan test --filter=ComplianceCalculationTest
 | **Weekly Backups** | Setiap Minggu (Pukul 02.00) | Disimpan selama 4 minggu |
 | **Monthly Backups** | Hari pertama tiap bulan | Disimpan selama 12 bulan |
 | **Annual Compliance** | 31 Desember | Disimpan selama 5 tahun (UU Perpajakan) |
+

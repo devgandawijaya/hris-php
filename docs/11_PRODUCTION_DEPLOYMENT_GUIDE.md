@@ -182,3 +182,4 @@ docker compose -f docker-compose.prod.yml exec app php artisan up
 
 echo "=== Deployment Selesai Sukses! ==="
 ```
+

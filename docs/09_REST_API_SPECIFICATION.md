@@ -245,3 +245,4 @@ if (!hash_equals($computedSignature, $signatureHeader)) {
 | `leave.approved` | Pengajuan cuti karyawan telah disetujui hingga tahap final workflow. |
 | `payroll.finalized` | Periode penggajian bulanan telah disahkan dan slip gaji siap diunduh. |
 | `ping.test` | Uji coba konektivitas webhook dari antarmuka dashboard perusahaan. |
+
