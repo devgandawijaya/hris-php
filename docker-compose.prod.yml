@@ -1,0 +1,122 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rihris-app-prod
+    restart: always
+    working_dir: /var/www/html
+    volumes:
+      - app-storage:/var/www/html/storage
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-rihris_db}
+      - DB_USERNAME=${DB_USERNAME:-rihris_user}
+      - DB_PASSWORD=${DB_PASSWORD:-rihris_password_secure}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUE_CONNECTION=redis
+      - CACHE_STORE=redis
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - rihris-prod-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: rihris-nginx-prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - .:/var/www/html:ro
+      - app-storage:/var/www/html/storage:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - rihris-prod-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: rihris-postgres-prod
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-rihris_db}
+      POSTGRES_USER: ${DB_USERNAME:-rihris_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-rihris_password_secure}
+    volumes:
+      - pgdata-prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-rihris_user} -d ${DB_DATABASE:-rihris_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rihris-prod-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: rihris-redis-prod
+    restart: always
+    volumes:
+      - redisdata-prod:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rihris-prod-network
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rihris-queue-prod
+    restart: always
+    command: php artisan queue:work redis --sleep=3 --tries=3 --timeout=90
+    volumes:
+      - app-storage:/var/www/html/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - rihris-prod-network
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rihris-scheduler-prod
+    restart: always
+    command: php artisan schedule:work
+    volumes:
+      - app-storage:/var/www/html/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - rihris-prod-network
+
+volumes:
+  pgdata-prod:
+  redisdata-prod:
+  app-storage:
+
+networks:
+  rihris-prod-network:
+    driver: bridge
+
