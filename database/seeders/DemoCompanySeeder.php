@@ -94,6 +94,16 @@ use App\Models\FringeBenefit;
 use App\Models\OvertimeOrder;
 use App\Models\CompanyRegulation;
 use App\Models\BipartiteMeeting;
+use App\Models\WltkReport;
+use App\Models\IjpVacancy;
+use App\Models\IjpApplication;
+use App\Models\MentorshipPair;
+use App\Models\MentorshipCheckin;
+use App\Models\AssetHandoverBast;
+use App\Models\AssetHandoverItem;
+use App\Models\SystemAccessRevocationLog;
+use App\Models\DisabilityEmploymentAudit;
+use App\Models\EmployeeDisabilityProfile;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -2027,6 +2037,232 @@ class DemoCompanySeeder extends Seeder
                     'action_items' => 'Implementasi rambu K3 baru dan audit APD sebelum akhir bulan berjalan.',
                     'disnaker_reported_at' => now()->subDays(5)->toDateString(),
                     'status' => 'reported_to_disnaker',
+                ]
+            );
+
+            // =========================================================================
+            // PHASE 15: WLTK, IJP, ONBOARDING MENTORSHIP, ASSET BAST & DISABILITY AUDIT
+            // =========================================================================
+
+            // 1. Wajib Lapor Ketenagakerjaan Perusahaan (WLTK UU No. 7/1981)
+            $wltk = WltkReport::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'report_number' => 'WLTK/2026/0001'],
+                [
+                    'company_id' => $company->id,
+                    'reporting_year' => 2026,
+                    'report_period' => 'annual',
+                    'status' => 'submitted_kemnaker',
+                    'submission_date' => now()->subMonths(2)->toDateString(),
+                    'valid_until' => now()->subMonths(2)->addYear()->toDateString(),
+                    'company_registration_number' => 'WLKP-NIB-2026-98124',
+                    'kbli_code' => '62012',
+                    'total_workers' => 25,
+                    'total_wni_male' => 15,
+                    'total_wni_female' => 9,
+                    'total_wna_male' => 1,
+                    'total_wna_female' => 0,
+                    'total_pkwtt' => 18,
+                    'total_pkwt' => 7,
+                    'total_disability_workers' => 1,
+                    'lowest_wage' => 5200000.00,
+                    'highest_wage' => 38000000.00,
+                    'bpjs_tk_registered' => true,
+                    'bpjs_kes_registered' => true,
+                    'has_pp_or_pkb' => true,
+                    'has_lks_bipartit' => true,
+                    'disnaker_receipt_number' => 'TANDA-TERIMA-KEMNAKER-2026-8812',
+                    'raw_payload_json' => [
+                        'company' => $company->name,
+                        'npwp' => $company->npwp,
+                        'total_workers' => 25,
+                    ],
+                ]
+            );
+
+            // 2. Internal Job Posting (IJP) Vacancy & Application
+            $techDept = Department::where('company_id', $company->id)->where('name', 'Technology')->first() ?? Department::where('company_id', $company->id)->first();
+            $posLead = Position::where('company_id', $company->id)->first();
+
+            $vacancy = IjpVacancy::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'vacancy_code' => 'IJP-2026-0001'],
+                [
+                    'company_id' => $company->id,
+                    'department_id' => $techDept->id,
+                    'position_id' => $posLead->id,
+                    'title' => 'Senior Platform & Cloud Engineer',
+                    'description' => 'Memimpin pengembangan infrastruktur cloud multi-tenant high-availability dan integrasi arsitektur perbankan.',
+                    'requirements' => 'Pengalaman minimum 12 bulan di divisi saat ini, pemahaman Kubernetes, PHP 8.3/Laravel, dan CI/CD.',
+                    'min_tenure_months' => 12,
+                    'min_performance_score' => 3.50,
+                    'open_slots' => 1,
+                    'application_deadline' => now()->addDays(20)->toDateString(),
+                    'status' => 'open',
+                    'created_by_user_id' => $ownerUser->id ?? null,
+                ]
+            );
+
+            IjpApplication::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'ijp_vacancy_id' => $vacancy->id, 'employee_id' => $empBudi->id],
+                [
+                    'current_department_id' => $empBudi->department_id,
+                    'current_position_id' => $empBudi->position_id,
+                    'application_date' => now()->subDays(5)->toDateString(),
+                    'motivation_letter' => 'Saya memiliki motivasi tinggi untuk memperluas kontribusi pada arsitektur core cloud HRIS dan meningkatkan performa database.',
+                    'current_tenure_months' => 18,
+                    'latest_performance_score' => 4.25,
+                    'has_active_warning' => false,
+                    'is_eligible' => true,
+                    'manager_approval_status' => 'approved',
+                    'manager_approval_notes' => 'Direkomendasikan. Budi memiliki etos kerja dan kompetensi teknis luar biasa.',
+                    'manager_approved_at' => now()->subDays(3),
+                    'hr_interview_status' => 'passed',
+                    'final_decision' => 'accepted',
+                    'transfer_effective_date' => now()->addDays(15)->toDateString(),
+                ]
+            );
+
+            // 3. Onboarding Buddy & Mentorship Program
+            $mentorshipPair = MentorshipPair::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'mentee_employee_id' => $empAni->id, 'mentor_employee_id' => $empBudi->id],
+                [
+                    'company_id' => $company->id,
+                    'start_date' => now()->subDays(45)->toDateString(),
+                    'end_date' => now()->subDays(45)->addDays(90)->toDateString(),
+                    'status' => 'active',
+                    'program_objectives' => 'Bimbingan orientasi 90 hari, pendalaman sistem kepatuhan UU Cipta Kerja dan adaptasi budaya kerja inovatif.',
+                ]
+            );
+
+            // Seed Day-30 check-in (completed) and Day-60 check-in (pending)
+            MentorshipCheckin::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'mentorship_pair_id' => $mentorshipPair->id, 'milestone' => 'day_30'],
+                [
+                    'scheduled_date' => now()->subDays(15)->toDateString(),
+                    'completed_date' => now()->subDays(15)->toDateString(),
+                    'status' => 'completed',
+                    'agenda_topics' => 'Pengenalan alur kerja tim, akses repository, dan adaptasi 30 hari pertama.',
+                    'mentee_satisfaction_score' => 5,
+                    'mentee_feedback' => 'Buddy sangat responsif dan membantu menjelaskan logika kalkulasi PPh 21 secara mendalam.',
+                    'mentor_adaptation_score' => 5,
+                    'mentor_notes' => 'Ani sangat cepat memahami sistem dan mandiri menyelesaikan tiket pengujian.',
+                    'action_plan' => 'Lanjut pendalaman modul pelaporan WLTK dan audit Disnaker.',
+                ]
+            );
+
+            MentorshipCheckin::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'mentorship_pair_id' => $mentorshipPair->id, 'milestone' => 'day_60'],
+                [
+                    'scheduled_date' => now()->addDays(15)->toDateString(),
+                    'status' => 'pending',
+                    'agenda_topics' => 'Evaluasi independensi penyelesaian tugas dan kolaborasi lintas tim.',
+                ]
+            );
+
+            MentorshipCheckin::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'mentorship_pair_id' => $mentorshipPair->id, 'milestone' => 'day_90'],
+                [
+                    'scheduled_date' => now()->addDays(45)->toDateString(),
+                    'status' => 'pending',
+                    'agenda_topics' => 'Refleksi akhir probation dan kesiapan konversi SK PKWTT tetap.',
+                ]
+            );
+
+            // 4. Asset Handover BAST & Automated SSO Revocation
+            $bast = AssetHandoverBast::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'bast_number' => 'BAST-ASSET-2026-0001'],
+                [
+                    'company_id' => $company->id,
+                    'employee_id' => $empAni->id,
+                    'handover_date' => now()->subDays(2)->toDateString(),
+                    'status' => 'completed',
+                    'officer_name' => 'Rian Hidayat, S.Kom',
+                    'officer_position' => 'IT & Security Operations Lead',
+                    'employee_signature_token' => 'TTE-ANI-SIG-'.md5('Ani-Bast-2026'),
+                    'officer_signature_token' => 'TTE-RIAN-SIG-'.md5('Rian-Bast-2026'),
+                    'signed_at' => now()->subDays(2),
+                    'total_compensation_due' => 0.00,
+                    'notes' => 'Seluruh perangkat dikembalikan dalam kondisi fisik prima dan terawat baik.',
+                ]
+            );
+
+            AssetHandoverItem::firstOrCreate(
+                ['asset_handover_bast_id' => $bast->id, 'asset_name' => 'MacBook Pro 14 M2 Pro 16GB/512GB'],
+                [
+                    'serial_number' => 'MBP-2026-M2P-9812',
+                    'condition_on_return' => 'good',
+                    'compensation_amount' => 0.00,
+                    'notes' => 'Fisik mulus, charger MagSafe & box lengkap.',
+                ]
+            );
+
+            AssetHandoverItem::firstOrCreate(
+                ['asset_handover_bast_id' => $bast->id, 'asset_name' => 'Kartu Akses Gedung & Smart Key RFID'],
+                [
+                    'serial_number' => 'RFID-TAG-04812',
+                    'condition_on_return' => 'good',
+                    'compensation_amount' => 0.00,
+                    'notes' => 'Akses fisik dinonaktifkan.',
+                ]
+            );
+
+            SystemAccessRevocationLog::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empAni->id, 'system_name' => 'Google Workspace / Corporate Email'],
+                [
+                    'company_id' => $company->id,
+                    'asset_handover_bast_id' => $bast->id,
+                    'account_identifier' => $empAni->email,
+                    'revocation_status' => 'revoked',
+                    'revoked_at' => now()->subDays(2),
+                    'revoked_by_user_id' => $ownerUser->id ?? null,
+                    'api_response_log' => 'Google Workspace Directory API: User account suspended and OAuth tokens revoked.',
+                ]
+            );
+
+            SystemAccessRevocationLog::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empAni->id, 'system_name' => 'Corporate VPN & Internal Gateway'],
+                [
+                    'company_id' => $company->id,
+                    'asset_handover_bast_id' => $bast->id,
+                    'account_identifier' => $empAni->employee_number.'@vpn',
+                    'revocation_status' => 'revoked',
+                    'revoked_at' => now()->subDays(2),
+                    'revoked_by_user_id' => $ownerUser->id ?? null,
+                    'api_response_log' => 'WireGuard RADIUS API: Certificate revoked successfully.',
+                ]
+            );
+
+            // 5. Audit Kepatuhan Kuota Tenaga Kerja Disabilitas (UU No. 8/2016)
+            $disabilityAudit = DisabilityEmploymentAudit::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'audit_code' => 'DISABILITY-AUDIT-2026-0001'],
+                [
+                    'company_id' => $company->id,
+                    'audit_year' => 2026,
+                    'audit_date' => now()->subMonth()->toDateString(),
+                    'entity_type' => 'private_sector',
+                    'total_active_workforce' => 25,
+                    'disability_workforce_count' => 1,
+                    'statutory_quota_percentage' => 1.00,
+                    'actual_quota_percentage' => 4.00,
+                    'statutory_headcount_required' => 1,
+                    'headcount_shortfall' => 0,
+                    'compliance_status' => 'compliant',
+                    'physical_accessibility_score' => 90,
+                    'digital_accessibility_score' => 95,
+                    'reasonable_accommodations_summary' => 'Jalur landai kursi roda (ramp) lobi utama, lift berpenanda suara, toilet difabel lantai 1, dan software pembaca layar (screen reader NVDA).',
+                    'recommendations' => 'Pertahankan dan kembangkan kesempatan magang inklusif bekerja sama dengan ULD Ketenagakerjaan Disnaker DKI Jakarta.',
+                    'audited_by_user_id' => $ownerUser->id ?? null,
+                ]
+            );
+
+            EmployeeDisabilityProfile::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empAni->id],
+                [
+                    'company_id' => $company->id,
+                    'disability_category' => 'physical',
+                    'medical_certificate_number' => 'SKD-DIS-RSUD-2026-041',
+                    'accommodations_provided' => 'Meja kerja khusus dekat akses elevator, fleksibilitas istirahat medis, dan dukungan penugasan hibrida/FWA.',
+                    'accessibility_needs' => 'Jalur evakuasi bebas tangga dan pendamping designated safety warden.',
+                    'emergency_evacuation_assistance_plan' => 'Didampingi oleh Safety Floor Warden saat sirine darurat berbunyi.',
                 ]
             );
         }

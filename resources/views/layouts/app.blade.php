@@ -390,13 +390,28 @@
                             <i data-lucide="user-check" class="w-4 h-4"></i>
                             Evaluasi Probation (SK PKWTT)
                         </a>
+                        <a href="{{ route('company.asset-handover.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.asset-handover.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="package-check" class="w-4 h-4"></i>
+                            BAST Pengembalian Aset
+                        </a>
 
-                        <!-- Talenta & Pengembangan SDM (Phase 4) -->
+                        <!-- Talenta & Pengembangan SDM (Phase 4 & Phase 15) -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Manajemen Talenta</div>
                         <a href="{{ route('company.recruitment.index') }}"
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.recruitment.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="briefcase" class="w-4 h-4"></i>
                             Rekrutmen & Pelamar
+                        </a>
+                        <a href="{{ route('company.ijp.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.ijp.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="repeat" class="w-4 h-4"></i>
+                            Lowongan Internal (IJP)
+                        </a>
+                        <a href="{{ route('company.mentorship.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.mentorship.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            Onboarding Buddy & Mentor
                         </a>
                         <a href="{{ route('company.onboarding.index') }}"
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.onboarding.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
@@ -533,6 +548,16 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.bipartite.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="users" class="w-4 h-4"></i>
                             Forum LKS Bipartit
+                        </a>
+                        <a href="{{ route('company.wltk.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.wltk.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            Wajib Lapor Kemnaker (WLTK)
+                        </a>
+                        <a href="{{ route('company.disability-audit.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.disability-audit.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="accessibility" class="w-4 h-4"></i>
+                            Audit Kuota Disabilitas
                         </a>
 
                         <!-- Portal ESS -->

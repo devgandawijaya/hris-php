@@ -646,4 +646,50 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/', [App\Http\Controllers\Company\BipartiteController::class, 'store'])->name('store');
         Route::post('/{meeting}/report-disnaker', [App\Http\Controllers\Company\BipartiteController::class, 'reportDisnaker'])->name('report-disnaker');
     });
+
+    // --- PHASE 15: TALENT RETENTION, IJP, ONBOARDING MENTORSHIP, ASSET HANDOVER BAST & WLTK STATUTORY REPORTING ---
+
+    // 56. Wajib Lapor Ketenagakerjaan Perusahaan (WLTK / WLKP UU No. 7/1981 & Permenaker 18/2017)
+    Route::prefix('wltk')->name('company.wltk.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\WltkComplianceController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Company\WltkComplianceController::class, 'store'])->name('store');
+        Route::get('/{report}', [App\Http\Controllers\Company\WltkComplianceController::class, 'show'])->name('show');
+        Route::post('/{report}/receipt', [App\Http\Controllers\Company\WltkComplianceController::class, 'submitReceipt'])->name('submit-receipt');
+        Route::get('/{report}/export-json', [App\Http\Controllers\Company\WltkComplianceController::class, 'exportJson'])->name('export-json');
+        Route::get('/{report}/export-csv', [App\Http\Controllers\Company\WltkComplianceController::class, 'exportCsv'])->name('export-csv');
+    });
+
+    // 57. Internal Job Posting (IJP) & Talent Mobility Marketplace
+    Route::prefix('ijp')->name('company.ijp.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\IjpMarketplaceController::class, 'index'])->name('index');
+        Route::post('/vacancies', [App\Http\Controllers\Company\IjpMarketplaceController::class, 'storeVacancy'])->name('vacancies.store');
+        Route::post('/vacancies/{vacancy}/apply', [App\Http\Controllers\Company\IjpMarketplaceController::class, 'apply'])->name('apply');
+        Route::post('/applications/{application}/approve-manager', [App\Http\Controllers\Company\IjpMarketplaceController::class, 'approveManager'])->name('approve-manager');
+        Route::post('/applications/{application}/decide-hr', [App\Http\Controllers\Company\IjpMarketplaceController::class, 'decideHr'])->name('decide-hr');
+    });
+
+    // 58. Onboarding Buddy & Mentorship Program
+    Route::prefix('mentorship')->name('company.mentorship.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\MentorshipController::class, 'index'])->name('index');
+        Route::post('/pairs', [App\Http\Controllers\Company\MentorshipController::class, 'storePair'])->name('pairs.store');
+        Route::post('/checkins/{checkin}/complete', [App\Http\Controllers\Company\MentorshipController::class, 'completeCheckin'])->name('checkins.complete');
+    });
+
+    // 59. Exit Asset Handover BAST & Automated SSO Revocation
+    Route::prefix('asset-handover')->name('company.asset-handover.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\AssetHandoverController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Company\AssetHandoverController::class, 'storeBast'])->name('store');
+        Route::get('/{bast}', [App\Http\Controllers\Company\AssetHandoverController::class, 'show'])->name('show');
+        Route::post('/{bast}/sign', [App\Http\Controllers\Company\AssetHandoverController::class, 'signBast'])->name('sign');
+        Route::get('/{bast}/print', [App\Http\Controllers\Company\AssetHandoverController::class, 'printBast'])->name('print');
+        Route::post('/revoke-access', [App\Http\Controllers\Company\AssetHandoverController::class, 'revokeAccess'])->name('revoke-access');
+    });
+
+    // 60. Audit Kepatuhan Kuota Tenaga Kerja Disabilitas (UU No. 8/2016 Pasal 53)
+    Route::prefix('disability-audit')->name('company.disability-audit.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\DisabilityAuditController::class, 'index'])->name('index');
+        Route::post('/run', [App\Http\Controllers\Company\DisabilityAuditController::class, 'runAudit'])->name('run');
+        Route::post('/profiles', [App\Http\Controllers\Company\DisabilityAuditController::class, 'storeProfile'])->name('profiles.store');
+        Route::get('/{audit}/print', [App\Http\Controllers\Company\DisabilityAuditController::class, 'printReport'])->name('print');
+    });
 });

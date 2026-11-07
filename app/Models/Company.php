@@ -89,5 +89,37 @@ class Company extends Model
     {
         return $this->hasMany(BipartiteMeeting::class);
     }
+
+    // --- PHASE 15: WLTK, IJP, MENTORSHIP, ASSET BAST & DISABILITY AUDIT ---
+
+    public function wltkReports(): HasMany
+    {
+        return $this->hasMany(WltkReport::class);
+    }
+
+    public function ijpVacancies(): HasMany
+    {
+        return $this->hasMany(IjpVacancy::class);
+    }
+
+    public function mentorshipPairs(): HasMany
+    {
+        return $this->hasMany(MentorshipPair::class);
+    }
+
+    public function assetHandoverBasts(): HasMany
+    {
+        return $this->hasMany(AssetHandoverBast::class);
+    }
+
+    public function disabilityEmploymentAudits(): HasMany
+    {
+        return $this->hasMany(DisabilityEmploymentAudit::class);
+    }
+
+    public function employeeDisabilityProfiles(): HasMany
+    {
+        return $this->hasMany(EmployeeDisabilityProfile::class);
+    }
 }
 

@@ -43,6 +43,8 @@ class Employee extends Model
         'basic_salary',
         'photo_path',
         'status',
+        'citizenship',
+        'has_disability',
     ];
 
     protected function casts(): array
@@ -52,6 +54,7 @@ class Employee extends Model
             'join_date' => 'date',
             'end_date' => 'date',
             'basic_salary' => 'decimal:2',
+            'has_disability' => 'boolean',
         ];
     }
 
@@ -355,5 +358,37 @@ class Employee extends Model
     public function overtimeOrders(): HasMany
     {
         return $this->hasMany(OvertimeOrder::class);
+    }
+
+    // --- PHASE 15: IJP, MENTORSHIP, ASSET HANDOVER & DISABILITY ---
+
+    public function ijpApplications(): HasMany
+    {
+        return $this->hasMany(IjpApplication::class);
+    }
+
+    public function menteePairs(): HasMany
+    {
+        return $this->hasMany(MentorshipPair::class, 'mentee_employee_id');
+    }
+
+    public function mentorPairs(): HasMany
+    {
+        return $this->hasMany(MentorshipPair::class, 'mentor_employee_id');
+    }
+
+    public function assetHandoverBasts(): HasMany
+    {
+        return $this->hasMany(AssetHandoverBast::class);
+    }
+
+    public function systemAccessRevocationLogs(): HasMany
+    {
+        return $this->hasMany(SystemAccessRevocationLog::class);
+    }
+
+    public function disabilityProfile(): HasOne
+    {
+        return $this->hasOne(EmployeeDisabilityProfile::class);
     }
 }
