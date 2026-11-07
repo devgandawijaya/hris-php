@@ -190,5 +190,37 @@ class Company extends Model
     {
         return $this->hasMany(InternshipProgram::class);
     }
+
+    // --- PHASE 18: FLEX BENEFITS, STATUTORY THR, ESOP, COB & P2K3 ---
+
+    public function flexBenefitCategories(): HasMany
+    {
+        return $this->hasMany(FlexBenefitCategory::class);
+    }
+
+    public function flexBenefitAllocations(): HasMany
+    {
+        return $this->hasMany(FlexBenefitAllocation::class);
+    }
+
+    public function thrDisbursements(): HasMany
+    {
+        return $this->hasMany(ThrDisbursement::class);
+    }
+
+    public function esopGrants(): HasMany
+    {
+        return $this->hasMany(EsopGrant::class);
+    }
+
+    public function cobInsurancePolicies(): HasMany
+    {
+        return $this->hasMany(CobInsurancePolicy::class);
+    }
+
+    public function p2k3Committees(): HasMany
+    {
+        return $this->hasMany(P2k3Committee::class);
+    }
 }
 

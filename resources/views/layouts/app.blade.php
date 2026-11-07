@@ -613,6 +613,34 @@
                             Pemagangan (Permenaker 6/20)
                         </a>
 
+                        <!-- Flex Benefits, Statutori THR, ESOP, CoB & P2K3 (Phase 18) -->
+                        <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Flex Benefit, Statutori & P2K3</div>
+                        <a href="{{ route('flex-benefits.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('flex-benefits.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            Cafeteria / Flex-Benefit
+                        </a>
+                        <a href="{{ route('thr-disbursements.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('thr-disbursements.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="gift" class="w-4 h-4"></i>
+                            THR Statutori & Denda (Permenaker 6)
+                        </a>
+                        <a href="{{ route('esop.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('esop.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="trending-up" class="w-4 h-4"></i>
+                            ESOP / RSU Opsi Saham
+                        </a>
+                        <a href="{{ route('cob-insurance.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('cob-insurance.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i>
+                            Asuransi CoB BPJS Kesehatan
+                        </a>
+                        <a href="{{ route('p2k3.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('p2k3.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="hard-hat" class="w-4 h-4"></i>
+                            Panitia K3 (P2K3 Disnaker)
+                        </a>
+
                         <!-- Portal ESS -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Portal Karyawan</div>
                         <a href="{{ route('ess.dashboard') }}"

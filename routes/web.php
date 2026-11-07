@@ -779,4 +779,47 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/logbooks/{logbook}/verify', [App\Http\Controllers\Company\InternshipProgramController::class, 'verifyLogbook'])->name('internships.logbooks.verify');
         Route::get('/{internship}/print-certificate', [App\Http\Controllers\Company\InternshipProgramController::class, 'printCertificate'])->name('internships.print-certificate');
     });
+
+    // --- PHASE 18: FLEX BENEFITS, STATUTORY THR, ESOP, COB & P2K3 ---
+
+    // 71. Cafeteria Plan / Flexible Benefits & Poin Plafon Karyawan
+    Route::prefix('flex-benefits')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\FlexBenefitController::class, 'index'])->name('flex-benefits.index');
+        Route::post('/categories', [App\Http\Controllers\Company\FlexBenefitController::class, 'storeCategory'])->name('flex-benefits.categories.store');
+        Route::post('/allocations', [App\Http\Controllers\Company\FlexBenefitController::class, 'storeAllocation'])->name('flex-benefits.allocations.store');
+        Route::post('/claims', [App\Http\Controllers\Company\FlexBenefitController::class, 'storeClaim'])->name('flex-benefits.claims.store');
+        Route::post('/claims/{claim}/approve', [App\Http\Controllers\Company\FlexBenefitController::class, 'approveClaim'])->name('flex-benefits.claims.approve');
+        Route::post('/claims/{claim}/reject', [App\Http\Controllers\Company\FlexBenefitController::class, 'rejectClaim'])->name('flex-benefits.claims.reject');
+    });
+
+    // 72. Tunjangan Hari Raya (THR) Statutori & Denda H-7 (Permenaker No. 6/2016 jo. PP 58/2023)
+    Route::prefix('thr-disbursements')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\ThrDisbursementController::class, 'index'])->name('thr-disbursements.index');
+        Route::post('/calculate', [App\Http\Controllers\Company\ThrDisbursementController::class, 'calculate'])->name('thr-disbursements.calculate');
+        Route::post('/{disbursement}/mark-paid', [App\Http\Controllers\Company\ThrDisbursementController::class, 'markPaid'])->name('thr-disbursements.mark-paid');
+        Route::get('/{disbursement}/print-slip', [App\Http\Controllers\Company\ThrDisbursementController::class, 'printSlip'])->name('thr-disbursements.print-slip');
+    });
+
+    // 73. Employee Stock Option Plan (ESOP / RSU) & Vesting 4 Tahun (UU No. 40/2007)
+    Route::prefix('esop')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\EsopGrantController::class, 'index'])->name('esop.index');
+        Route::post('/', [App\Http\Controllers\Company\EsopGrantController::class, 'store'])->name('esop.store');
+        Route::post('/{grant}/refresh-vesting', [App\Http\Controllers\Company\EsopGrantController::class, 'refreshVesting'])->name('esop.refresh-vesting');
+        Route::post('/{grant}/exercise', [App\Http\Controllers\Company\EsopGrantController::class, 'exercise'])->name('esop.exercise');
+    });
+
+    // 74. Asuransi Kesehatan Komersial & CoB BPJS Kesehatan (Perpres 82/2018)
+    Route::prefix('cob-insurance')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\CobInsuranceController::class, 'index'])->name('cob-insurance.index');
+        Route::post('/', [App\Http\Controllers\Company\CobInsuranceController::class, 'store'])->name('cob-insurance.store');
+        Route::post('/coordinate-claim', [App\Http\Controllers\Company\CobInsuranceController::class, 'coordinateClaim'])->name('cob-insurance.coordinate-claim');
+    });
+
+    // 75. Panitia Pembina Keselamatan & Kesehatan Kerja (P2K3 Disnaker Permenaker No. 04/1987)
+    Route::prefix('p2k3')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\P2k3CommitteeController::class, 'index'])->name('p2k3.index');
+        Route::post('/committee', [App\Http\Controllers\Company\P2k3CommitteeController::class, 'storeCommittee'])->name('p2k3.committee.store');
+        Route::post('/reports', [App\Http\Controllers\Company\P2k3CommitteeController::class, 'storeQuarterlyReport'])->name('p2k3.reports.store');
+        Route::get('/reports/{report}/print', [App\Http\Controllers\Company\P2k3CommitteeController::class, 'printReport'])->name('p2k3.reports.print');
+    });
 });

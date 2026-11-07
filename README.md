@@ -39,10 +39,11 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 21. [21. Phase 15: Talent Retention, IJP, Onboarding Mentorship, Exit Asset BAST & Disnaker Statutory WLTK / Disability Quota](docs/21_PHASE_15_WLTK_IJP_MENTORSHIP_AND_ACCESSIBILITY.md)
 22. [22. Phase 16: TKA & RPTKA Kemnaker, Klaim JKP BPJS, Koperasi Karyawan, Continuous Shift Roster 24/7 & Mediasi Tripartit PPHI](docs/22_PHASE_16_TKA_RPTKA_JKP_KOPERASI_ROSTER_DAN_PPHI.md)
 23. [23. Phase 17: Alih Daya Outsourcing PP 35/2021, Serikat Pekerja PKB UU 21/2000, Satgas PPKS Kepmenaker 88/2023, Pensiun Dini VSS & Pemagangan Permenaker 6/2020](docs/23_PHASE_17_OUTSOURCING_PKB_PPKS_VSS_DAN_PEMAGANGAN.md)
+24. [24. Phase 18: Cafeteria Flex-Benefits, THR Statutori & Denda Permenaker 6/2016, ESOP 4-Year Vesting, Asuransi CoB BPJS Kesehatan & P2K3 Disnaker](docs/24_PHASE_18_FLEX_BENEFITS_THR_ESOP_COB_DAN_P2K3.md)
 
 ---
 
-## 🚀 STATUS IMPLEMENTASI 17 PHASE ROADMAP
+## 🚀 STATUS IMPLEMENTASI 18 PHASE ROADMAP (2 FASE TERSISA MENUJU BLUEPRINT 20 PHASE)
 
 | Phase | Modul & Cakupan Utama | Status |
 |---|---|---|
@@ -63,6 +64,7 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 | **Phase 15: Talent Retention, IJP, Mentorship & WLTK** | Wajib Lapor Ketenagakerjaan Perusahaan (WLTK / WLKP UU 7/1981 & Permenaker 18/2017 Format Daring Kemnaker & Siklus 1 Tahun), Internal Job Posting (IJP) & Mobilitas Karir (Gating Masa Kerja, Bebas SP, Nilai Kinerja & Approval Manajer Asal), Onboarding Buddy & Mentorship 90 Hari (Milestone Check-in Day 30-60-90 & Evaluasi 2 Arah), Exit Asset Handover BAST Terstandar & Pemutusan Akses Akun SSO Otomatis (Google Workspace, Slack, VPN), serta Audit Statutori Kuota Disabilitas (Pasal 53 UU 8/2016 Kuota 1% Swasta / 2% BUMN & Inventarisasi Akomodasi yang Layak). | ✅ Complete |
 | **Phase 16: TKA, JKP, KOPKAR, Roster 24/7 & PPHI** | Pengawasan TKA & RPTKA Kemnaker (PP 34/2021, DKPTKA USD 100 & Blokir Jabatan Personalia), Klaim JKP BPJS Ketenagakerjaan (PP 37/2021 Plafon Rp 5 Juta, Manfaat 45% & 25%), Koperasi Karyawan & Simpan Pinjam (UU 25/1992 & Potong Gaji Payroll), Continuous Shift Roster 24/7 (Kepmenakertrans 233/2003 Pola 3 Shift 4 Grup & Tunjangan Malam/Siaga), serta Mediasi Tripartit & PPHI (UU 2/2004 Anjuran Mediator, Perjanjian Bersama PB vs Gugatan PHI). | ✅ Complete |
 | **Phase 17: Outsourcing, PKB, PPKS, VSS & Pemagangan** | Rekanan Alih Daya & Jaminan TUPE (PP 35/2021 & Putusan MK 27/2011), Serikat Pekerja & Perundingan PKB Batas 30 Hari (UU 21/2000 & Permenaker 28/2014), Satgas PPKS Rahasia & Fasilitas Ramah Perempuan (Kepmenaker 88/2023 & Pasal 76 UU 13/2003), Pensiun Dini Sukarela VSS Multiplier & DPLK (UU 4/2023 P2SK), serta Pemagangan Terstruktur Batas Kuota 20% & Durasi 1 Tahun (Permenaker 6/2020). | ✅ Complete |
+| **Phase 18: Flex Benefits, THR, ESOP, CoB & P2K3** | Cafeteria Flex-Benefits & Plafon Poin Kesejahteraan (UU 13/2003 Pasal 100 & PMK 66/2023), Perhitungan THR Statutori & Denda 5% H-7 (Permenaker 6/2016 jo. PP 58/2023 TER), ESOP / RSU Opsi Saham 4-Year Vesting & 1-Year Cliff (UU 40/2007), Asuransi Tambahan CoB BPJS Kesehatan First Payer (Perpres 82/2018), serta Panitia Pembina K3 (P2K3) & Laporan Triwulan Disnaker (Permenaker 04/1987). | ✅ Complete |
 
 ---
 
@@ -121,6 +123,16 @@ RiHRIS dibangun dengan kepatuhan hukum sebagai pilar utama tanpa mengunci tarif 
     - Skema rasionalisasi sukarela dengan pesangon berlipat (multiplier) + bonus tali asih tunai (*Golden Handshake*), serta akumulasi kepesertaan tabungan hari tua DPLK.
 21. **Pemagangan Terstruktur Dalam Negeri (Permenaker No. 6 Tahun 2020)**:
     - Perjanjian pemagangan tertulis (bukan hubungan kerja), batas kuota maksimal 20% dari total pekerja, durasi maksimal 1 tahun, hak uang saku harian, jaminan BPJS BPU (JKK & JKM), logbook mentor, dan Sertifikat Pemagangan resmi.
+22. **Cafeteria Plan & Flexible Benefits (UU 13/2003 Pasal 100 & PMK 66/2023)**:
+    - Plafon poin kesejahteraan tahunan (1 Poin = Rp 1) untuk kacamata, kebugaran gym, pendidikan anak, dan transportasi hijau.
+23. **THR Statutori & Denda Keterlambatan H-7 (Permenaker No. 6/2016 jo. PP 58/2023)**:
+    - 1 bulan upah untuk $\ge 12$ bulan, pro-rata untuk $1 \le \text{tenure} < 12$ bulan, batas wajib bayar H-7 hari raya, denda 5% jika terlambat (Pasal 10), dan pemotongan TER PPh 21.
+24. **ESOP / RSU Opsi Saham (UU No. 40 Tahun 2007)**:
+    - Jadwal vesting 4 tahun, 12 bulan masa cliff (25% di tahun pertama), strike price tetap, dan pelacakan *intrinsic capital gain*.
+25. **Asuransi Komersial & CoB BPJS Kesehatan (Perpres No. 82/2018 & Permenkes No. 51/2018)**:
+    - BPJS Kesehatan sebagai First Payer, asuransi swasta sebagai penjamin selisih biaya naik kelas rawat inap, mewujudkan perlindungan *zero out-of-pocket*.
+26. **P2K3 & Pelaporan Triwulan Disnaker (UU No. 1/1970 & Permenaker No. 04/1987)**:
+    - Pembentukan mandatori untuk tempat kerja $\ge 100$ orang, Sekretaris wajib Ahli K3 Umum bersertifikat SKP Kemnaker, dan laporan triwulan berkala ke Kantor Disnaker setempat.
 
 ---
 
@@ -224,6 +236,12 @@ docker compose exec app php artisan test
 10. `CareerTransitionsAndSeverancePhase7Test`: Pengujian mutasi/promosi jabatan, kalkulasi kompensasi pesangon PHK PP 35/2021 Pasal 40-52 & Pasal 156 UU Cipta Kerja, dan notification bell real-time.
 11. `FinancialWellbeingAndEngagementPhase8Test`: Pengujian pengajuan kasbon darurat, pembentukan jadwal angsuran payroll PP 36/2021, kalkulasi analitik eNPS (-100 s.d. +100), dan Wall of Recognition.
 12. `SkillMatrixAndSuccessionPhase9Test`: Pengujian kamus keahlian 5 level kemahiran, matriks kesenjangan (skill gap), rekomendasi pelatihan LMS, suksesi posisi kunci Ready Now, dan 4 background worker cron scheduler (PP 35/2021 PKWT H-30, auto-expire SP 6 bulan Pasal 161, monitor probasi PKWTT 3 bulan Pasal 60).
+13. `AdvancedEnterpriseCompliancePhase13Test`: Pengujian Superadmin tenant impersonation, subscription plan gating middleware, CRM leads & eksekutif analitik.
+14. `AdvancedEnterpriseCompliancePhase14Test`: Pengujian K3 SMK3 & klaim JKK BPJS, pajak natura PMK 66/2023, lembur SPL PP 35/2021 & forum LKS Bipartit Permenaker 32/2008.
+15. `AdvancedEnterpriseCompliancePhase15Test`: Pengujian Wajib Lapor Ketenagakerjaan WLTK UU 7/1981, IJP mobilitas karir, buddy mentorship & audit kuota disabilitas UU 8/2016.
+16. `AdvancedEnterpriseCompliancePhase16Test`: Pengujian pengawasan TKA & RPTKA PP 34/2021, klaim JKP BPJS PP 37/2021, koperasi karyawan UU 25/1992, shift roster 24/7 & mediasi tripartit PPHI UU 2/2004.
+17. `AdvancedEnterpriseCompliancePhase17Test`: Pengujian alih daya & jaminan TUPE PP 35/2021, serikat pekerja & PKB UU 21/2000, satgas PPKS & fasilitas ramah perempuan Kepmenaker 88/2023, pensiun dini VSS & pemagangan Permenaker 6/2020.
+18. `AdvancedEnterpriseCompliancePhase18Test`: Pengujian cafeteria flex-benefits, kalkulasi THR statutori & denda 5% H-7 Permenaker 6/2016, ESOP vesting 4 tahun & 1-year cliff UU 40/2007, CoB BPJS Kesehatan Perpres 82/2018, dan komite P2K3 SKP Kemnaker Permenaker 04/1987.
 
 ---
 *RiHRIS — Solusi HRIS SaaS Terpercaya untuk Bisnis Indonesia.*

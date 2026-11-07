@@ -124,6 +124,14 @@ use App\Models\VssApplication;
 use App\Models\DplkParticipation;
 use App\Models\InternshipProgram;
 use App\Models\InternshipLogbook;
+use App\Models\FlexBenefitCategory;
+use App\Models\FlexBenefitAllocation;
+use App\Models\FlexBenefitClaim;
+use App\Models\ThrDisbursement;
+use App\Models\EsopGrant;
+use App\Models\CobInsurancePolicy;
+use App\Models\P2k3Committee;
+use App\Models\P2k3QuarterlyReport;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -2684,6 +2692,160 @@ class DemoCompanySeeder extends Seeder
                     'mentor_feedback' => 'Pemahaman arsitektur sangat cepat dan eksekusi deployment mandiri.',
                     'mentor_rating' => 4.80,
                     'is_verified_by_mentor' => true,
+                ]
+            );
+
+            // --- PHASE 18: FLEX BENEFITS, STATUTORY THR, ESOP, COB & P2K3 ---
+
+            // 1. Cafeteria Plan / Flexible Benefits Categories & Allocations
+            $catMedical = FlexBenefitCategory::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'code' => 'medical_topup'],
+                ['name' => 'Rawat Inap & Top-Up Obat', 'description' => 'Reimbursement biaya rawat inap dan obat non-BPJS', 'is_active' => true]
+            );
+            $catOptical = FlexBenefitCategory::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'code' => 'optical_dental'],
+                ['name' => 'Kacamata, Lensa & Perawatan Gigi', 'description' => 'Pemeriksaan mata, lensa kacamata, dan scaling gigi', 'is_active' => true]
+            );
+            $catWellness = FlexBenefitCategory::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'code' => 'wellness_gym'],
+                ['name' => 'Kebugaran & Fitness Gym', 'description' => 'Langganan gym, yoga, dan kebugaran jasmani', 'is_active' => true]
+            );
+            $catEducation = FlexBenefitCategory::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'code' => 'child_education'],
+                ['name' => 'Bantuan Pendidikan Anak', 'description' => 'SPP sekolah, buku pelajaran, dan kursus anak karyawan', 'is_active' => true]
+            );
+            $catEcoTransport = FlexBenefitCategory::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'code' => 'eco_transport'],
+                ['name' => 'Transportasi Hijau & Transport Publik', 'description' => 'Langganan MRT/LRT/KRL dan subsidi kendaraan listrik', 'is_active' => true]
+            );
+
+            $allocBudi = FlexBenefitAllocation::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'employee_id' => $empBudi->id, 'period_year' => 2026],
+                [
+                    'total_points_allocated' => 5000000.00,
+                    'points_used' => 1250000.00,
+                    'points_remaining' => 3750000.00,
+                    'status' => 'active',
+                ]
+            );
+
+            FlexBenefitClaim::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'claim_number' => 'FLX-2026-OPT001'],
+                [
+                    'flex_benefit_allocation_id' => $allocBudi->id,
+                    'flex_benefit_category_id' => $catOptical->id,
+                    'employee_id' => $empBudi->id,
+                    'claim_date' => now()->subDays(10)->toDateString(),
+                    'claim_amount' => 1250000.00,
+                    'points_deducted' => 1250000.00,
+                    'notes' => 'Penggantian frame dan lensa kacamata anti radiasi komputer.',
+                    'status' => 'approved',
+                    'approved_by_user_id' => $ownerUser->id ?? null,
+                ]
+            );
+
+            // 2. Tunjangan Hari Raya (THR) Statutori & Denda H-7 (Permenaker No. 6/2016 jo. PP 58/2023)
+            ThrDisbursement::firstOrCreate(
+                [
+                    'tenant_id' => $tenant->id,
+                    'company_id' => $company->id,
+                    'employee_id' => $empBudi->id,
+                    'tax_year' => 2026,
+                    'religious_holiday_type' => 'idul_fitri',
+                ],
+                [
+                    'tenure_months' => 36,
+                    'prorata_multiplier' => 1.0000,
+                    'regular_wage_basis' => 15000000.00,
+                    'calculated_thr_amount' => 15000000.00,
+                    'ter_tax_deduction' => 750000.00,
+                    'net_thr_paid' => 14250000.00,
+                    'statutory_payment_deadline' => '2026-03-14', // H-7 Idul Fitri 2026 (21 Maret 2026)
+                    'actual_payment_date' => '2026-03-12', // Tepat waktu sebelum H-7
+                    'late_penalty_interest' => 0.00,
+                    'status' => 'paid',
+                ]
+            );
+
+            ThrDisbursement::firstOrCreate(
+                [
+                    'tenant_id' => $tenant->id,
+                    'company_id' => $company->id,
+                    'employee_id' => $empAni->id,
+                    'tax_year' => 2026,
+                    'religious_holiday_type' => 'idul_fitri',
+                ],
+                [
+                    'tenure_months' => 6,
+                    'prorata_multiplier' => 0.5000,
+                    'regular_wage_basis' => 18000000.00,
+                    'calculated_thr_amount' => 9000000.00,
+                    'ter_tax_deduction' => 180000.00,
+                    'net_thr_paid' => 8820000.00,
+                    'statutory_payment_deadline' => '2026-03-14',
+                    'actual_payment_date' => '2026-03-13',
+                    'late_penalty_interest' => 0.00,
+                    'status' => 'paid',
+                ]
+            );
+
+            // 3. Employee Stock Option Plan (ESOP / RSU) (UU No. 40/2007)
+            $esop = EsopGrant::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'grant_number' => 'ESOP-2024-001'],
+                [
+                    'company_id' => $company->id,
+                    'employee_id' => $empBudi->id,
+                    'grant_date' => now()->subMonths(24)->toDateString(),
+                    'total_shares_granted' => 20000,
+                    'vesting_schedule_years' => 4,
+                    'cliff_months' => 12,
+                    'strike_price_per_share' => 1200.00,
+                    'vested_shares_count' => 10000,
+                    'exercised_shares_count' => 2500,
+                    'fair_market_value' => 4500.00,
+                    'status' => 'active',
+                ]
+            );
+
+            // 4. Asuransi Komersial & CoB BPJS Kesehatan (Perpres No. 82/2018)
+            CobInsurancePolicy::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'employee_id' => $empBudi->id],
+                [
+                    'insurance_company_name' => 'PT Asuransi Allianz Life Indonesia',
+                    'policy_number' => 'ALZ-COB-2026-00918',
+                    'plan_type' => 'Platinum Executive Inpatient',
+                    'bpjs_health_card_number' => '0001889218921',
+                    'cob_claim_mechanism' => 'bpjs_first_payer',
+                    'annual_limit_amount' => 150000000.00,
+                    'current_usage_amount' => 12500000.00,
+                    'status' => 'active',
+                ]
+            );
+
+            // 5. Panitia Pembina Keselamatan & Kesehatan Kerja (P2K3 Disnaker Permenaker No. 04/1987)
+            $p2k3 = P2k3Committee::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id],
+                [
+                    'decree_number' => 'SK-DIR/P2K3/2024/001',
+                    'disnaker_ratification_number' => 'DISNAKER-DKI/P2K3/2024/089',
+                    'formation_date' => '2024-01-10',
+                    'chairman_name' => 'Hendra Gunawan, SE, MM (Direktur Operasional)',
+                    'secretary_ahli_k3_name' => 'Ir. Muhammad Fajar, ST, K3',
+                    'ahli_k3_skp_number' => 'SKP.9921/NAKER-BINWASK3/2024',
+                    'total_committee_members' => 12,
+                    'status' => 'active',
+                ]
+            );
+
+            P2k3QuarterlyReport::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'p2k3_committee_id' => $p2k3->id, 'reporting_year' => 2026, 'quarter' => 'Q1'],
+                [
+                    'workplace_inspections_count' => 4,
+                    'safety_trainings_count' => 2,
+                    'incident_summary' => 'Nihil kecelakaan kerja berat maupun fatal (Zero Accident). Telah dilakukan inspeksi berkala APAR, jalur evakuasi, dan ergonomi kerja.',
+                    'disnaker_submission_date' => now()->subDays(15)->toDateString(),
+                    'disnaker_receipt_number' => 'DISNAKER-DKI/P2K3/2026/0341',
+                    'status' => 'submitted_disnaker',
                 ]
             );
         }
