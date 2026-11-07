@@ -83,6 +83,9 @@ use App\Models\ProbationEvaluation;
 use App\Models\PaymentGatewayTransaction;
 use App\Models\TrainingKirkpatrickEvaluation;
 use App\Models\TrainingCertificate;
+use App\Models\NotificationTemplate;
+use App\Models\NotificationDispatchLog;
+use App\Models\CmsContactMessage;
 use App\Models\FwaSchedule;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
@@ -1749,6 +1752,148 @@ class DemoCompanySeeder extends Seeder
                     'status' => 'approved',
                     'approved_by' => $ownerUser->id ?? null,
                     'approved_at' => now()->subHours(8),
+                ]
+            );
+
+            // ==========================================
+            // PHASE 13: SAAS PLAN GATING, SUPERADMIN IMPERSONATION, CMS LEADS CRM & NOTIFICATION HUB
+            // ==========================================
+
+            // 1. Subscription Plans with Gating Quotas & Feature Flags
+            SubscriptionPlan::updateOrCreate(
+                ['slug' => 'starter'],
+                [
+                    'name' => 'Starter SME',
+                    'price_monthly' => 499000,
+                    'price_yearly' => 4990000,
+                    'max_employees' => 25,
+                    'max_admins' => 2,
+                    'storage_limit_mb' => 2048,
+                    'has_api_access' => false,
+                    'has_whatsapp' => false,
+                    'has_custom_workflows' => false,
+                    'has_bank_disbursal' => false,
+                    'has_ebupot_export' => false,
+                    'has_digital_contracts' => true,
+                    'is_active' => true,
+                ]
+            );
+
+            $proPlan = SubscriptionPlan::updateOrCreate(
+                ['slug' => 'professional'],
+                [
+                    'name' => 'Professional Corporate',
+                    'price_monthly' => 1499000,
+                    'price_yearly' => 14990000,
+                    'max_employees' => 100,
+                    'max_admins' => 5,
+                    'storage_limit_mb' => 10240,
+                    'has_api_access' => true,
+                    'has_whatsapp' => true,
+                    'has_custom_workflows' => true,
+                    'has_bank_disbursal' => true,
+                    'has_ebupot_export' => true,
+                    'has_digital_contracts' => true,
+                    'is_active' => true,
+                ]
+            );
+
+            SubscriptionPlan::updateOrCreate(
+                ['slug' => 'enterprise'],
+                [
+                    'name' => 'Enterprise Unlimited',
+                    'price_monthly' => 3999000,
+                    'price_yearly' => 39990000,
+                    'max_employees' => 1000,
+                    'max_admins' => 20,
+                    'storage_limit_mb' => 51200,
+                    'has_api_access' => true,
+                    'has_whatsapp' => true,
+                    'has_custom_workflows' => true,
+                    'has_bank_disbursal' => true,
+                    'has_ebupot_export' => true,
+                    'has_digital_contracts' => true,
+                    'is_active' => true,
+                ]
+            );
+
+            // Assign Professional Plan to Demo Tenant
+            $activeSub = $tenant->activeSubscription;
+            if ($activeSub) {
+                $activeSub->update(['plan_id' => $proPlan->id, 'status' => 'active']);
+            }
+
+            // 2. Inbound Leads CRM (CMS Contact Messages)
+            CmsContactMessage::firstOrCreate(
+                ['email' => 'hrd@pt-nusantara-logistik.co.id'],
+                [
+                    'name' => 'Rian Hidayat',
+                    'phone' => '081298765432',
+                    'company' => 'PT Nusantara Logistik Ekspres',
+                    'message' => 'Kami membutuhkan solusi HRIS untuk 150 staf lapangan dengan integrasi geofencing GPS dan kalkulasi PPh 21 TER 2024.',
+                    'status' => 'qualified',
+                    'notes' => 'Telah dijadwalkan demo teknis daring via Zoom pada hari Selasa.',
+                    'contacted_by_user_id' => $ownerUser->id ?? null,
+                    'contacted_at' => now()->subDay(),
+                    'is_read' => true,
+                ]
+            );
+
+            CmsContactMessage::firstOrCreate(
+                ['email' => 'management@fintech-karya-bangsa.id'],
+                [
+                    'name' => 'Jessica Tan',
+                    'phone' => '081801234567',
+                    'company' => 'PT Fintech Karya Bangsa',
+                    'message' => 'Mohon penawaran harga paket Enterprise untuk integrasi REST API dan generator disbursal Bank Mandiri MCM.',
+                    'status' => 'new',
+                    'notes' => null,
+                    'is_read' => false,
+                ]
+            );
+
+            // 3. Multi-Channel Notification Templates
+            $tmplExpiry = NotificationTemplate::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'code' => 'PKWT_EXPIRY'],
+                [
+                    'name' => 'Pengingat Berakhir Kontrak PKWT (H-30)',
+                    'channel' => 'whatsapp',
+                    'category' => 'contract',
+                    'subject' => 'Pemberitahuan Berakhir Masa Kontrak PKWT',
+                    'body_template' => 'Yth. Sdr/i {employee_name}, kami menginformasikan masa berlaku perjanjian kerja PKWT Anda di {company_name} akan berakhir. Mohon berkoordinasi dengan tim HRD untuk proses evaluasi dan konversi.',
+                    'variables' => ['employee_name', 'company_name', 'department'],
+                    'is_active' => true,
+                ]
+            );
+
+            $tmplPayslip = NotificationTemplate::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'code' => 'PAYSLIP_READY'],
+                [
+                    'name' => 'Slip Gaji Diterbitkan',
+                    'channel' => 'email',
+                    'category' => 'payroll',
+                    'subject' => 'Slip Gaji Telah Siap - {company_name}',
+                    'body_template' => 'Halo {employee_name}, slip gaji bulanan Anda telah diterbitkan oleh {company_name}. Silakan login ke portal Employee Self-Service (ESS) untuk melihat dan mengunduh rincian bukti pembayaran.',
+                    'variables' => ['employee_name', 'company_name', 'department', 'date_today'],
+                    'is_active' => true,
+                ]
+            );
+
+            // 4. Sample Notification Dispatch Logs
+            NotificationDispatchLog::firstOrCreate(
+                [
+                    'tenant_id' => $tenant->id,
+                    'template_id' => $tmplExpiry->id,
+                    'recipient_target' => $empAni->phone ?? '081234567890',
+                ],
+                [
+                    'channel' => 'whatsapp',
+                    'recipient_name' => $empAni->full_name,
+                    'subject' => null,
+                    'message_preview' => "Yth. Sdr/i {$empAni->full_name}, kami menginformasikan masa berlaku perjanjian kerja PKWT Anda di {$company->name} akan berakhir.",
+                    'status' => 'sent',
+                    'sent_at' => now()->subHours(2),
+                    'dispatched_by_user_id' => $ownerUser->id ?? null,
                 ]
             );
         }

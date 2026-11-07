@@ -80,6 +80,11 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
+// Phase 13: Leave Tenant Impersonation (Available to any authenticated session under impersonation)
+Route::post('/super-admin/impersonate/leave', [App\Http\Controllers\SuperAdmin\ImpersonationController::class, 'leave'])
+    ->name('super.admin.impersonate.leave')
+    ->middleware('auth');
+
 /*
 |--------------------------------------------------------------------------
 | Super Admin Platform Routes (Prefix: /super-admin)
@@ -92,6 +97,25 @@ Route::middleware(['auth', 'super.admin'])->prefix('super-admin')->name('super.a
     Route::get('/companies', [CompanyManagementController::class, 'index'])->name('companies.index');
     Route::get('/companies/{id}', [CompanyManagementController::class, 'show'])->name('companies.show');
     Route::post('/companies/{id}/toggle-status', [CompanyManagementController::class, 'toggleStatus'])->name('companies.toggle-status');
+    Route::post('/companies/{id}/update-plan', [CompanyManagementController::class, 'updatePlan'])->name('companies.update-plan');
+    Route::post('/impersonate/{tenantId}', [App\Http\Controllers\SuperAdmin\ImpersonationController::class, 'start'])->name('impersonate.start');
+
+    // Platform Health & Financial Diagnostics (Phase 13)
+    Route::get('/health', [App\Http\Controllers\SuperAdmin\PlatformHealthController::class, 'index'])->name('health.index');
+
+    // SaaS Subscription Plans (Phase 13)
+    Route::prefix('plans')->name('plans.')->group(function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\SubscriptionPlanController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\SuperAdmin\SubscriptionPlanController::class, 'store'])->name('store');
+        Route::put('/{plan}', [App\Http\Controllers\SuperAdmin\SubscriptionPlanController::class, 'update'])->name('update');
+        Route::post('/{plan}/toggle', [App\Http\Controllers\SuperAdmin\SubscriptionPlanController::class, 'toggle'])->name('toggle');
+    });
+
+    // Inbound Leads CRM (Phase 13)
+    Route::prefix('cms/leads')->name('cms.leads.')->group(function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\CmsLeadController::class, 'index'])->name('index');
+        Route::put('/{lead}', [App\Http\Controllers\SuperAdmin\CmsLeadController::class, 'updateStatus'])->name('update');
+    });
 
     // CMS Management
     Route::get('/cms', [AdminCmsController::class, 'index'])->name('cms.index');
@@ -567,5 +591,20 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::get('/', [FwaController::class, 'index'])->name('index');
         Route::post('/', [FwaController::class, 'store'])->name('store');
         Route::post('/{schedule}/approve', [FwaController::class, 'approve'])->name('approve');
+    });
+
+    // --- PHASE 13: ADVANCED HR ANALYTICS & MULTI-CHANNEL NOTIFICATION HUB ---
+
+    // 49. Advanced HR Analytics, Turnover Formula & Bradford Factor
+    Route::prefix('analytics/advanced')->name('company.analytics.advanced.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\AdvancedHrAnalyticsController::class, 'index'])->name('index');
+        Route::get('/export-csv', [App\Http\Controllers\Company\AdvancedHrAnalyticsController::class, 'exportCsv'])->name('export-csv');
+    });
+
+    // 50. Enterprise Multi-Channel Notification Hub & Template Engine
+    Route::prefix('notifications/hub')->name('company.notifications.hub.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\NotificationHubController::class, 'index'])->name('index');
+        Route::post('/templates', [App\Http\Controllers\Company\NotificationHubController::class, 'storeTemplate'])->name('templates.store');
+        Route::post('/test', [App\Http\Controllers\Company\NotificationHubController::class, 'dispatchTest'])->name('test.dispatch');
     });
 });

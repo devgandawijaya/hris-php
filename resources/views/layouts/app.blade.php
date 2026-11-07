@@ -39,6 +39,22 @@
 </head>
 <body class="h-full antialiased flex flex-col" x-data="{ sidebarOpen: false }">
 
+    @if(session()->has('impersonator_super_admin_id'))
+        <div class="bg-amber-400 text-slate-950 px-4 py-2.5 shadow-md flex items-center justify-between z-50 sticky top-0 border-b border-amber-500 font-sans">
+            <div class="flex items-center gap-2 text-xs font-bold">
+                <i data-lucide="shield-alert" class="w-4 h-4 text-slate-950"></i>
+                <span>MODE IMPERSONASI AKTIF: Anda sedang mengakses sistem sebagai <u>{{ Auth::user()->name }}</u> ({{ Auth::user()->email }}).</span>
+            </div>
+            <form action="{{ route('super.admin.impersonate.leave') }}" method="POST" class="inline">
+                @csrf
+                <button type="submit" class="px-3.5 py-1 bg-slate-900 text-amber-400 hover:bg-black rounded-lg text-xs font-black shadow transition flex items-center gap-1.5">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    Kembali ke Super Admin
+                </button>
+            </form>
+        </div>
+    @endif
+
     <!-- Top Navigation Header -->
     <header class="sticky top-0 z-40 bg-white border-b border-slate-200">
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -202,9 +218,24 @@
                             Kelola Perusahaan
                         </a>
                         <a href="{{ route('super.admin.cms.index') }}"
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('super.admin.cms.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('super.admin.cms.index') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="globe" class="w-4 h-4"></i>
                             CMS Landing Page
+                        </a>
+                        <a href="{{ route('super.admin.health.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('super.admin.health.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="activity" class="w-4 h-4"></i>
+                            Kesehatan & MRR SaaS
+                        </a>
+                        <a href="{{ route('super.admin.plans.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('super.admin.plans.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="credit-card" class="w-4 h-4"></i>
+                            Paket Langganan
+                        </a>
+                        <a href="{{ route('super.admin.cms.leads.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('super.admin.cms.leads.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="inbox" class="w-4 h-4"></i>
+                            Prospek Leads (CRM)
                         </a>
                     @else
                         <!-- General HR Management -->
@@ -396,9 +427,14 @@
                         <!-- Enterprise & Sistem (Phase 5) -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Enterprise & Sistem</div>
                         <a href="{{ route('company.analytics.index') }}"
-                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.analytics.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.analytics.index') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                             Eksekutif Analitik
+                        </a>
+                        <a href="{{ route('company.analytics.advanced.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.analytics.advanced.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="pie-chart" class="w-4 h-4"></i>
+                            Analitik Turnover & Bradford
                         </a>
                         <a href="{{ route('company.workflows.index') }}"
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.workflows.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
@@ -442,6 +478,11 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.announcements.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="megaphone" class="w-4 h-4"></i>
                             Papan Pengumuman
+                        </a>
+                        <a href="{{ route('company.notifications.hub.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.notifications.hub.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="bell" class="w-4 h-4"></i>
+                            Hub Notifikasi Multi-Kanal
                         </a>
                         <a href="{{ route('company.helpdesk.index') }}"
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.helpdesk.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">

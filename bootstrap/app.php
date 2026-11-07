@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant' => IdentifyTenant::class,
             'tenant.access' => EnsureTenantAccess::class,
             'super.admin' => SuperAdminOnly::class,
+            'plan.feature' => \App\Http\Middleware\EnsurePlanFeatureAccess::class,
         ]);
 
         $middleware->web(append: [

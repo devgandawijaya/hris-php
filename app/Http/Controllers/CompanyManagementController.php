@@ -63,5 +63,45 @@ class CompanyManagementController extends Controller
 
         return back()->with('success', "Status perusahaan {$tenant->name} berhasil diubah menjadi: {$newStatus}");
     }
+
+    public function updatePlan(Request $request, int $id): RedirectResponse
+    {
+        $tenant = Tenant::findOrFail($id);
+
+        $validated = $request->validate([
+            'plan_id' => ['required', 'exists:subscription_plans,id'],
+            'billing_cycle' => ['required', 'in:monthly,yearly'],
+        ]);
+
+        $sub = $tenant->activeSubscription;
+        if ($sub) {
+            $sub->update([
+                'plan_id' => $validated['plan_id'],
+                'billing_cycle' => $validated['billing_cycle'],
+                'status' => 'active',
+            ]);
+        } else {
+            \App\Models\Subscription::create([
+                'tenant_id' => $tenant->id,
+                'plan_id' => $validated['plan_id'],
+                'status' => 'active',
+                'billing_cycle' => $validated['billing_cycle'],
+                'starts_at' => now(),
+            ]);
+        }
+
+        AuditLog::create([
+            'tenant_id' => $tenant->id,
+            'user_id' => Auth::id(),
+            'action' => 'tenant.plan_change',
+            'auditable_type' => Tenant::class,
+            'auditable_id' => $tenant->id,
+            'new_values' => $validated,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        return back()->with('success', "Paket langganan perusahaan {$tenant->name} berhasil diubah.");
+    }
 }
 

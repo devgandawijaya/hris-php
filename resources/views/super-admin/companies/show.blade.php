@@ -13,6 +13,14 @@
         </a>
 
         <div class="flex items-center gap-2">
+            <form action="{{ route('super.admin.impersonate.start', $tenant->id) }}" method="POST" onsubmit="return confirm('Mulai sesi impersonasi ke {{ $tenant->name }}? Anda akan masuk sebagai owner perusahaan.');">
+                @csrf
+                <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-900 transition shadow-sm inline-flex items-center gap-1.5">
+                    <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                    Login Sebagai Admin (Impersonate)
+                </button>
+            </form>
+
             <form action="{{ route('super.admin.companies.toggle-status', $tenant->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengubah status perusahaan ini?');">
                 @csrf
                 <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold transition {{ $tenant->status === 'active' ? 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200' }}">
@@ -47,9 +55,22 @@
             </div>
         </div>
 
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-right">
-            <div class="text-[10px] uppercase font-bold text-slate-400">Paket Aktif</div>
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-right">
+            <div class="text-[10px] uppercase font-bold text-slate-400">Paket Langganan Aktif</div>
             <div class="text-sm font-bold text-slate-900 mt-0.5">{{ $tenant->activeSubscription?->plan?->name ?? 'Free Trial' }}</div>
+            <form action="{{ route('super.admin.companies.update-plan', $tenant->id) }}" method="POST" class="mt-2 flex items-center justify-end gap-1.5">
+                @csrf
+                <select name="plan_id" class="px-2 py-1 bg-white border border-slate-300 rounded text-[11px] font-semibold">
+                    @foreach(\App\Models\SubscriptionPlan::where('is_active', true)->get() as $p)
+                        <option value="{{ $p->id }}" {{ $tenant->activeSubscription?->plan_id === $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
+                    @endforeach
+                </select>
+                <select name="billing_cycle" class="px-2 py-1 bg-white border border-slate-300 rounded text-[11px]">
+                    <option value="monthly" {{ $tenant->activeSubscription?->billing_cycle === 'monthly' ? 'selected' : '' }}>Bln</option>
+                    <option value="yearly" {{ $tenant->activeSubscription?->billing_cycle === 'yearly' ? 'selected' : '' }}>Thn</option>
+                </select>
+                <button type="submit" class="px-2.5 py-1 bg-slate-900 text-white rounded text-[11px] font-bold hover:bg-black transition">Ubah</button>
+            </form>
         </div>
     </div>
 

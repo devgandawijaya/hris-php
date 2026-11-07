@@ -14,6 +14,8 @@ use App\Models\EmployeeFamily;
 use App\Models\EmployeeEducation;
 use App\Models\EmployeeEmploymentHistory;
 use App\Models\EmployeeEmergencyContact;
+use App\Models\Tenant;
+use App\Services\Subscription\PlanGatingService;
 use App\Tenancy\TenantManager;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +24,10 @@ use Illuminate\Http\RedirectResponse;
 
 class EmployeeController extends Controller
 {
-    public function __construct(protected TenantManager $tenantManager) {}
+    public function __construct(
+        protected TenantManager $tenantManager,
+        protected PlanGatingService $planGatingService
+    ) {}
 
     public function index(Request $request): View
     {
@@ -56,8 +61,18 @@ class EmployeeController extends Controller
         return view('company.employees.index', compact('employees', 'departments'));
     }
 
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
+        $tenantId = session('active_tenant_id');
+        $tenant = $tenantId ? Tenant::find($tenantId) : null;
+        if ($tenant && !$this->planGatingService->canAddEmployee($tenant)) {
+            $usage = $this->planGatingService->getEmployeeUsage($tenant);
+            return redirect()->route('company.employees.index')->with(
+                'error',
+                "Batas kuota karyawan ({$usage['max']} orang) pada paket langganan Anda ({$usage['plan_name']}) telah tercapai. Harap upgrade paket untuk menambah karyawan baru."
+            );
+        }
+
         $departments = Department::with('positions')->get();
         $positions = Position::all();
         $ptkpList = array_keys(config('compliance.ptkp', []));
@@ -67,6 +82,11 @@ class EmployeeController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $tenantId = session('active_tenant_id');
+        $tenant = $tenantId ? Tenant::find($tenantId) : null;
+        if ($tenant && !$this->planGatingService->canAddEmployee($tenant)) {
+            return back()->withInput()->with('error', "Gagal menambah karyawan: Kuota paket langganan aktif telah mencapai batas maksimal.");
+        }
         $tenantId = $this->tenantManager->getActiveTenantId();
         $company = $this->tenantManager->getCompany();
 
