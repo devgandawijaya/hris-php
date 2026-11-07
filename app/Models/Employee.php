@@ -467,4 +467,21 @@ class Employee extends Model
     {
         return $this->hasOne(CobInsurancePolicy::class);
     }
+
+    // --- PHASE 19: ESG SUSTAINABILITY, COMMUTER CARBON & ERGONOMICS ---
+
+    public function commuteProfile(): HasOne
+    {
+        return $this->hasOne(EmployeeCommuteProfile::class);
+    }
+
+    public function ergonomicAssessments(): HasMany
+    {
+        return $this->hasMany(ErgonomicAssessment::class);
+    }
+
+    public function digitalStressSurveys(): HasMany
+    {
+        return $this->hasMany(DigitalStressSurvey::class);
+    }
 }

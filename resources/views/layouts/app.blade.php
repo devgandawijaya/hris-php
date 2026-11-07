@@ -641,6 +641,24 @@
                             Panitia K3 (P2K3 Disnaker)
                         </a>
 
+                        <!-- ESG Sustainability, Carbon Commute & Ergonomics (Phase 19) -->
+                        <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">ESG & Keberlanjutan</div>
+                        <a href="{{ route('esg.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('esg.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="leaf" class="w-4 h-4"></i>
+                            ESG & Laporan Berkelanjutan (POJK 51)
+                        </a>
+                        <a href="{{ route('carbon-commute.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('carbon-commute.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="car" class="w-4 h-4"></i>
+                            Emisi Komuter Karyawan (Scope 3)
+                        </a>
+                        <a href="{{ route('ergonomics.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('ergonomics.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="activity" class="w-4 h-4"></i>
+                            Ergonomi K3 & Beban Digital
+                        </a>
+
                         <!-- Portal ESS -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Portal Karyawan</div>
                         <a href="{{ route('ess.dashboard') }}"

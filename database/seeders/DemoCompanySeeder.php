@@ -132,6 +132,11 @@ use App\Models\EsopGrant;
 use App\Models\CobInsurancePolicy;
 use App\Models\P2k3Committee;
 use App\Models\P2k3QuarterlyReport;
+use App\Models\EsgMetricSnapshot;
+use App\Models\EmployeeCommuteProfile;
+use App\Models\CommuteEmissionAudit;
+use App\Models\ErgonomicAssessment;
+use App\Models\DigitalStressSurvey;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -2846,6 +2851,93 @@ class DemoCompanySeeder extends Seeder
                     'disnaker_submission_date' => now()->subDays(15)->toDateString(),
                     'disnaker_receipt_number' => 'DISNAKER-DKI/P2K3/2026/0341',
                     'status' => 'submitted_disnaker',
+                ]
+            );
+
+            // --- PHASE 19: ESG SUSTAINABILITY, COMMUTER CARBON & ERGONOMICS ---
+
+            // 1. ESG Ketenagakerjaan & Sustainability Snapshot (POJK No. 51/2017 & GRI Standards)
+            EsgMetricSnapshot::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'reporting_year' => 2026],
+                [
+                    'gender_pay_gap_ratio' => 0.9850,
+                    'female_workforce_pct' => 42.50,
+                    'female_leadership_pct' => 38.00,
+                    'board_diversity_pct' => 33.33,
+                    'avg_training_hours_per_employee' => 28.50,
+                    'annual_turnover_rate' => 6.20,
+                    'lost_time_injury_frequency_rate' => 0.00,
+                    'status' => 'published',
+                    'sustainability_notes' => 'Laporan Berkelanjutan Ketenagakerjaan Terverifikasi Sesuai POJK 51/2017 & GRI Standards.',
+                ]
+            );
+
+            // 2. Profil Komuter Karyawan (Scope 3 GHG Commuter Emissions)
+            EmployeeCommuteProfile::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'employee_id' => $empBudi->id],
+                [
+                    'home_to_office_distance_km' => 18.50,
+                    'primary_commute_mode' => 'public_transit',
+                    'weekly_office_days' => 3,
+                    'weekly_remote_days' => 2,
+                    'weekly_emissions_kg_co2' => 4.55,
+                    'weekly_avoided_emissions_kg_co2' => 3.03,
+                ]
+            );
+
+            EmployeeCommuteProfile::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'employee_id' => $empAni->id],
+                [
+                    'home_to_office_distance_km' => 12.00,
+                    'primary_commute_mode' => 'motorcycle_gasoline',
+                    'weekly_office_days' => 4,
+                    'weekly_remote_days' => 1,
+                    'weekly_emissions_kg_co2' => 9.89,
+                    'weekly_avoided_emissions_kg_co2' => 2.47,
+                ]
+            );
+
+            CommuteEmissionAudit::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'audit_year' => 2026],
+                [
+                    'participating_employees_count' => 2,
+                    'total_annual_commute_distance_km' => 10350.00,
+                    'gross_emissions_ton_co2e' => 0.99,
+                    'avoided_emissions_wfh_ton_co2e' => 0.28,
+                    'net_commute_emissions_ton_co2e' => 0.71,
+                    'status' => 'completed',
+                ]
+            );
+
+            // 3. Ergonomi Tempat Kerja & Beban Kerja Digital (Permenaker No. 5/2018)
+            ErgonomicAssessment::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'workstation_type' => 'Engineering Workstation Pod 4'],
+                [
+                    'department_id' => $deptTech->id,
+                    'employee_id' => $empBudi->id,
+                    'assessment_date' => now()->subDays(20)->toDateString(),
+                    'lighting_lux_level' => 380,
+                    'chair_lumbar_support_compliant' => true,
+                    'monitor_eye_level_compliant' => true,
+                    'keyboard_wrist_rest_compliant' => true,
+                    'posture_risk_level' => 'low',
+                    'ergonomic_compliance_score' => 100.00,
+                    'corrective_actions' => 'Stasiun kerja memenuhi seluruh standar ergonomis Permenaker 5/2018.',
+                    'status' => 'completed',
+                ]
+            );
+
+            DigitalStressSurvey::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'employee_id' => $empBudi->id],
+                [
+                    'survey_date' => now()->subDays(10)->toDateString(),
+                    'avg_daily_screen_hours' => 7.5,
+                    'meeting_fatigue_score' => 2,
+                    'after_hours_communication_score' => 2,
+                    'eyestrain_headache_frequency' => 2,
+                    'digital_burnout_risk_index' => 29.25,
+                    'risk_classification' => 'low',
+                    'coping_recommendation' => 'Beban kerja digital terpantau seimbang dan produktif.',
                 ]
             );
         }

@@ -822,4 +822,27 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/reports', [App\Http\Controllers\Company\P2k3CommitteeController::class, 'storeQuarterlyReport'])->name('p2k3.reports.store');
         Route::get('/reports/{report}/print', [App\Http\Controllers\Company\P2k3CommitteeController::class, 'printReport'])->name('p2k3.reports.print');
     });
+
+    // --- PHASE 19: ESG SUSTAINABILITY, COMMUTER CARBON & ERGONOMICS ---
+
+    // 76. ESG Sustainability Reporting Ketenagakerjaan (POJK No. 51/2017 & GRI Standards)
+    Route::prefix('esg')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\EsgReportingController::class, 'index'])->name('esg.index');
+        Route::post('/generate', [App\Http\Controllers\Company\EsgReportingController::class, 'generateSnapshot'])->name('esg.generate');
+        Route::get('/{snapshot}/print', [App\Http\Controllers\Company\EsgReportingController::class, 'printReport'])->name('esg.print');
+    });
+
+    // 77. Scope 3 GHG Commuter Emissions (GHG Protocol & Penghematan FWA/WFH)
+    Route::prefix('carbon-commute')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\CarbonCommuteController::class, 'index'])->name('carbon-commute.index');
+        Route::post('/profiles', [App\Http\Controllers\Company\CarbonCommuteController::class, 'storeProfile'])->name('carbon-commute.profiles.store');
+        Route::post('/audit', [App\Http\Controllers\Company\CarbonCommuteController::class, 'runAudit'])->name('carbon-commute.audit.run');
+    });
+
+    // 78. Ergonomi Tempat Kerja & Beban Kerja Digital (Permenaker No. 5/2018)
+    Route::prefix('ergonomics')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\ErgonomicStressController::class, 'index'])->name('ergonomics.index');
+        Route::post('/assessments', [App\Http\Controllers\Company\ErgonomicStressController::class, 'storeErgonomic'])->name('ergonomics.assessments.store');
+        Route::post('/surveys', [App\Http\Controllers\Company\ErgonomicStressController::class, 'storeStressSurvey'])->name('ergonomics.surveys.store');
+    });
 });

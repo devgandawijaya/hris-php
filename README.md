@@ -40,10 +40,11 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 22. [22. Phase 16: TKA & RPTKA Kemnaker, Klaim JKP BPJS, Koperasi Karyawan, Continuous Shift Roster 24/7 & Mediasi Tripartit PPHI](docs/22_PHASE_16_TKA_RPTKA_JKP_KOPERASI_ROSTER_DAN_PPHI.md)
 23. [23. Phase 17: Alih Daya Outsourcing PP 35/2021, Serikat Pekerja PKB UU 21/2000, Satgas PPKS Kepmenaker 88/2023, Pensiun Dini VSS & Pemagangan Permenaker 6/2020](docs/23_PHASE_17_OUTSOURCING_PKB_PPKS_VSS_DAN_PEMAGANGAN.md)
 24. [24. Phase 18: Cafeteria Flex-Benefits, THR Statutori & Denda Permenaker 6/2016, ESOP 4-Year Vesting, Asuransi CoB BPJS Kesehatan & P2K3 Disnaker](docs/24_PHASE_18_FLEX_BENEFITS_THR_ESOP_COB_DAN_P2K3.md)
+25. [25. Phase 19: ESG Ketenagakerjaan POJK 51/2017 & GRI Standards, Emisi Karbon Komuter Scope 3, Ergonomi K3 & Beban Digital](docs/25_PHASE_19_ESG_SUSTAINABILITY_CARBON_COMMUTE_DAN_ERGONOMI.md)
 
 ---
 
-## 🚀 STATUS IMPLEMENTASI 18 PHASE ROADMAP (2 FASE TERSISA MENUJU BLUEPRINT 20 PHASE)
+## 🚀 STATUS IMPLEMENTASI 19 PHASE ROADMAP (1 FASE TERSISA MENUJU BLUEPRINT FINAL 20 PHASE)
 
 | Phase | Modul & Cakupan Utama | Status |
 |---|---|---|
@@ -65,6 +66,7 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 | **Phase 16: TKA, JKP, KOPKAR, Roster 24/7 & PPHI** | Pengawasan TKA & RPTKA Kemnaker (PP 34/2021, DKPTKA USD 100 & Blokir Jabatan Personalia), Klaim JKP BPJS Ketenagakerjaan (PP 37/2021 Plafon Rp 5 Juta, Manfaat 45% & 25%), Koperasi Karyawan & Simpan Pinjam (UU 25/1992 & Potong Gaji Payroll), Continuous Shift Roster 24/7 (Kepmenakertrans 233/2003 Pola 3 Shift 4 Grup & Tunjangan Malam/Siaga), serta Mediasi Tripartit & PPHI (UU 2/2004 Anjuran Mediator, Perjanjian Bersama PB vs Gugatan PHI). | ✅ Complete |
 | **Phase 17: Outsourcing, PKB, PPKS, VSS & Pemagangan** | Rekanan Alih Daya & Jaminan TUPE (PP 35/2021 & Putusan MK 27/2011), Serikat Pekerja & Perundingan PKB Batas 30 Hari (UU 21/2000 & Permenaker 28/2014), Satgas PPKS Rahasia & Fasilitas Ramah Perempuan (Kepmenaker 88/2023 & Pasal 76 UU 13/2003), Pensiun Dini Sukarela VSS Multiplier & DPLK (UU 4/2023 P2SK), serta Pemagangan Terstruktur Batas Kuota 20% & Durasi 1 Tahun (Permenaker 6/2020). | ✅ Complete |
 | **Phase 18: Flex Benefits, THR, ESOP, CoB & P2K3** | Cafeteria Flex-Benefits & Plafon Poin Kesejahteraan (UU 13/2003 Pasal 100 & PMK 66/2023), Perhitungan THR Statutori & Denda 5% H-7 (Permenaker 6/2016 jo. PP 58/2023 TER), ESOP / RSU Opsi Saham 4-Year Vesting & 1-Year Cliff (UU 40/2007), Asuransi Tambahan CoB BPJS Kesehatan First Payer (Perpres 82/2018), serta Panitia Pembina K3 (P2K3) & Laporan Triwulan Disnaker (Permenaker 04/1987). | ✅ Complete |
+| **Phase 19: ESG, Carbon Commute & Ergonomics** | ESG Sustainability Reporting Ketenagakerjaan (POJK 51/2017 & GRI 401/404/405), Analisis Gender Pay Ratio & Diversitas Direksi/Manajemen, Emisi Komuter Scope 3 GHG Protocol & Reduksi WFH/FWA, serta Audit Ergonomi Stasiun Kerja & Beban Digital (Permenaker 5/2018). | ✅ Complete |
 
 ---
 
@@ -133,6 +135,10 @@ RiHRIS dibangun dengan kepatuhan hukum sebagai pilar utama tanpa mengunci tarif 
     - BPJS Kesehatan sebagai First Payer, asuransi swasta sebagai penjamin selisih biaya naik kelas rawat inap, mewujudkan perlindungan *zero out-of-pocket*.
 26. **P2K3 & Pelaporan Triwulan Disnaker (UU No. 1/1970 & Permenaker No. 04/1987)**:
     - Pembentukan mandatori untuk tempat kerja $\ge 100$ orang, Sekretaris wajib Ahli K3 Umum bersertifikat SKP Kemnaker, dan laporan triwulan berkala ke Kantor Disnaker setempat.
+27. **Laporan Keberlanjutan ESG & Kesetaraan Upah Gender (OJK POJK No. 51/2017 & GRI Standards)**:
+    - Pengukuran otomatis Gender Pay Gap Ratio (GRI 405-2), persentase kepemimpinan wanita (GRI 405-1), jam pelatihan L&D (GRI 404-1), dan tingkat cedera kerja LTIFR (GRI 403-9).
+28. **Jejak Karbon Komuter Scope 3 & Ergonomi K3 Lingkungan Kerja (Permenaker No. 5/2018)**:
+    - Estimasi emisi gas rumah kaca komuter per moda transportasi (DEFRA/IPCC), penghematan karbon berkat FWA/WFH, audit intensitas cahaya stasiun kerja minimal 300 Lux, dan pemantauan digital burnout index.
 
 ---
 
@@ -242,6 +248,7 @@ docker compose exec app php artisan test
 16. `AdvancedEnterpriseCompliancePhase16Test`: Pengujian pengawasan TKA & RPTKA PP 34/2021, klaim JKP BPJS PP 37/2021, koperasi karyawan UU 25/1992, shift roster 24/7 & mediasi tripartit PPHI UU 2/2004.
 17. `AdvancedEnterpriseCompliancePhase17Test`: Pengujian alih daya & jaminan TUPE PP 35/2021, serikat pekerja & PKB UU 21/2000, satgas PPKS & fasilitas ramah perempuan Kepmenaker 88/2023, pensiun dini VSS & pemagangan Permenaker 6/2020.
 18. `AdvancedEnterpriseCompliancePhase18Test`: Pengujian cafeteria flex-benefits, kalkulasi THR statutori & denda 5% H-7 Permenaker 6/2016, ESOP vesting 4 tahun & 1-year cliff UU 40/2007, CoB BPJS Kesehatan Perpres 82/2018, dan komite P2K3 SKP Kemnaker Permenaker 04/1987.
+19. `AdvancedEnterpriseCompliancePhase19Test`: Pengujian metrik snapshot ESG POJK 51/2017 & GRI 405, emisi komuter Scope 3 mobil/motor/EV/transit, audit ergonomi stasiun kerja Permenaker 5/2018 & survei burnout kognitif.
 
 ---
 *RiHRIS — Solusi HRIS SaaS Terpercaya untuk Bisnis Indonesia.*

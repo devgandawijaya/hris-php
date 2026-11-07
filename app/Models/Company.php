@@ -222,5 +222,32 @@ class Company extends Model
     {
         return $this->hasMany(P2k3Committee::class);
     }
+
+    // --- PHASE 19: ESG SUSTAINABILITY, COMMUTER CARBON & ERGONOMICS ---
+
+    public function esgMetricSnapshots(): HasMany
+    {
+        return $this->hasMany(EsgMetricSnapshot::class);
+    }
+
+    public function employeeCommuteProfiles(): HasMany
+    {
+        return $this->hasMany(EmployeeCommuteProfile::class);
+    }
+
+    public function commuteEmissionAudits(): HasMany
+    {
+        return $this->hasMany(CommuteEmissionAudit::class);
+    }
+
+    public function ergonomicAssessments(): HasMany
+    {
+        return $this->hasMany(ErgonomicAssessment::class);
+    }
+
+    public function digitalStressSurveys(): HasMany
+    {
+        return $this->hasMany(DigitalStressSurvey::class);
+    }
 }
 
