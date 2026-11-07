@@ -39,5 +39,20 @@ class Company extends Model
     {
         return $this->hasMany(Employee::class);
     }
+
+    public function jobGrades(): HasMany
+    {
+        return $this->hasMany(JobGrade::class);
+    }
+
+    public function businessTrips(): HasMany
+    {
+        return $this->hasMany(BusinessTripOrder::class);
+    }
+
+    public function offboardingClearances(): HasMany
+    {
+        return $this->hasMany(OffboardingClearance::class);
+    }
 }
 

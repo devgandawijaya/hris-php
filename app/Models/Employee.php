@@ -32,6 +32,7 @@ class Employee extends Model
         'bpjs_kes_number',
         'department_id',
         'position_id',
+        'job_grade_id',
         'reports_to_id',
         'employment_status',
         'join_date',
@@ -284,5 +285,30 @@ class Employee extends Model
     public function supervisedPips(): HasMany
     {
         return $this->hasMany(PerformanceImprovementPlan::class, 'supervisor_employee_id');
+    }
+
+    public function jobGrade(): BelongsTo
+    {
+        return $this->belongsTo(JobGrade::class);
+    }
+
+    public function businessTrips(): HasMany
+    {
+        return $this->hasMany(BusinessTripOrder::class);
+    }
+
+    public function offboardingClearances(): HasMany
+    {
+        return $this->hasMany(OffboardingClearance::class);
+    }
+
+    public function paklaringLetters(): HasMany
+    {
+        return $this->hasMany(WorkExperienceLetter::class);
+    }
+
+    public function taxForms1721A1(): HasMany
+    {
+        return $this->hasMany(TaxForm1721A1Record::class);
     }
 }

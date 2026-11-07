@@ -12,7 +12,7 @@ RiHRIS adalah aplikasi Software-as-a-Service (SaaS) Multi-Tenant berbasis arsite
 
 ---
 
-## 📑 DAFTAR DOKUMENTASI LENGKAP (16 MODUL TEKNIS)
+## 📑 DAFTAR DOKUMENTASI LENGKAP (17 MODUL TEKNIS)
 
 Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumentasi secara lengkap pada direktori `docs/`:
 
@@ -32,10 +32,11 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 14. [14. Phase 8: Financial Well-being & Advanced Engagement](docs/14_PHASE_8_FINANCIAL_WELLBEING_AND_ENGAGEMENT.md)
 15. [15. Phase 9: Competency Skill Matrix, Succession & Background Cron](docs/15_PHASE_9_SKILL_MATRIX_AND_SUCCESSION.md)
 16. [16. Phase 10: Appraisals 360°, Extended Profile, Bank Disbursal & UMK/BPJS Gateway](docs/16_PHASE_10_APPRAISALS_EXTENDED_PROFILE_AND_BANK_DISBURSAL.md)
+17. [17. Phase 11: Wage Scales Permenaker 1/2017, SPPD Business Travel, Offboarding Clearance & e-Bupot 21/26](docs/17_PHASE_11_WAGE_SCALES_SPPD_CLEARANCE_AND_EBUPOT.md)
 
 ---
 
-## 🚀 STATUS IMPLEMENTASI 10 PHASE ROADMAP
+## 🚀 STATUS IMPLEMENTASI 11 PHASE ROADMAP
 
 | Phase | Modul & Cakupan Utama | Status |
 |---|---|---|
@@ -49,6 +50,7 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 | **Phase 8: Financial Well-being & Engagement** | Fasilitas Pinjaman Karyawan & Kasbon Darurat (Bunga 0%, Angsuran Payroll), Survei Kepuasan Kerja & Metrik eNPS, Wall of Fame (Kudos), dan Kalender Agenda Acara Perusahaan. | ✅ Complete |
 | **Phase 9: Competency, Succession & Cron** | Kamus Kompetensi & Standar Jabatan (Level 1-5), Matriks Kesenjangan (Skill Gap Analysis), Rencana Suksesi Kepemimpinan (Ready Now / 1 Yr / 2+ Yrs), dan Background Cron Workers Kepatuhan Ketenagakerjaan (PP 35/2021 PKWT H-30, SP 6 Bulan Pasal 161, Probasi 3 Bulan Pasal 60). | ✅ Complete |
 | **Phase 10: Appraisals, Lifecycle & Bank Disbursal** | Evaluasi Kinerja 360° Multi-Penilai & Bimbingan PIP, Profil Mandiri Karyawan Lengkap (Keluarga, Pendidikan, Pengalaman Kerja, Kontak Darurat, Supervisor Atasan), Generator Mass Disbursal Perbankan Nasional (BCA KlikBCA, Mandiri MCM, BNI Direct, BRI CMS), Audit Kepatuhan Upah Minimum Regional (UMK PP 51/2023), Berkas Statutori BPJS SIPP Online & e-Dabu, serta Kios Presensi QR Touchless Geofencing. | ✅ Complete |
+| **Phase 11: Wage Scale, SPPD, Clearance & e-Bupot** | Struktur & Skala Upah Permenaker 1/2017 & Compa-Ratio Audit, SPPD Perjalanan Dinas & Rekonsiliasi Settlement Uang Muka Kasbon, Matriks Offboarding Clearance 4 Pilar & Surat Paklaring Resmi (KUHPerdata Pasal 1603p), Generator Bukti Potong 1721-A1 & Ekspor Masal CSV e-Bupot 21/26 (PER-2/PJ/2024), serta Bagan Struktur Organisasi Interaktif Rekursif. | ✅ Complete |
 
 ---
 

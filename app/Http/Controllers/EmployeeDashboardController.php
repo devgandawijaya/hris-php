@@ -33,6 +33,10 @@ use App\Models\EmployeeFamily;
 use App\Models\EmployeeEducation;
 use App\Models\EmployeeEmploymentHistory;
 use App\Models\EmployeeEmergencyContact;
+use App\Models\BusinessTripOrder;
+use App\Models\TaxForm1721A1Record;
+use App\Models\WorkExperienceLetter;
+use App\Services\Travel\BusinessTripService;
 use App\Services\Talent\Appraisal360Service;
 use App\Services\Attendance\QrAttendanceService;
 use App\Services\Finance\EmployeeLoanService;
@@ -59,7 +63,8 @@ class EmployeeDashboardController extends Controller
         protected SurveyAndRecognitionService $surveyService,
         protected SkillMatrixService $skillMatrixService,
         protected Appraisal360Service $appraisalService,
-        protected QrAttendanceService $qrAttendanceService
+        protected QrAttendanceService $qrAttendanceService,
+        protected BusinessTripService $travelService
     ) {}
 
     public function index(): View
@@ -185,6 +190,16 @@ class EmployeeDashboardController extends Controller
             $myEducations = EmployeeEducation::where('employee_id', $employee->id)->get();
             $myEmploymentHistories = EmployeeEmploymentHistory::where('employee_id', $employee->id)->get();
             $myEmergencyContacts = EmployeeEmergencyContact::where('employee_id', $employee->id)->get();
+
+            // Phase 11: Business Trips (SPPD), Form 1721-A1 Bukti Potong & Paklaring
+            $myBusinessTrips = BusinessTripOrder::with(['advances', 'expenses', 'settlement'])
+                ->where('employee_id', $employee->id)
+                ->latest()
+                ->get();
+            $myTaxForms1721A1 = TaxForm1721A1Record::where('employee_id', $employee->id)
+                ->latest('tax_year')
+                ->get();
+            $myPaklaring = WorkExperienceLetter::where('employee_id', $employee->id)->first();
         } else {
             $myWarnings = collect();
             $myGrievances = collect();
@@ -210,6 +225,9 @@ class EmployeeDashboardController extends Controller
             $myEducations = collect();
             $myEmploymentHistories = collect();
             $myEmergencyContacts = collect();
+            $myBusinessTrips = collect();
+            $myTaxForms1721A1 = collect();
+            $myPaklaring = null;
         }
 
         return view('employee.dashboard', compact(
@@ -246,7 +264,10 @@ class EmployeeDashboardController extends Controller
             'myFamilies',
             'myEducations',
             'myEmploymentHistories',
-            'myEmergencyContacts'
+            'myEmergencyContacts',
+            'myBusinessTrips',
+            'myTaxForms1721A1',
+            'myPaklaring'
         ));
     }
 
@@ -709,5 +730,74 @@ class EmployeeDashboardController extends Controller
         EmployeeEmergencyContact::create($validated);
 
         return back()->with('success', 'Kontak darurat berhasil disimpan.');
+    }
+
+    public function submitEssBusinessTrip(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        $validated = $request->validate([
+            'purpose' => ['required', 'string', 'max:255'],
+            'origin_city' => ['required', 'string', 'max:100'],
+            'destination_city' => ['required', 'string', 'max:100'],
+            'departure_date' => ['required', 'date'],
+            'return_date' => ['required', 'date', 'after_or_equal:departure_date'],
+            'transport_type' => ['required', 'string'],
+            'lodging_needed' => ['boolean'],
+            'advance_requested' => ['nullable', 'numeric', 'min:0'],
+            'notes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $order = $this->travelService->createTripOrder($employee, $validated);
+
+        return back()->with('success', "Permohonan perjalanan dinas (SPPD) {$order->sppd_number} berhasil diajukan.");
+    }
+
+    public function addEssBusinessTripExpense(Request $request, BusinessTripOrder $order): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        if ($order->employee_id !== $employee->id) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $validated = $request->validate([
+            'expense_category' => ['required', 'string'],
+            'amount' => ['required', 'numeric', 'min:1'],
+            'expense_date' => ['required', 'date'],
+            'description' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $this->travelService->addExpense($order, $validated);
+
+        return back()->with('success', 'Pengeluaran dinas berhasil dicatat.');
+    }
+
+    public function viewEssForm1721A1(TaxForm1721A1Record $record): View
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        if ($record->employee_id !== $employee->id) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $record->load(['company', 'employee.department', 'employee.position']);
+        return view('company.taxes.form1721a1', compact('record'));
+    }
+
+    public function viewEssPaklaring(WorkExperienceLetter $letter): View
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        if ($letter->employee_id !== $employee->id) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $letter->load(['company', 'employee.department', 'employee.position']);
+        return view('company.clearance.paklaring', compact('letter'));
     }
 }

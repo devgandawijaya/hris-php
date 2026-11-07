@@ -71,6 +71,14 @@ use App\Models\BankDisbursalBatch;
 use App\Models\RegionalMinimumWage;
 use App\Models\BpjsComplianceReport;
 use App\Models\BranchQrKiosk;
+use App\Models\JobGrade;
+use App\Models\BusinessTripOrder;
+use App\Models\BusinessTripAdvance;
+use App\Models\BusinessTripExpense;
+use App\Models\BusinessTripSettlement;
+use App\Models\OffboardingClearance;
+use App\Models\WorkExperienceLetter;
+use App\Models\TaxForm1721A1Record;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -1382,6 +1390,233 @@ class DemoCompanySeeder extends Seeder
                     'file_format' => 'csv',
                     'status' => 'generated',
                     'created_by_user_id' => $ownerUser->id ?? null,
+                ]
+            );
+        }
+
+        // --- PHASE 11: WAGE SCALES, SPPD TRAVEL, CLEARANCE & 1721-A1 ---
+
+        // 1. Job Grades & Wage Scales (Permenaker 1/2017)
+        $gradeG1 = JobGrade::firstOrCreate(
+            ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'grade_code' => 'G1'],
+            [
+                'name' => 'Pelaksana / Junior Staff',
+                'level_order' => 1,
+                'min_salary' => 5500000.00,
+                'mid_salary' => 7000000.00,
+                'max_salary' => 8500000.00,
+                'spread_percentage' => 54.55,
+                'midpoint_progression' => 0.00,
+                'description' => 'Tingkat pelaksana operasional pemula dengan pengalaman 0-2 tahun.',
+                'is_active' => true,
+            ]
+        );
+
+        $gradeG2 = JobGrade::firstOrCreate(
+            ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'grade_code' => 'G2'],
+            [
+                'name' => 'Officer / Senior Specialist',
+                'level_order' => 2,
+                'min_salary' => 8000000.00,
+                'mid_salary' => 11000000.00,
+                'max_salary' => 14000000.00,
+                'spread_percentage' => 75.00,
+                'midpoint_progression' => 57.14,
+                'description' => 'Tenaga ahli berpengalaman dan mandiri dengan kualifikasi spesialis.',
+                'is_active' => true,
+            ]
+        );
+
+        $gradeG3 = JobGrade::firstOrCreate(
+            ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'grade_code' => 'G3'],
+            [
+                'name' => 'Manager / Team Lead',
+                'level_order' => 3,
+                'min_salary' => 13500000.00,
+                'mid_salary' => 18000000.00,
+                'max_salary' => 22500000.00,
+                'spread_percentage' => 66.67,
+                'midpoint_progression' => 63.64,
+                'description' => 'Pemimpin tim fungsional dan pengambil keputusan strategis departemen.',
+                'is_active' => true,
+            ]
+        );
+
+        // Assign employees to grades
+        if (isset($empBudi)) {
+            $empBudi->job_grade_id = $gradeG2->id;
+            $empBudi->saveQuietly();
+        }
+        if (isset($empAni)) {
+            $empAni->job_grade_id = $gradeG3->id;
+            $empAni->saveQuietly();
+        }
+
+        // 2. Business Trip Order (SPPD)
+        if (isset($empBudi)) {
+            $sppd = BusinessTripOrder::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'sppd_number' => 'SPPD/2026/I/001'],
+                [
+                    'company_id' => $company->id,
+                    'employee_id' => $empBudi->id,
+                    'purpose' => 'Audit Operasional & Implementasi Sistem POS Cabang Surabaya',
+                    'origin_city' => 'Jakarta',
+                    'destination_city' => 'Surabaya',
+                    'departure_date' => now()->subDays(5)->toDateString(),
+                    'return_date' => now()->subDays(2)->toDateString(),
+                    'duration_days' => 4,
+                    'transport_type' => 'train',
+                    'lodging_needed' => true,
+                    'per_diem_daily_rate' => 250000.00,
+                    'estimated_budget' => 3000000.00,
+                    'status' => 'completed',
+                    'approved_by' => $ownerUser->id ?? null,
+                    'approved_at' => now()->subDays(6),
+                    'notes' => 'Perjalanan dinas telah mendapatkan otorisasi dari Direksi.',
+                ]
+            );
+
+            // Advance
+            $advance = BusinessTripAdvance::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'business_trip_order_id' => $sppd->id],
+                [
+                    'amount_requested' => 2500000.00,
+                    'amount_approved' => 2500000.00,
+                    'status' => 'disbursed',
+                    'transfer_reference' => 'TRF-BCA-99281',
+                    'disbursed_at' => now()->subDays(5),
+                    'disbursed_by' => $ownerUser->id ?? null,
+                ]
+            );
+
+            // Expenses
+            BusinessTripExpense::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'business_trip_order_id' => $sppd->id, 'expense_category' => 'transport'],
+                [
+                    'amount' => 600000.00,
+                    'expense_date' => now()->subDays(5)->toDateString(),
+                    'description' => 'Tiket Kereta Eksekutif Argo Bromo Anggrek PP',
+                    'is_verified' => true,
+                ]
+            );
+            BusinessTripExpense::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'business_trip_order_id' => $sppd->id, 'expense_category' => 'lodging'],
+                [
+                    'amount' => 1200000.00,
+                    'expense_date' => now()->subDays(4)->toDateString(),
+                    'description' => 'Hotel Santika Premiere Gubeng Surabaya (2 malam)',
+                    'is_verified' => true,
+                ]
+            );
+            BusinessTripExpense::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'business_trip_order_id' => $sppd->id, 'expense_category' => 'per_diem'],
+                [
+                    'amount' => 750000.00,
+                    'expense_date' => now()->subDays(3)->toDateString(),
+                    'description' => 'Uang saku harian 3 hari dinas',
+                    'is_verified' => true,
+                ]
+            );
+
+            // Settlement
+            BusinessTripSettlement::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'business_trip_order_id' => $sppd->id],
+                [
+                    'total_advance' => 2500000.00,
+                    'total_expenses' => 2550000.00,
+                    'balance_amount' => 50000.00, // company reimburses employee Rp 50.000
+                    'status' => 'finalized',
+                    'audited_by' => $ownerUser->id ?? null,
+                    'audited_at' => now()->subDays(1),
+                    'settled_at' => now()->subDays(1),
+                    'notes' => 'Settlement selesai, selisih kurang bayar Rp 50.000 dibayarkan via transfer.',
+                ]
+            );
+
+            // 3. Tax Form 1721-A1 Record
+            TaxForm1721A1Record::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empBudi->id, 'tax_year' => 2026],
+                [
+                    'company_id' => $company->id,
+                    'nomor_bupot' => '1.1-12.26-0000001',
+                    'pemotong_npwp' => $company->npwp ?? '01.234.567.8-012.000',
+                    'pemotong_nama' => $company->legal_name ?? $company->name,
+                    'penerima_npwp' => $empBudi->npwp,
+                    'penerima_nik' => $empBudi->nik_ktp ?? '3171012345670001',
+                    'penerima_nama' => $empBudi->full_name,
+                    'penerima_alamat' => 'DKI Jakarta',
+                    'status_ptkp' => $empBudi->tax_ptkp_status ?? 'K/1',
+                    'jumlah_tanggungan' => 1,
+                    'masa_perolehan_awal' => 1,
+                    'masa_perolehan_akhir' => 12,
+                    'gaji_pensiun_tht' => 120000000.00,
+                    'tunjangan_pph' => 0.00,
+                    'tunjangan_lain_lembur' => 15000000.00,
+                    'honorarium_imbalan' => 0.00,
+                    'premi_asuransi_jkk_jkm' => 2500000.00,
+                    'natura_kenikmatan' => 0.00,
+                    'tantiem_bonus_thr' => 10000000.00,
+                    'penghasilan_bruto' => 147500000.00,
+                    'biaya_jabatan' => 6000000.00,
+                    'iuran_pensiun_jht' => 3600000.00,
+                    'total_pengurang' => 9600000.00,
+                    'penghasilan_neto' => 137900000.00,
+                    'penghasilan_neto_masa_sebelumnya' => 0.00,
+                    'jumlah_penghasilan_neto_disetahunkan' => 137900000.00,
+                    'ptkp' => 63000000.00, // K/1
+                    'pkp' => 74900000.00,
+                    'pph21_terutang_setahun' => 4985000.00,
+                    'pph21_telah_dipotong' => 4985000.00,
+                    'pph21_kurang_lebih_bayar' => 0.00,
+                    'status' => 'published',
+                    'published_at' => now(),
+                ]
+            );
+
+            // 4. Offboarding Clearance & Paklaring
+            $clearance = OffboardingClearance::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empBudi->id],
+                [
+                    'company_id' => $company->id,
+                    'resignation_date' => now()->subDays(30)->toDateString(),
+                    'last_working_day' => now()->toDateString(),
+                    'separation_reason' => 'resigned',
+                    'hr_status' => 'cleared',
+                    'hr_notes' => 'ID Card dan kartu BPJS fisik telah diterima.',
+                    'hr_cleared_by' => $ownerUser->id ?? null,
+                    'hr_cleared_at' => now()->subDays(2),
+                    'it_status' => 'cleared',
+                    'it_notes' => 'Laptop Dell, akun email, dan akses GitHub telah di-wipe.',
+                    'it_cleared_by' => $ownerUser->id ?? null,
+                    'it_cleared_at' => now()->subDays(2),
+                    'finance_status' => 'cleared',
+                    'finance_notes' => 'Kewajiban kasbon dan pinjaman nihil.',
+                    'finance_cleared_by' => $ownerUser->id ?? null,
+                    'finance_cleared_at' => now()->subDays(1),
+                    'supervisor_status' => 'cleared',
+                    'supervisor_notes' => 'Dokumen dan repositori project telah diserahterimakan lengkap.',
+                    'supervisor_cleared_by' => $empAni->id ?? null,
+                    'supervisor_cleared_at' => now()->subDays(1),
+                    'overall_status' => 'completed',
+                    'completed_at' => now(),
+                ]
+            );
+
+            WorkExperienceLetter::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'offboarding_clearance_id' => $clearance->id],
+                [
+                    'company_id' => $company->id,
+                    'employee_id' => $empBudi->id,
+                    'letter_number' => '001/HRD-PKL/I/2026',
+                    'signer_name' => 'Dewi Sartika, S.Psi., M.M.',
+                    'signer_position' => 'Head of People Operations',
+                    'start_date' => $empBudi->join_date ? $empBudi->join_date->toDateString() : '2023-01-15',
+                    'end_date' => now()->toDateString(),
+                    'last_position' => 'Senior Full Stack Engineer',
+                    'last_department' => 'Technology & Engineering',
+                    'conduct_appraisal' => 'very_good',
+                    'achievement_summary' => 'Menunjukkan loyalitas, integritas, dan dedikasi luar biasa dalam pengembangan core HR & perbankan.',
+                    'issued_date' => now()->toDateString(),
                 ]
             );
         }

@@ -227,6 +227,16 @@
                             <i data-lucide="network" class="w-4 h-4"></i>
                             Struktur Organisasi
                         </a>
+                        <a href="{{ route('company.orgchart.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.orgchart.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="sitemap" class="w-4 h-4"></i>
+                            Bagan Hirarki Visual
+                        </a>
+                        <a href="{{ route('company.clearances.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.clearances.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="user-x" class="w-4 h-4"></i>
+                            Clearance & Paklaring
+                        </a>
 
                         <!-- Presensi & Jadwal (Phase 2) -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Waktu & Kehadiran</div>
@@ -276,6 +286,11 @@
                             <i data-lucide="sliders" class="w-4 h-4"></i>
                             Komponen Gaji
                         </a>
+                        <a href="{{ route('company.wage-scales.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.wage-scales.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="scale" class="w-4 h-4"></i>
+                            Struktur & Skala Upah
+                        </a>
                         <a href="{{ route('company.thr.index') }}"
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.thr.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="gift" class="w-4 h-4"></i>
@@ -284,7 +299,12 @@
                         <a href="{{ route('company.tax.index') }}"
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.tax.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-                            PPh 21 & Bukti Potong 1721-A1
+                            PPh 21 Tahunan (TER)
+                        </a>
+                        <a href="{{ route('company.taxes.ebupot.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.taxes.ebupot.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="file-check-2" class="w-4 h-4"></i>
+                            e-Bupot & 1721-A1
                         </a>
                         <a href="{{ route('company.disbursal.index') }}"
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.disbursal.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
@@ -303,6 +323,11 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.reimbursements.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="receipt" class="w-4 h-4"></i>
                             Reimbursement & Biaya
+                        </a>
+                        <a href="{{ route('company.business-trips.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.business-trips.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="plane" class="w-4 h-4"></i>
+                            Perjalanan Dinas (SPPD)
                         </a>
                         <a href="{{ route('company.contracts.index') }}"
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.contracts.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">

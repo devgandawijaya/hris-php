@@ -167,6 +167,20 @@
             Keluarga & Edukasi
         </button>
 
+        <button type="button" @click="activeEssTab = 'sppd'"
+                :class="activeEssTab === 'sppd' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="plane" class="w-4 h-4"></i>
+            SPPD & Dinas
+        </button>
+
+        <button type="button" @click="activeEssTab = 'tax-docs'"
+                :class="activeEssTab === 'tax-docs' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="file-check-2" class="w-4 h-4"></i>
+            Bukti Potong & Dokumen
+        </button>
+
         <button type="button" @click="activeEssTab = 'profile'"
                 :class="activeEssTab === 'profile' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
@@ -2004,6 +2018,185 @@
                 @endforelse
             </div>
         </div>
+    </div>
+
+    <!-- TAB 13: PERJALANAN DINAS (SPPD) -->
+    <div x-show="activeEssTab === 'sppd'" x-cloak class="space-y-6">
+        <!-- Form Pengajuan SPPD -->
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-sm font-bold text-slate-900 mb-1">Permohonan Perjalanan Dinas Luar Kota (SPPD)</h3>
+            <p class="text-xs text-slate-500 mb-4">Ajukan surat tugas dinas, kebutuhan akomodasi/transportasi, dan permohonan uang muka operasional.</p>
+            <form method="POST" action="{{ route('ess.business-trip.submit') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                @csrf
+                <div class="lg:col-span-2">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Maksud & Keperluan Tugas *</label>
+                    <input type="text" name="purpose" required placeholder="Contoh: Kunjungan instalasi sistem di klien Surabaya" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Kota Asal *</label>
+                    <input type="text" name="origin_city" value="Jakarta" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Kota Tujuan *</label>
+                    <input type="text" name="destination_city" required placeholder="Surabaya / Medan / Bali" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Berangkat *</label>
+                    <input type="date" name="departure_date" required value="{{ date('Y-m-d') }}" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Kembali *</label>
+                    <input type="date" name="return_date" required value="{{ date('Y-m-d', strtotime('+3 days')) }}" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Moda Transportasi *</label>
+                    <select name="transport_type" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                        <option value="flight">Pesawat Udara</option>
+                        <option value="train">Kereta Api</option>
+                        <option value="company_car">Mobil Dinas</option>
+                        <option value="personal_vehicle">Kendaraan Pribadi</option>
+                        <option value="public_transport">Transportasi Umum</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Uang Muka Dimohon (Rp)</label>
+                    <input type="number" name="advance_requested" min="0" placeholder="Rp 0" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div class="lg:col-span-4 flex items-center justify-end">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition">
+                        Kirim Permohonan SPPD
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabel Riwayat SPPD Saya -->
+        <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-sm font-bold text-slate-900">Riwayat Penugasan Dinas Saya</h3>
+                <span class="text-xs text-slate-400">{{ $myBusinessTrips->count() }} Penugasan</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-600">
+                    <thead class="bg-slate-50 text-slate-700 uppercase tracking-wider font-semibold">
+                        <tr>
+                            <th class="px-5 py-3">No. SPPD</th>
+                            <th class="px-5 py-3">Destinasi & Maksud</th>
+                            <th class="px-5 py-3">Jadwal Tugas</th>
+                            <th class="px-5 py-3 text-right">Uang Muka</th>
+                            <th class="px-5 py-3 text-right">Realisasi</th>
+                            <th class="px-5 py-3 text-center">Status</th>
+                            <th class="px-5 py-3 text-center">Klaim Kwitansi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse($myBusinessTrips as $trip)
+                            @php
+                                $totAdv = $trip->advances->whereIn('status', ['approved', 'disbursed'])->sum('amount_approved');
+                                $totExp = $trip->expenses->sum('amount');
+                            @endphp
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="px-5 py-3 font-mono font-bold text-red-600">{{ $trip->sppd_number }}</td>
+                                <td class="px-5 py-3">
+                                    <div class="font-bold text-slate-800">{{ $trip->destination_city }}</div>
+                                    <div class="text-[11px] text-slate-500 line-clamp-1">{{ $trip->purpose }}</div>
+                                </td>
+                                <td class="px-5 py-3">
+                                    <div>{{ $trip->departure_date->format('d/m/Y') }} - {{ $trip->return_date->format('d/m/Y') }}</div>
+                                    <div class="text-[10px] text-slate-400">{{ $trip->duration_days }} Hari</div>
+                                </td>
+                                <td class="px-5 py-3 text-right font-mono">Rp {{ number_format($totAdv, 0, ',', '.') }}</td>
+                                <td class="px-5 py-3 text-right font-mono font-bold text-slate-800">Rp {{ number_format($totExp, 0, ',', '.') }}</td>
+                                <td class="px-5 py-3 text-center">
+                                    <span class="px-2 py-0.5 rounded-full font-bold text-[10px] uppercase {{ $trip->status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }}">
+                                        {{ $trip->status }}
+                                    </span>
+                                </td>
+                                <td class="px-5 py-3 text-center">
+                                    <details class="relative inline-block text-left">
+                                        <summary class="cursor-pointer text-[11px] text-blue-600 font-bold hover:underline">+ Input Kwitansi</summary>
+                                        <div class="absolute right-0 mt-1 w-64 bg-white rounded-xl shadow-xl border border-slate-200 p-3 z-30 text-left">
+                                            <form method="POST" action="{{ route('ess.business-trip.expense', $trip) }}" class="space-y-2">
+                                                @csrf
+                                                <select name="expense_category" required class="w-full text-xs border-slate-300 rounded px-2 py-1">
+                                                    <option value="per_diem">Uang Saku Harian</option>
+                                                    <option value="transport">Transportasi / Tiket</option>
+                                                    <option value="lodging">Hotel / Penginapan</option>
+                                                    <option value="meals">Makan</option>
+                                                    <option value="other">Lainnya</option>
+                                                </select>
+                                                <input type="number" name="amount" required min="1" placeholder="Nominal Rp" class="w-full text-xs border-slate-300 rounded px-2 py-1">
+                                                <input type="date" name="expense_date" required value="{{ date('Y-m-d') }}" class="w-full text-xs border-slate-300 rounded px-2 py-1">
+                                                <input type="text" name="description" placeholder="Keterangan kwitansi" class="w-full text-xs border-slate-300 rounded px-2 py-1">
+                                                <button type="submit" class="w-full py-1 bg-red-600 text-white rounded text-[11px] font-bold">Simpan</button>
+                                            </form>
+                                        </div>
+                                    </details>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="px-5 py-8 text-center text-slate-400">Belum ada permohonan perjalanan dinas.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 14: BUKTI POTONG PAJAK & DOKUMEN RESMI -->
+    <div x-show="activeEssTab === 'tax-docs'" x-cloak class="space-y-6">
+        <!-- 1721-A1 Tax Records -->
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-sm font-bold text-slate-900 mb-1">Bukti Pemotongan PPh 21 Tahunan (Formulir 1721-A1)</h3>
+            <p class="text-xs text-slate-500 mb-4">Unduh bukti potong resmi Anda untuk pelaporan SPT Tahunan Wajib Pajak Orang Pribadi di DJP Online.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @forelse($myTaxForms1721A1 as $taxDoc)
+                    <div class="rounded-xl border border-slate-200 p-4 bg-slate-50 hover:bg-slate-100 transition space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700">Tahun Pajak {{ $taxDoc->tax_year }}</span>
+                            <span class="font-mono text-[10px] text-slate-400">{{ $taxDoc->status_ptkp }}</span>
+                        </div>
+                        <div class="font-mono font-bold text-slate-800 text-xs">{{ $taxDoc->nomor_bupot }}</div>
+                        <div class="text-xs text-slate-500 flex justify-between">
+                            <span>Penghasilan Bruto:</span>
+                            <span class="font-mono font-medium">Rp {{ number_format($taxDoc->penghasilan_bruto, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="text-xs text-slate-500 flex justify-between">
+                            <span>PPh 21 Dipotong:</span>
+                            <span class="font-mono font-bold text-slate-800">Rp {{ number_format($taxDoc->pph21_telah_dipotong, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="pt-2 border-t border-slate-200 flex justify-end">
+                            <a href="{{ route('ess.form1721a1.show', $taxDoc) }}" target="_blank" class="px-3 py-1 bg-slate-900 text-white rounded text-xs font-bold hover:bg-slate-800">
+                                🖨️ Cetak / Unduh 1721-A1
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-3 py-6 text-center text-xs text-slate-400">
+                        Belum ada Formulir 1721-A1 yang diterbitkan untuk akun ini.
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Paklaring Letter -->
+        @if($myPaklaring)
+            <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-200 text-emerald-800">Dokumen Resmi Tersedia</span>
+                        <h4 class="text-sm font-bold text-emerald-950 mt-1">Surat Pengalaman Kerja (Paklaring)</h4>
+                        <p class="text-xs text-emerald-700 mt-0.5">Nomor: {{ $myPaklaring->letter_number }} | Masa Pengabdian: {{ $myPaklaring->start_date->format('d/m/Y') }} s.d. {{ $myPaklaring->end_date->format('d/m/Y') }}</p>
+                    </div>
+                    <a href="{{ route('ess.paklaring.show', $myPaklaring) }}" target="_blank" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition">
+                        🖨️ Buka Dokumen Paklaring
+                    </a>
+                </div>
+            </div>
+        @endif
     </div>
 
 </div>

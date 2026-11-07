@@ -46,6 +46,11 @@ use App\Http\Controllers\Company\Appraisal360Controller;
 use App\Http\Controllers\Company\BankDisbursalController;
 use App\Http\Controllers\Company\ComplianceGatewayController;
 use App\Http\Controllers\Company\QrKioskController;
+use App\Http\Controllers\Company\WageScaleController;
+use App\Http\Controllers\Company\BusinessTripController;
+use App\Http\Controllers\Company\OffboardingClearanceController;
+use App\Http\Controllers\Company\TaxEbupotController;
+use App\Http\Controllers\Company\OrgChartController;
 use App\Http\Controllers\NotificationController;
 
 /*
@@ -277,6 +282,10 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/profile/education', [EmployeeDashboardController::class, 'addEssEducation'])->name('profile.education');
         Route::post('/profile/history', [EmployeeDashboardController::class, 'addEssEmploymentHistory'])->name('profile.history');
         Route::post('/profile/emergency', [EmployeeDashboardController::class, 'addEssEmergencyContact'])->name('profile.emergency');
+        Route::post('/business-trip', [EmployeeDashboardController::class, 'submitEssBusinessTrip'])->name('business-trip.submit');
+        Route::post('/business-trip/{order}/expense', [EmployeeDashboardController::class, 'addEssBusinessTripExpense'])->name('business-trip.expense');
+        Route::get('/form1721a1/{record}', [EmployeeDashboardController::class, 'viewEssForm1721A1'])->name('form1721a1.show');
+        Route::get('/paklaring/{letter}', [EmployeeDashboardController::class, 'viewEssPaklaring'])->name('paklaring.show');
         Route::get('/payslip/{payroll}', [PayslipController::class, 'employeePayslip'])->name('payslip.show');
     });
 
@@ -466,4 +475,47 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::delete('/emergency/{contactId}', [EmployeeController::class, 'deleteEmergencyContact'])->name('emergency.delete');
         Route::post('/supervisor', [EmployeeController::class, 'assignSupervisor'])->name('supervisor.assign');
     });
+
+    // --- PHASE 11: WAGE SCALES (PERMENAKER 1/2017), SPPD BUSINESS TRAVEL, CLEARANCE OFBOARDING & E-BUPOT 21/26 ---
+
+    // 39. Struktur & Skala Upah (Permenaker No. 1 Tahun 2017)
+    Route::prefix('wage-scales')->name('company.wage-scales.')->group(function () {
+        Route::get('/', [WageScaleController::class, 'index'])->name('index');
+        Route::post('/grades', [WageScaleController::class, 'storeGrade'])->name('grades.store');
+        Route::post('/assign/{employee}', [WageScaleController::class, 'assignEmployee'])->name('assign');
+        Route::get('/export', [WageScaleController::class, 'exportAudit'])->name('export');
+    });
+
+    // 40. SPPD (Surat Perintah Perjalanan Dinas) & Settlement
+    Route::prefix('business-trips')->name('company.business-trips.')->group(function () {
+        Route::get('/', [BusinessTripController::class, 'index'])->name('index');
+        Route::post('/', [BusinessTripController::class, 'store'])->name('store');
+        Route::get('/{order}', [BusinessTripController::class, 'show'])->name('show');
+        Route::get('/{order}/print', [BusinessTripController::class, 'print'])->name('print');
+        Route::post('/{order}/approve', [BusinessTripController::class, 'approve'])->name('approve');
+        Route::post('/advances/{advance}/disburse', [BusinessTripController::class, 'disburseAdvance'])->name('advances.disburse');
+        Route::post('/{order}/expenses', [BusinessTripController::class, 'addExpense'])->name('expenses.store');
+        Route::post('/{order}/settle', [BusinessTripController::class, 'settle'])->name('settle');
+    });
+
+    // 41. Offboarding Clearance Checklist & Paklaring Generator
+    Route::prefix('clearances')->name('company.clearances.')->group(function () {
+        Route::get('/', [OffboardingClearanceController::class, 'index'])->name('index');
+        Route::post('/', [OffboardingClearanceController::class, 'store'])->name('store');
+        Route::get('/{clearance}', [OffboardingClearanceController::class, 'show'])->name('show');
+        Route::post('/{clearance}/signoff/{department}', [OffboardingClearanceController::class, 'signOff'])->name('signoff');
+        Route::post('/{clearance}/paklaring', [OffboardingClearanceController::class, 'issuePaklaring'])->name('paklaring.issue');
+        Route::get('/paklaring/{letter}/print', [OffboardingClearanceController::class, 'printPaklaring'])->name('paklaring.print');
+    });
+
+    // 42. e-Bupot 21/26 & Formulir 1721-A1 Generator (PER-2/PJ/2024)
+    Route::prefix('ebupot')->name('company.taxes.ebupot.')->group(function () {
+        Route::get('/', [TaxEbupotController::class, 'index'])->name('index');
+        Route::post('/generate', [TaxEbupotController::class, 'generate'])->name('generate');
+        Route::get('/form1721a1/{record}', [TaxEbupotController::class, 'showForm'])->name('form1721a1');
+        Route::get('/export-csv', [TaxEbupotController::class, 'exportCsv'])->name('export');
+    });
+
+    // 43. Interactive Organizational Chart
+    Route::get('/orgchart', [OrgChartController::class, 'index'])->name('company.orgchart.index');
 });
