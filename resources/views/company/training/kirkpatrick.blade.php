@@ -11,7 +11,7 @@
             <p class="text-sm text-slate-500 mt-1">Pengukuran efektivitas L&D 4-Level (Reaksi, Pembelajaran Pre/Post-Test, Perilaku Kerja, dan Dampak Bisnis) + Penerbitan Sertifikat Digital Terverifikasi.</p>
         </div>
         <div class="flex items-center gap-3">
-            <a href="{{ route('company.trainings.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm">
+            <a href="{{ route('company.training.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm">
                 <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 Kembali ke Manajemen Training
             </a>

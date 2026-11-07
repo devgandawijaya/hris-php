@@ -153,6 +153,7 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::delete('/{id}', [EmployeeController::class, 'destroy'])->name('destroy');
         Route::post('/{id}/documents', [EmployeeController::class, 'uploadDocument'])->name('documents.upload');
         Route::post('/{id}/mutations', [EmployeeController::class, 'recordMutation'])->name('mutations.record');
+        Route::post('/{id}/mutation', [EmployeeController::class, 'recordMutation'])->name('mutation');
     });
 
     // 2. Organization Management
@@ -289,6 +290,7 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/{course}/enroll', [TrainingController::class, 'enroll'])->name('enroll');
         Route::post('/enrollments/{enrollment}/complete', [TrainingController::class, 'complete'])->name('complete');
     });
+    Route::get('/trainings', [TrainingController::class, 'index'])->name('company.trainings.index');
 
     // 16. Employee Self-Service (ESS)
     Route::prefix('ess')->name('ess.')->group(function () {

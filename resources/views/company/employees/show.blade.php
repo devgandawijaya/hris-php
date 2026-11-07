@@ -247,7 +247,7 @@
             <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wider flex items-center gap-2">
                 <i data-lucide="trending-up" class="w-4 h-4 text-red-600"></i> Buat Surat Keputusan (SK) Mutasi / Promosi Baru
             </h3>
-            <form action="{{ route('company.employees.mutation', $employee->id) }}" method="POST" class="space-y-4">
+            <form action="{{ route('company.employees.mutations.record', $employee->id) }}" method="POST" class="space-y-4">
                 @csrf
                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div>
