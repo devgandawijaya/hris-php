@@ -692,4 +692,46 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/profiles', [App\Http\Controllers\Company\DisabilityAuditController::class, 'storeProfile'])->name('profiles.store');
         Route::get('/{audit}/print', [App\Http\Controllers\Company\DisabilityAuditController::class, 'printReport'])->name('print');
     });
+
+    // --- PHASE 16: TKA & RPTKA, JKP BPJS, KOPERASI KARYAWAN, CONTINUOUS SHIFT ROSTER, DAN PPHI MEDIASI ---
+
+    // 61. Manajemen Tenaga Kerja Asing (TKA) & RPTKA (PP No. 34/2021)
+    Route::prefix('expatriates')->name('company.expatriates.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\ExpatriatePermitController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Company\ExpatriatePermitController::class, 'store'])->name('store');
+        Route::get('/{permit}', [App\Http\Controllers\Company\ExpatriatePermitController::class, 'show'])->name('show');
+        Route::post('/{permit}/status', [App\Http\Controllers\Company\ExpatriatePermitController::class, 'updateStatus'])->name('update-status');
+    });
+
+    // 62. Jaminan Kehilangan Pekerjaan (JKP BPJS TK & PP No. 37/2021)
+    Route::prefix('jkp')->name('company.jkp.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\JkpClaimController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Company\JkpClaimController::class, 'store'])->name('store');
+        Route::get('/{certification}', [App\Http\Controllers\Company\JkpClaimController::class, 'show'])->name('show');
+        Route::get('/{certification}/print', [App\Http\Controllers\Company\JkpClaimController::class, 'printRecommendation'])->name('print');
+    });
+
+    // 63. Koperasi Karyawan & Simpan Pinjam (UU No. 25/1992 & UU 13/2003 Pasal 100)
+    Route::prefix('cooperative')->name('company.cooperative.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\EmployeeCooperativeController::class, 'index'])->name('index');
+        Route::post('/members', [App\Http\Controllers\Company\EmployeeCooperativeController::class, 'storeMember'])->name('members.store');
+        Route::post('/transactions', [App\Http\Controllers\Company\EmployeeCooperativeController::class, 'storeTransaction'])->name('transactions.store');
+        Route::post('/payroll-deductions', [App\Http\Controllers\Company\EmployeeCooperativeController::class, 'runPayrollDeduction'])->name('payroll-deductions.run');
+    });
+
+    // 64. Pola Shift Khusus 24/7 & Roster (Kepmenakertrans No. KEP-233/MEN/2003)
+    Route::prefix('rosters')->name('company.rosters.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\ContinuousShiftRosterController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Company\ContinuousShiftRosterController::class, 'store'])->name('store');
+        Route::post('/assign-group', [App\Http\Controllers\Company\ContinuousShiftRosterController::class, 'assignGroup'])->name('assign-group');
+    });
+
+    // 65. Penyelesaian Perselisihan Hubungan Industrial / PPHI (UU No. 2/2004)
+    Route::prefix('disputes')->name('company.disputes.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\TripartiteDisputeController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Company\TripartiteDisputeController::class, 'store'])->name('store');
+        Route::post('/{dispute}/recommendation', [App\Http\Controllers\Company\TripartiteDisputeController::class, 'recordRecommendation'])->name('recommendation.store');
+        Route::post('/{dispute}/response', [App\Http\Controllers\Company\TripartiteDisputeController::class, 'recordResponse'])->name('response.store');
+        Route::get('/{dispute}/print', [App\Http\Controllers\Company\TripartiteDisputeController::class, 'printDispute'])->name('print');
+    });
 });

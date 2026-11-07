@@ -104,6 +104,13 @@ use App\Models\AssetHandoverItem;
 use App\Models\SystemAccessRevocationLog;
 use App\Models\DisabilityEmploymentAudit;
 use App\Models\EmployeeDisabilityProfile;
+use App\Models\ExpatriatePermit;
+use App\Models\JkpClaimCertification;
+use App\Models\EmployeeCooperative;
+use App\Models\CooperativeTransaction;
+use App\Models\ContinuousShiftRoster;
+use App\Models\EmployeeShiftRosterAssignment;
+use App\Models\TripartiteIndustrialDispute;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -1304,6 +1311,34 @@ class DemoCompanySeeder extends Seeder
             );
         }
 
+        $empBudi = $employeeBudi;
+        $empAni = Employee::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $tenant->id, 'employee_number' => 'SDN-2024-003'],
+            [
+                'company_id' => $company->id,
+                'nik_ktp' => '3171012304920008',
+                'first_name' => 'Ani',
+                'last_name' => 'Widyastuti',
+                'email' => 'ani.widyastuti@solusidigital.id',
+                'phone' => '+628123456708',
+                'gender' => 'female',
+                'birth_place' => 'Yogyakarta',
+                'birth_date' => '1990-11-15',
+                'marital_status' => 'married',
+                'tax_ptkp_status' => 'K/0',
+                'npwp' => '07.654.321.0-013.000',
+                'bpjs_tk_number' => '18029384758',
+                'bpjs_kes_number' => '000192837467',
+                'department_id' => $deptTech->id,
+                'position_id' => $posDev->id,
+                'employment_status' => 'pkwtt',
+                'join_date' => '2022-03-01',
+                'basic_salary' => 18000000.00,
+                'status' => 'active',
+            ]
+        );
+        $ownerUser = $owner;
+
         // B. Supervisor Hierarchy & Extended Profile
         if (isset($empBudi) && isset($empAni)) {
             $empBudi->update(['reports_to_id' => $empAni->id]);
@@ -2263,6 +2298,192 @@ class DemoCompanySeeder extends Seeder
                     'accommodations_provided' => 'Meja kerja khusus dekat akses elevator, fleksibilitas istirahat medis, dan dukungan penugasan hibrida/FWA.',
                     'accessibility_needs' => 'Jalur evakuasi bebas tangga dan pendamping designated safety warden.',
                     'emergency_evacuation_assistance_plan' => 'Didampingi oleh Safety Floor Warden saat sirine darurat berbunyi.',
+                ]
+            );
+
+            // =========================================================================
+            // PHASE 16: TKA & RPTKA, JKP CLAIMS, KOPERASI KARYAWAN, CONTINUOUS ROSTER, PPHI
+            // =========================================================================
+
+            // 1. Expatriate Work Permit & RPTKA (PP No. 34 Tahun 2021)
+            $empExpat = Employee::withoutGlobalScopes()->firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_number' => 'EXP-2026-001'],
+                [
+                    'company_id' => $company->id,
+                    'nik_ktp' => '9999012304920009',
+                    'first_name' => 'John',
+                    'last_name' => 'Smith',
+                    'email' => 'john.smith@solusidigital.id',
+                    'phone' => '+628119876540',
+                    'gender' => 'male',
+                    'birth_place' => 'London',
+                    'birth_date' => '1984-06-12',
+                    'marital_status' => 'married',
+                    'tax_ptkp_status' => 'K/1',
+                    'npwp' => '05.432.109.8-015.000',
+                    'bpjs_tk_number' => '18029384799',
+                    'bpjs_kes_number' => '000192837499',
+                    'department_id' => $deptTech->id,
+                    'position_id' => $posDev->id,
+                    'employment_status' => 'pkwt',
+                    'join_date' => '2025-01-01',
+                    'end_date' => '2027-01-01',
+                    'basic_salary' => 45000000.00,
+                    'status' => 'active',
+                ]
+            );
+
+            ExpatriatePermit::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'rptka_number' => 'RPTKA/2026/01/0089'],
+                [
+                    'company_id' => $company->id,
+                    'employee_id' => $empExpat->id,
+                    'rptka_approval_date' => '2026-01-01',
+                    'rptka_expiry_date' => now()->addMonths(11)->toDateString(),
+                    'job_position_title' => 'Chief Technical Architect & Cloud Advisor',
+                    'passport_number' => 'GBR849201948',
+                    'passport_expiry_date' => now()->addYears(3)->toDateString(),
+                    'itas_vitas_number' => 'ITAS-2C21-889104',
+                    'itas_expiry_date' => now()->addMonths(11)->toDateString(),
+                    'dkptka_monthly_amount_usd' => 100.00,
+                    'dkptka_payment_proof' => 'NTPN-KEMNAKER-2026-0091823',
+                    'companion_employee_id' => $empBudi->id,
+                    'technology_transfer_plan' => 'Program alih teknologi perancangan high-scale multi-tenant microservices, arsitektur database terdistribusi, dan pembinaan engineering lead Indonesia.',
+                    'status' => 'active',
+                ]
+            );
+
+            // 2. Jaminan Kehilangan Pekerjaan (JKP PP No. 37 Tahun 2021)
+            JkpClaimCertification::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'certificate_number' => 'JKP-CERT/2026/0001'],
+                [
+                    'company_id' => $company->id,
+                    'employee_id' => $empAni->id,
+                    'termination_date' => now()->subDays(10)->toDateString(),
+                    'termination_reason_code' => 'efisiensi_merger',
+                    'bpjs_tk_card_number' => '18029384758',
+                    'consecutive_paid_months' => 8,
+                    'total_paid_months_24m' => 18,
+                    'eligible_for_jkp' => true,
+                    'reference_salary_cap' => 5000000.00,
+                    'month_1_to_3_benefit_monthly' => 2250000.00,
+                    'month_4_to_6_benefit_monthly' => 1250000.00,
+                    'total_potential_cash_benefit' => 10500000.00,
+                    'disnaker_reporting_status' => 'verified_kemnaker',
+                    'siapkerja_tracking_code' => 'SK-JKP-2026-992182',
+                    'company_recommendation_letter' => 'Surat Rekomendasi Resmi Penerima Manfaat JKP BPJS Ketenagakerjaan atas nama Ani Widyastuti dikarenakan efisiensi restrukturisasi.',
+                ]
+            );
+
+            // 3. Employee Cooperative (Koperasi Karyawan UU No. 25/1992 & UU 13/2003)
+            $kopkar = EmployeeCooperative::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'member_number' => 'KOPKAR-2026-0001'],
+                [
+                    'company_id' => $company->id,
+                    'employee_id' => $empBudi->id,
+                    'join_date' => now()->subMonths(12)->toDateString(),
+                    'status' => 'active',
+                    'mandatory_savings' => 100000.00,
+                    'voluntary_savings' => 50000.00,
+                    'principal_savings_paid' => 500000.00,
+                    'total_accumulated_savings' => 3500000.00,
+                    'active_loan_balance' => 4500000.00,
+                ]
+            );
+
+            CooperativeTransaction::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_cooperative_id' => $kopkar->id, 'transaction_type' => 'principal_saving'],
+                [
+                    'amount' => 500000.00,
+                    'transaction_date' => now()->subMonths(12)->toDateString(),
+                    'is_payroll_deducted' => false,
+                    'reference_notes' => 'Penyetoran Simpanan Pokok awal keanggotaan Koperasi Karyawan Sejahtera',
+                ]
+            );
+
+            CooperativeTransaction::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_cooperative_id' => $kopkar->id, 'transaction_type' => 'loan_disbursement'],
+                [
+                    'amount' => 5000000.00,
+                    'transaction_date' => now()->subMonths(1)->toDateString(),
+                    'is_payroll_deducted' => false,
+                    'reference_notes' => 'Pencairan Pinjaman Lunak Karyawan Tenor 10 Bulan',
+                ]
+            );
+
+            CooperativeTransaction::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_cooperative_id' => $kopkar->id, 'transaction_type' => 'loan_repayment'],
+                [
+                    'amount' => 500000.00,
+                    'transaction_date' => now()->toDateString(),
+                    'is_payroll_deducted' => true,
+                    'reference_notes' => 'Angsuran Pinjaman Bulan Berjalan via Payroll Deduction',
+                ]
+            );
+
+            CooperativeTransaction::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_cooperative_id' => $kopkar->id, 'transaction_type' => 'mandatory_saving'],
+                [
+                    'amount' => 100000.00,
+                    'transaction_date' => now()->toDateString(),
+                    'is_payroll_deducted' => true,
+                    'reference_notes' => 'Simpanan Wajib Bulanan via Payroll Deduction',
+                ]
+            );
+
+            // 4. Continuous Shift Roster (Kepmenakertrans No. KEP-233/MEN/2003 24/7)
+            $roster = ContinuousShiftRoster::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'roster_code' => 'ROSTER-2026-0001'],
+                [
+                    'company_id' => $company->id,
+                    'name' => 'Pola Rotasi 3 Shift 4 Grup Kontinu (24/7 Ops & NOC)',
+                    'department_id' => $deptTech->id,
+                    'cycle_days' => 28,
+                    'work_days_per_cycle' => 21,
+                    'off_days_per_cycle' => 7,
+                    'night_shift_allowance_rate' => 65000.00,
+                    'standby_allowance_rate' => 85000.00,
+                    'rotation_pattern_json' => [
+                        'pattern' => '3_shift_4_group',
+                        'shifts' => [
+                            ['code' => 'S1', 'name' => 'Pagi (07:00 - 15:00)'],
+                            ['code' => 'S2', 'name' => 'Sore (15:00 - 23:00)'],
+                            ['code' => 'S3', 'name' => 'Malam (23:00 - 07:00)'],
+                            ['code' => 'OFF', 'name' => 'Libur Shift'],
+                        ],
+                    ],
+                    'is_active' => true,
+                ]
+            );
+
+            EmployeeShiftRosterAssignment::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'continuous_shift_roster_id' => $roster->id, 'employee_id' => $empBudi->id],
+                [
+                    'group_name' => 'Grup A',
+                    'effective_start_date' => now()->startOfMonth()->toDateString(),
+                    'effective_end_date' => null,
+                    'status' => 'active',
+                ]
+            );
+
+            // 5. Penyelesaian Perselisihan Hubungan Industrial / Mediasi Tripartit (UU No. 2/2004)
+            TripartiteIndustrialDispute::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'case_number' => 'PHI-CASE/2026/0001'],
+                [
+                    'company_id' => $company->id,
+                    'dispute_type' => 'perselisihan_phk',
+                    'employee_id' => $empAni->id,
+                    'employee_name_external' => 'Ani Widyastuti (didampingi Tim Advokasi Pekerja)',
+                    'disnaker_mediator_name' => 'Dra. Siti Nurhaliza, M.H. (Mediator Hubungan Industrial Ahli Madya)',
+                    'disnaker_office' => 'Suku Dinas Tenaga Kerja, Transmigrasi dan Energi Kota Administrasi Jakarta Selatan',
+                    'mediation_date' => now()->subDays(7)->toDateString(),
+                    'dispute_chronology' => 'Musyawarah mediasi tripartit atas kompensasi pesangon restrukturisasi organisasi. Kedua belah pihak hadir dan menyetujui anjuran tertulis mediator.',
+                    'mediator_written_recommendation' => 'Mediator menganjurkan agar perusahaan membayarkan kompensasi uang pisah tambahan sebesar Rp 10.000.000 dan pekerja menerima pengakhiran hubungan kerja secara damai.',
+                    'company_response' => 'accepted',
+                    'worker_response' => 'accepted',
+                    'settlement_status' => 'peaceful_agreement_pb',
+                    'joint_agreement_number' => 'PB-PHI-PN-JKT-PST/2026/041',
+                    'notes' => 'Perjanjian Bersama (PB) berkekuatan hukum tetap (inkracht) dan didaftarkan pada Pengadilan Hubungan Industrial Jakarta Pusat.',
                 ]
             );
         }

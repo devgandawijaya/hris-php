@@ -37,10 +37,11 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 19. [19. Phase 13: Super Admin Impersonation, Plan Gating, Advanced HR Analytics & Multi-Channel Notifications](docs/19_PHASE_13_SUPERADMIN_IMPERSONATION_PLAN_GATING_ANALYTICS_AND_NOTIFICATIONS.md)
 20. [20. Phase 14: K3 SMK3 & JKK Claims, Pajak Natura PMK 66/2023, SPL PP 35/2021, PP/PKB, & Forum Bipartit](docs/20_PHASE_14_K3_SMK3_JKK_PAJAK_NATURA_SPL_PP_BIPARTIT.md)
 21. [21. Phase 15: Talent Retention, IJP, Onboarding Mentorship, Exit Asset BAST & Disnaker Statutory WLTK / Disability Quota](docs/21_PHASE_15_WLTK_IJP_MENTORSHIP_AND_ACCESSIBILITY.md)
+22. [22. Phase 16: TKA & RPTKA Kemnaker, Klaim JKP BPJS, Koperasi Karyawan, Continuous Shift Roster 24/7 & Mediasi Tripartit PPHI](docs/22_PHASE_16_TKA_RPTKA_JKP_KOPERASI_ROSTER_DAN_PPHI.md)
 
 ---
 
-## 🚀 STATUS IMPLEMENTASI 15 PHASE ROADMAP
+## 🚀 STATUS IMPLEMENTASI 16 PHASE ROADMAP
 
 | Phase | Modul & Cakupan Utama | Status |
 |---|---|---|
@@ -59,6 +60,7 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 | **Phase 13: Super Admin, Plan Gating & Analytics Hub** | Super Admin Tenant Impersonation (Sesi Aman & Sticky Top Alert), SaaS Subscription Plan Feature Gating & Quota Middleware (Batas Karyawan & Flag Fitur Premium), Inbound Leads CRM (Siklus Prospek Landing Page), Advanced Executive HR Analytics Hub (Rumus Baku Turnover Rate, Indeks Bradford Factor Ketidakhadiran, Piramida Demografi, & Ekspor Streaming CSV), serta Hub Notifikasi Multi-Channel (Email & WhatsApp Template Engine & Live Dispatch Simulator). | ✅ Complete |
 | **Phase 14: K3 Safety, Natura, SPL & Bipartit** | Sistem Manajemen Keselamatan Kerja (K3 SMK3 UU 1/1970 & PP 50/2012), Klaim JKK BPJS Ketenagakerjaan (Formulir Tahap I & II, Santunan STMB 100% Upah), Surveilans MCU Kebugaran Kerja (Fit to Work), Pajak Imbalan Natura & Kenikmatan (PMK 66/2023 Ambang Batas PPh 21), Surat Perintah Lembur Resmi (SPL PP 35/2021 Validasi Batas Maks 4 Jam/Hari & 18 Jam/Minggu + Persetujuan Tertulis Pekerja), Register Peraturan Perusahaan (PP/PKB Masa Berlaku 2 Tahun & Early Warning H-90 Renewal), serta Forum Lembaga Kerja Sama (LKS) Bipartit (Permenaker 32/2008 Komposisi Berimbang 1:1 & Laporan Semesteran Disnaker). | ✅ Complete |
 | **Phase 15: Talent Retention, IJP, Mentorship & WLTK** | Wajib Lapor Ketenagakerjaan Perusahaan (WLTK / WLKP UU 7/1981 & Permenaker 18/2017 Format Daring Kemnaker & Siklus 1 Tahun), Internal Job Posting (IJP) & Mobilitas Karir (Gating Masa Kerja, Bebas SP, Nilai Kinerja & Approval Manajer Asal), Onboarding Buddy & Mentorship 90 Hari (Milestone Check-in Day 30-60-90 & Evaluasi 2 Arah), Exit Asset Handover BAST Terstandar & Pemutusan Akses Akun SSO Otomatis (Google Workspace, Slack, VPN), serta Audit Statutori Kuota Disabilitas (Pasal 53 UU 8/2016 Kuota 1% Swasta / 2% BUMN & Inventarisasi Akomodasi yang Layak). | ✅ Complete |
+| **Phase 16: TKA, JKP, KOPKAR, Roster 24/7 & PPHI** | Pengawasan TKA & RPTKA Kemnaker (PP 34/2021, DKPTKA USD 100 & Blokir Jabatan Personalia), Klaim JKP BPJS Ketenagakerjaan (PP 37/2021 Plafon Rp 5 Juta, Manfaat 45% & 25%), Koperasi Karyawan & Simpan Pinjam (UU 25/1992 & Potong Gaji Payroll), Continuous Shift Roster 24/7 (Kepmenakertrans 233/2003 Pola 3 Shift 4 Grup & Tunjangan Malam/Siaga), serta Mediasi Tripartit & PPHI (UU 2/2004 Anjuran Mediator, Perjanjian Bersama PB vs Gugatan PHI). | ✅ Complete |
 
 ---
 
@@ -97,6 +99,16 @@ RiHRIS dibangun dengan kepatuhan hukum sebagai pilar utama tanpa mengunci tarif 
     - Pelaporan tahunan wajib kondisi ketenagakerjaan, data agregasi gender/WNI/TKA, upah terendah/tertinggi, jaminan sosial, dan ekspor format daring Kemnaker (WLKP Online).
 11. **Kepatuhan Kuota Tenaga Kerja Penyandang Disabilitas (UU No. 8 Tahun 2016)**:
     - Validasi kuota minimal 1% (swasta) / 2% (BUMN) per Pasal 53 serta audit fasilitas akomodasi yang layak (*Reasonable Accommodation*) di tempat kerja.
+12. **Penggunaan Tenaga Kerja Asing (PP No. 34 Tahun 2021 & Pasal 46 UU 13/2003)**:
+    - Pengesahan RPTKA Kemnaker, penunjukan TKI pendamping alih keahlian, setoran DKPTKA USD 100/bulan ke PNBP, dan larangan mutlak jabatan personalia/SDM.
+13. **Jaminan Kehilangan Pekerjaan / JKP (PP No. 37 Tahun 2021 & Permenaker 15/2021)**:
+    - Batas upah acuan Rp 5.000.000, manfaat uang tunai 45% (bulan 1-3) & 25% (bulan 4-6) dengan batas akumulasi Rp 10.500.000, masa iur minimal 6 bulan berturut-turut, serta pengecualian pekerja yang mengundurkan diri sukarela (*resignation*).
+14. **Koperasi Karyawan & Simpan Pinjam (UU No. 25 Tahun 1992 & UU 13/2003 Pasal 100)**:
+    - Tata kelola simpanan pokok, simpanan wajib, simpanan sukarela, fasilitas pinjaman lunak anggota, pemotongan berkala via payroll (*payroll deduction*), dan dividen SHU.
+15. **Sektor Kerja Terus Menerus 24/7 (Kepmenakertrans No. KEP-233/MEN/2003)**:
+    - Pengaturan pola rotasi shift industri teknologi & operasional kontinu 3 shift 4 grup (siklus 28 hari: 21 hari kerja & 7 hari istirahat bergilir), tunjangan shift malam, dan tunjangan siaga on-call standby.
+16. **Penyelesaian Perselisihan Hubungan Industrial / PPHI (UU No. 2 Tahun 2004)**:
+    - Penanganan 4 jenis perselisihan (Hak, Kepentingan, PHK, Antar Serikat), mediasi tripartit Disnaker, anjuran tertulis mediator, Perjanjian Bersama (PB) berkekuatan hukum inkracht di PHI, atau eskalasi ke Gugatan PHI Pengadilan Negeri.
 
 ---
 

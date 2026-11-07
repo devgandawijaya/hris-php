@@ -296,6 +296,11 @@
                             <i data-lucide="home" class="w-4 h-4"></i>
                             Jadwal Kerja Fleksibel (FWA)
                         </a>
+                        <a href="{{ route('company.rosters.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.rosters.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="rotate-cw" class="w-4 h-4"></i>
+                            Pola Shift Roster 24/7
+                        </a>
 
                         <!-- Cuti & Lembur (Phase 2) -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Izin & Beban Kerja</div>
@@ -394,6 +399,16 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.asset-handover.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="package-check" class="w-4 h-4"></i>
                             BAST Pengembalian Aset
+                        </a>
+                        <a href="{{ route('company.expatriates.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.expatriates.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="globe" class="w-4 h-4"></i>
+                            Izin TKA & RPTKA (PP 34)
+                        </a>
+                        <a href="{{ route('company.jkp.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.jkp.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="umbrella" class="w-4 h-4"></i>
+                            Klaim JKP BPJS (PP 37)
                         </a>
 
                         <!-- Talenta & Pengembangan SDM (Phase 4 & Phase 15) -->
@@ -558,6 +573,16 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.disability-audit.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="accessibility" class="w-4 h-4"></i>
                             Audit Kuota Disabilitas
+                        </a>
+                        <a href="{{ route('company.cooperative.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.cooperative.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="piggy-bank" class="w-4 h-4"></i>
+                            Koperasi & Simpan Pinjam
+                        </a>
+                        <a href="{{ route('company.disputes.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.disputes.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="scale" class="w-4 h-4"></i>
+                            Mediasi Sengketa PHI (UU 2)
                         </a>
 
                         <!-- Portal ESS -->

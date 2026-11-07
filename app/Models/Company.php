@@ -121,5 +121,32 @@ class Company extends Model
     {
         return $this->hasMany(EmployeeDisabilityProfile::class);
     }
+
+    // --- PHASE 16: TKA, JKP, KOPERASI, CONTINUOUS ROSTER & PHI DISPUTES ---
+
+    public function expatriatePermits(): HasMany
+    {
+        return $this->hasMany(ExpatriatePermit::class);
+    }
+
+    public function jkpCertifications(): HasMany
+    {
+        return $this->hasMany(JkpClaimCertification::class);
+    }
+
+    public function employeeCooperatives(): HasMany
+    {
+        return $this->hasMany(EmployeeCooperative::class);
+    }
+
+    public function continuousShiftRosters(): HasMany
+    {
+        return $this->hasMany(ContinuousShiftRoster::class);
+    }
+
+    public function tripartiteIndustrialDisputes(): HasMany
+    {
+        return $this->hasMany(TripartiteIndustrialDispute::class);
+    }
 }
 
