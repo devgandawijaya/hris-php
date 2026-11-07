@@ -249,5 +249,32 @@ class Company extends Model
     {
         return $this->hasMany(DigitalStressSurvey::class);
     }
+
+    // --- PHASE 20: DISASTER RECOVERY, MULTI-REGION FAILOVER & UU PDP LAW ---
+
+    public function pdpConsentLogs(): HasMany
+    {
+        return $this->hasMany(PdpConsentLog::class);
+    }
+
+    public function pdpDsarRequests(): HasMany
+    {
+        return $this->hasMany(PdpDsarRequest::class);
+    }
+
+    public function pdpBreachIncidentLogs(): HasMany
+    {
+        return $this->hasMany(PdpBreachIncidentLog::class);
+    }
+
+    public function disasterRecoveryConfig(): HasOne
+    {
+        return $this->hasOne(DisasterRecoveryConfig::class);
+    }
+
+    public function disasterRecoveryDrillLogs(): HasMany
+    {
+        return $this->hasMany(DisasterRecoveryDrillLog::class);
+    }
 }
 

@@ -659,6 +659,24 @@
                             Ergonomi K3 & Beban Digital
                         </a>
 
+                        <!-- Disaster Recovery, Failover & UU PDP Law (Phase 20) -->
+                        <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Privasi PDP & Disaster Recovery</div>
+                        <a href="{{ route('pdp.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('pdp.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                            Privasi Data (UU PDP 27/2022)
+                        </a>
+                        <a href="{{ route('disaster-recovery.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('disaster-recovery.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="server" class="w-4 h-4"></i>
+                            Disaster Recovery Multi-Region
+                        </a>
+                        <a href="{{ route('zero-trust.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('zero-trust.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="lock" class="w-4 h-4"></i>
+                            Keamanan Zero Trust & Enkripsi
+                        </a>
+
                         <!-- Portal ESS -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Portal Karyawan</div>
                         <a href="{{ route('ess.dashboard') }}"

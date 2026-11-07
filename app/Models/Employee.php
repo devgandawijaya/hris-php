@@ -484,4 +484,16 @@ class Employee extends Model
     {
         return $this->hasMany(DigitalStressSurvey::class);
     }
+
+    // --- PHASE 20: DISASTER RECOVERY, MULTI-REGION FAILOVER & UU PDP LAW ---
+
+    public function pdpConsentLogs(): HasMany
+    {
+        return $this->hasMany(PdpConsentLog::class);
+    }
+
+    public function pdpDsarRequests(): HasMany
+    {
+        return $this->hasMany(PdpDsarRequest::class);
+    }
 }

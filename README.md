@@ -41,10 +41,11 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 23. [23. Phase 17: Alih Daya Outsourcing PP 35/2021, Serikat Pekerja PKB UU 21/2000, Satgas PPKS Kepmenaker 88/2023, Pensiun Dini VSS & Pemagangan Permenaker 6/2020](docs/23_PHASE_17_OUTSOURCING_PKB_PPKS_VSS_DAN_PEMAGANGAN.md)
 24. [24. Phase 18: Cafeteria Flex-Benefits, THR Statutori & Denda Permenaker 6/2016, ESOP 4-Year Vesting, Asuransi CoB BPJS Kesehatan & P2K3 Disnaker](docs/24_PHASE_18_FLEX_BENEFITS_THR_ESOP_COB_DAN_P2K3.md)
 25. [25. Phase 19: ESG Ketenagakerjaan POJK 51/2017 & GRI Standards, Emisi Karbon Komuter Scope 3, Ergonomi K3 & Beban Digital](docs/25_PHASE_19_ESG_SUSTAINABILITY_CARBON_COMMUTE_DAN_ERGONOMI.md)
+26. [26. Phase 20: Disaster Recovery & Multi-Region Failover, Zero Trust HSM Encryption & UU PDP No. 27/2022](docs/26_PHASE_20_DISASTER_RECOVERY_FAILOVER_DAN_UU_PDP.md)
 
 ---
 
-## 🚀 STATUS IMPLEMENTASI 19 PHASE ROADMAP (1 FASE TERSISA MENUJU BLUEPRINT FINAL 20 PHASE)
+## 🚀 STATUS IMPLEMENTASI 20 PHASE ENTERPRISE ROADMAP (100% COMPLETE - FULL PRODUCTION READY)
 
 | Phase | Modul & Cakupan Utama | Status |
 |---|---|---|
@@ -67,6 +68,7 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 | **Phase 17: Outsourcing, PKB, PPKS, VSS & Pemagangan** | Rekanan Alih Daya & Jaminan TUPE (PP 35/2021 & Putusan MK 27/2011), Serikat Pekerja & Perundingan PKB Batas 30 Hari (UU 21/2000 & Permenaker 28/2014), Satgas PPKS Rahasia & Fasilitas Ramah Perempuan (Kepmenaker 88/2023 & Pasal 76 UU 13/2003), Pensiun Dini Sukarela VSS Multiplier & DPLK (UU 4/2023 P2SK), serta Pemagangan Terstruktur Batas Kuota 20% & Durasi 1 Tahun (Permenaker 6/2020). | ✅ Complete |
 | **Phase 18: Flex Benefits, THR, ESOP, CoB & P2K3** | Cafeteria Flex-Benefits & Plafon Poin Kesejahteraan (UU 13/2003 Pasal 100 & PMK 66/2023), Perhitungan THR Statutori & Denda 5% H-7 (Permenaker 6/2016 jo. PP 58/2023 TER), ESOP / RSU Opsi Saham 4-Year Vesting & 1-Year Cliff (UU 40/2007), Asuransi Tambahan CoB BPJS Kesehatan First Payer (Perpres 82/2018), serta Panitia Pembina K3 (P2K3) & Laporan Triwulan Disnaker (Permenaker 04/1987). | ✅ Complete |
 | **Phase 19: ESG, Carbon Commute & Ergonomics** | ESG Sustainability Reporting Ketenagakerjaan (POJK 51/2017 & GRI 401/404/405), Analisis Gender Pay Ratio & Diversitas Direksi/Manajemen, Emisi Komuter Scope 3 GHG Protocol & Reduksi WFH/FWA, serta Audit Ergonomi Stasiun Kerja & Beban Digital (Permenaker 5/2018). | ✅ Complete |
+| **Phase 20: Disaster Recovery, Zero Trust & UU PDP** | Multi-Region Disaster Recovery & Failover Otomatis (Jakarta Primary vs Singapore Standby, RPO $\le 5$ Menit & RTO $\le 15$ Menit), Zero Trust Security AES-256-GCM Envelope Encryption (HSM FIPS 140-2 Level 3 / Cloud KMS), Kepatuhan Penuh UU PDP No. 27/2022: Pelacakan Persetujuan Eksplisit & Penarikan Persetujuan (Pasal 9 & 20-24), Pemenuhan Hak Subjek Data DSAR & Portabilitas Data JSON Terstruktur (Pasal 13), serta Audit Notifikasi Kebocoran Data Maksimal 72 Jam (Pasal 46). | ✅ Complete |
 
 ---
 
@@ -139,6 +141,10 @@ RiHRIS dibangun dengan kepatuhan hukum sebagai pilar utama tanpa mengunci tarif 
     - Pengukuran otomatis Gender Pay Gap Ratio (GRI 405-2), persentase kepemimpinan wanita (GRI 405-1), jam pelatihan L&D (GRI 404-1), dan tingkat cedera kerja LTIFR (GRI 403-9).
 28. **Jejak Karbon Komuter Scope 3 & Ergonomi K3 Lingkungan Kerja (Permenaker No. 5/2018)**:
     - Estimasi emisi gas rumah kaca komuter per moda transportasi (DEFRA/IPCC), penghematan karbon berkat FWA/WFH, audit intensitas cahaya stasiun kerja minimal 300 Lux, dan pemantauan digital burnout index.
+29. **Pelindungan Data Pribadi / PDP (UU No. 27 Tahun 2022)**:
+    - Pelacakan persetujuan eksplisit pemrosesan data karyawan dan penarikan persetujuan (Pasal 9 & 20-24), pemenuhan hak subjek data DSAR (Portabilitas format terstruktur JSON Pasal 13, hak akses Pasal 7, ralat Pasal 6, penghapusan Pasal 8) dalam batas maksimal 3 hari kerja, audit waktu notifikasi kegagalan data pribadi maksimal 72 jam (Pasal 46), serta pengamanan kriptografi kolom sensitif (Pasal 35).
+30. **Ketahanan Infrastruktur Bencana / DRC & Zero Trust Security (ISO 22301 & POJK 11/2022)**:
+    - Arsitektur Multi-Region High Availability (Jakarta Primary `ap-southeast-3` vs Singapore Standby `ap-southeast-1`), target SLA RPO $\le 5$ menit & RTO $\le 15$ menit, replikasi sinkron dengan lag terukur, simulasi failover darurat, dan audit enkripsi kolom AES-256-GCM berbasis HSM FIPS 140-2 Level 3.
 
 ---
 
@@ -249,6 +255,7 @@ docker compose exec app php artisan test
 17. `AdvancedEnterpriseCompliancePhase17Test`: Pengujian alih daya & jaminan TUPE PP 35/2021, serikat pekerja & PKB UU 21/2000, satgas PPKS & fasilitas ramah perempuan Kepmenaker 88/2023, pensiun dini VSS & pemagangan Permenaker 6/2020.
 18. `AdvancedEnterpriseCompliancePhase18Test`: Pengujian cafeteria flex-benefits, kalkulasi THR statutori & denda 5% H-7 Permenaker 6/2016, ESOP vesting 4 tahun & 1-year cliff UU 40/2007, CoB BPJS Kesehatan Perpres 82/2018, dan komite P2K3 SKP Kemnaker Permenaker 04/1987.
 19. `AdvancedEnterpriseCompliancePhase19Test`: Pengujian metrik snapshot ESG POJK 51/2017 & GRI 405, emisi komuter Scope 3 mobil/motor/EV/transit, audit ergonomi stasiun kerja Permenaker 5/2018 & survei burnout kognitif.
+20. `AdvancedEnterpriseCompliancePhase20Test`: Pengujian persetujuan & penarikan consent PDP Pasal 9 & 20 UU 27/2022, permohonan hak subjek data DSAR & ekspor paket portabilitas data JSON Pasal 13, audit notifikasi insiden kebocoran data 72 jam Pasal 46, konfigurasi Disaster Recovery RPO 5 min & RTO 15 min multi-region Jakarta-Singapore, drill run simulasi bencana, failover darurat, serta audit enkripsi kolom sensitif Zero Trust HSM FIPS 140-2 Level 3 Pasal 35.
 
 ---
 *RiHRIS — Solusi HRIS SaaS Terpercaya untuk Bisnis Indonesia.*

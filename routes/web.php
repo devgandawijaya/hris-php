@@ -845,4 +845,28 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/assessments', [App\Http\Controllers\Company\ErgonomicStressController::class, 'storeErgonomic'])->name('ergonomics.assessments.store');
         Route::post('/surveys', [App\Http\Controllers\Company\ErgonomicStressController::class, 'storeStressSurvey'])->name('ergonomics.surveys.store');
     });
+
+    // --- PHASE 20: DISASTER RECOVERY, MULTI-REGION FAILOVER & UU PELINDUNGAN DATA PRIBADI (PDP) ---
+
+    // 79. Kepatuhan UU Pelindungan Data Pribadi / PDP (UU No. 27/2022 & DSAR)
+    Route::prefix('pdp')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\PdpComplianceController::class, 'index'])->name('pdp.index');
+        Route::post('/consents', [App\Http\Controllers\Company\PdpComplianceController::class, 'storeConsent'])->name('pdp.consents.store');
+        Route::post('/consents/{consent}/revoke', [App\Http\Controllers\Company\PdpComplianceController::class, 'revokeConsent'])->name('pdp.consents.revoke');
+        Route::post('/dsar', [App\Http\Controllers\Company\PdpComplianceController::class, 'storeDsar'])->name('pdp.dsar.store');
+        Route::get('/dsar/{request}/export', [App\Http\Controllers\Company\PdpComplianceController::class, 'fulfillExport'])->name('pdp.dsar.export');
+        Route::post('/breaches', [App\Http\Controllers\Company\PdpComplianceController::class, 'storeBreach'])->name('pdp.breaches.store');
+    });
+
+    // 80. Disaster Recovery & Multi-Region High-Availability Failover
+    Route::prefix('disaster-recovery')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\DisasterRecoveryController::class, 'index'])->name('disaster-recovery.index');
+        Route::post('/drills', [App\Http\Controllers\Company\DisasterRecoveryController::class, 'storeDrill'])->name('disaster-recovery.drills.store');
+        Route::post('/failover', [App\Http\Controllers\Company\DisasterRecoveryController::class, 'failover'])->name('disaster-recovery.failover');
+    });
+
+    // 81. Zero Trust Security & Enkripsi Data Spesifik Karyawan (UU PDP Pasal 35)
+    Route::prefix('zero-trust')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\ZeroTrustSecurityController::class, 'index'])->name('zero-trust.index');
+    });
 });

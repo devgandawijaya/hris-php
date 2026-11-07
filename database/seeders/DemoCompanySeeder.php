@@ -137,6 +137,11 @@ use App\Models\EmployeeCommuteProfile;
 use App\Models\CommuteEmissionAudit;
 use App\Models\ErgonomicAssessment;
 use App\Models\DigitalStressSurvey;
+use App\Models\PdpConsentLog;
+use App\Models\PdpDsarRequest;
+use App\Models\PdpBreachIncidentLog;
+use App\Models\DisasterRecoveryConfig;
+use App\Models\DisasterRecoveryDrillLog;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -2938,6 +2943,91 @@ class DemoCompanySeeder extends Seeder
                     'digital_burnout_risk_index' => 29.25,
                     'risk_classification' => 'low',
                     'coping_recommendation' => 'Beban kerja digital terpantau seimbang dan produktif.',
+                ]
+            );
+
+            // --- PHASE 20: DISASTER RECOVERY, MULTI-REGION FAILOVER & UU PDP LAW ---
+
+            // 1. Kepatuhan Pelindungan Data Pribadi (UU No. 27/2022)
+            PdpConsentLog::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'employee_id' => $empBudi->id, 'consent_type' => 'employment_contract'],
+                [
+                    'purpose_description' => 'Persetujuan pemrosesan data identitas KTP/NPWP untuk pemenuhan hak pengupahan statutori.',
+                    'ip_address' => '103.145.22.18',
+                    'user_agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+                    'consented_at' => now()->subMonths(6),
+                    'status' => 'granted',
+                ]
+            );
+
+            PdpConsentLog::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'employee_id' => $empBudi->id, 'consent_type' => 'biometrics_attendance'],
+                [
+                    'purpose_description' => 'Persetujuan verifikasi pemindaian biometrik wajah pada mesin presensi kantor.',
+                    'ip_address' => '103.145.22.18',
+                    'user_agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+                    'consented_at' => now()->subMonths(6),
+                    'status' => 'granted',
+                ]
+            );
+
+            PdpDsarRequest::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'request_number' => 'DSAR-2026-001'],
+                [
+                    'company_id' => $company->id,
+                    'employee_id' => $empBudi->id,
+                    'request_type' => 'data_portability',
+                    'reason_or_scope' => 'Permintaan salinan seluruh riwayat kontrak kerja dan kompensasi dalam format JSON terstruktur.',
+                    'request_date' => now()->subDays(5)->toDateString(),
+                    'completion_deadline' => now()->subDays(2)->toDateString(),
+                    'fulfilled_at' => now()->subDays(3),
+                    'handled_by_user_id' => $ownerUser->id ?? null,
+                    'status' => 'fulfilled',
+                    'resolution_notes' => 'Paket data portabilitas telah diserahkan dalam format JSON dan PDF resmi.',
+                ]
+            );
+
+            PdpBreachIncidentLog::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'incident_number' => 'BREACH-2026-001'],
+                [
+                    'company_id' => $company->id,
+                    'breach_type' => 'unauthorized_access',
+                    'detected_at' => now()->subDays(30),
+                    'affected_records_count' => 3,
+                    'authority_notified_at' => now()->subDays(30)->addHours(2),
+                    'subjects_notified_at' => now()->subDays(30)->addHours(4),
+                    'incident_description' => 'Percobaan anomali login berulang pada salah satu akun staff di luar jam operasional.',
+                    'remediation_measures' => 'Sesi diisolasi seketika, MFA direset paksa, dan kredensial diperbarui.',
+                    'status' => 'resolved',
+                ]
+            );
+
+            // 2. Disaster Recovery & Multi-Region High-Availability Configuration
+            $drConfig = DisasterRecoveryConfig::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id],
+                [
+                    'primary_region' => 'ap-southeast-3 (Jakarta)',
+                    'standby_region' => 'ap-southeast-1 (Singapore)',
+                    'replication_mode' => 'synchronous',
+                    'rpo_target_minutes' => 5,
+                    'rto_target_minutes' => 15,
+                    'current_replication_lag_ms' => 78,
+                    'health_status' => 'healthy',
+                    'last_heartbeat_at' => now(),
+                ]
+            );
+
+            DisasterRecoveryDrillLog::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'scenario_type' => 'primary_datacenter_outage'],
+                [
+                    'drill_date' => now()->subMonths(1)->toDateString(),
+                    'actual_failover_duration_seconds' => 175,
+                    'data_loss_records_count' => 0,
+                    'rpo_target_achieved' => true,
+                    'rto_target_achieved' => true,
+                    'audit_summary' => 'Simulasi pemadaman total datacenter Jakarta. Failover ke cluster Singapore tuntas dalam 175 detik tanpa kehilangan data record.',
+                    'lead_auditor_name' => 'Tim Infrastruktur & SecOps Cloud RiHRIS',
+                    'status' => 'passed',
                 ]
             );
         }
