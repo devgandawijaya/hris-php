@@ -734,4 +734,49 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/{dispute}/response', [App\Http\Controllers\Company\TripartiteDisputeController::class, 'recordResponse'])->name('response.store');
         Route::get('/{dispute}/print', [App\Http\Controllers\Company\TripartiteDisputeController::class, 'printDispute'])->name('print');
     });
+
+    // --- PHASE 17: OUTSOURCING, PKB, SATGAS PPKS, VSS & PEMAGANGAN ---
+
+    // 66. Rekanan Alih Daya / Outsourcing (PP No. 35/2021 BAB IV & TUPE)
+    Route::prefix('outsourcing')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\OutsourcingVendorController::class, 'index'])->name('outsourcing.index');
+        Route::post('/', [App\Http\Controllers\Company\OutsourcingVendorController::class, 'store'])->name('outsourcing.store');
+        Route::get('/{vendor}', [App\Http\Controllers\Company\OutsourcingVendorController::class, 'show'])->name('outsourcing.show');
+        Route::post('/{vendor}/contracts', [App\Http\Controllers\Company\OutsourcingVendorController::class, 'storeContract'])->name('outsourcing.contracts.store');
+    });
+
+    // 67. Perjanjian Kerja Bersama (PKB) & Serikat Pekerja (UU 21/2000 & Permenaker 28/2014)
+    Route::prefix('unions')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\LaborUnionController::class, 'index'])->name('unions.index');
+        Route::post('/', [App\Http\Controllers\Company\LaborUnionController::class, 'store'])->name('unions.store');
+        Route::post('/{union}/pkb', [App\Http\Controllers\Company\LaborUnionController::class, 'storePkb'])->name('unions.pkb.store');
+        Route::post('/{union}/checkoff', [App\Http\Controllers\Company\LaborUnionController::class, 'storeCheckoff'])->name('unions.checkoff.store');
+    });
+
+    // 68. Satgas PPKS & Fasilitas Ramah Perempuan (Kepmenaker 88/2023 & UU 12/2022)
+    Route::prefix('ppks')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\PpksProtectionController::class, 'index'])->name('ppks.index');
+        Route::post('/', [App\Http\Controllers\Company\PpksProtectionController::class, 'store'])->name('ppks.store');
+        Route::post('/{case}/update-status', [App\Http\Controllers\Company\PpksProtectionController::class, 'updateStatus'])->name('ppks.update-status');
+        Route::post('/audit-facility', [App\Http\Controllers\Company\PpksProtectionController::class, 'auditFacility'])->name('ppks.audit-facility');
+    });
+
+    // 69. Voluntary Separation Scheme (VSS / Pensiun Dini) & DPLK (UU 4/2023 P2SK)
+    Route::prefix('vss')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\VoluntarySeparationController::class, 'index'])->name('vss.index');
+        Route::post('/', [App\Http\Controllers\Company\VoluntarySeparationController::class, 'store'])->name('vss.store');
+        Route::post('/{program}/apply', [App\Http\Controllers\Company\VoluntarySeparationController::class, 'apply'])->name('vss.apply');
+        Route::post('/applications/{application}/approve', [App\Http\Controllers\Company\VoluntarySeparationController::class, 'approve'])->name('vss.approve');
+        Route::post('/dplk', [App\Http\Controllers\Company\VoluntarySeparationController::class, 'storeDplk'])->name('vss.dplk.store');
+    });
+
+    // 70. Program Pemagangan Dalam Negeri (Permenaker No. 6/2020)
+    Route::prefix('internships')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\InternshipProgramController::class, 'index'])->name('internships.index');
+        Route::post('/', [App\Http\Controllers\Company\InternshipProgramController::class, 'store'])->name('internships.store');
+        Route::get('/{internship}', [App\Http\Controllers\Company\InternshipProgramController::class, 'show'])->name('internships.show');
+        Route::post('/{internship}/logbooks', [App\Http\Controllers\Company\InternshipProgramController::class, 'storeLogbook'])->name('internships.logbooks.store');
+        Route::post('/logbooks/{logbook}/verify', [App\Http\Controllers\Company\InternshipProgramController::class, 'verifyLogbook'])->name('internships.logbooks.verify');
+        Route::get('/{internship}/print-certificate', [App\Http\Controllers\Company\InternshipProgramController::class, 'printCertificate'])->name('internships.print-certificate');
+    });
 });

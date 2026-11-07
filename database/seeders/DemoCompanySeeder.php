@@ -111,6 +111,19 @@ use App\Models\CooperativeTransaction;
 use App\Models\ContinuousShiftRoster;
 use App\Models\EmployeeShiftRosterAssignment;
 use App\Models\TripartiteIndustrialDispute;
+use App\Models\OutsourcingVendor;
+use App\Models\OutsourcingContract;
+use App\Models\VendorWorkerAssignment;
+use App\Models\LaborUnion;
+use App\Models\PkbNegotiation;
+use App\Models\UnionDuesDeduction;
+use App\Models\PpksComplaintCase;
+use App\Models\FemaleWorkerFacilityCheck;
+use App\Models\VoluntarySeparationProgram;
+use App\Models\VssApplication;
+use App\Models\DplkParticipation;
+use App\Models\InternshipProgram;
+use App\Models\InternshipLogbook;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -2484,6 +2497,193 @@ class DemoCompanySeeder extends Seeder
                     'settlement_status' => 'peaceful_agreement_pb',
                     'joint_agreement_number' => 'PB-PHI-PN-JKT-PST/2026/041',
                     'notes' => 'Perjanjian Bersama (PB) berkekuatan hukum tetap (inkracht) dan didaftarkan pada Pengadilan Hubungan Industrial Jakarta Pusat.',
+                ]
+            );
+
+            // =========================================================================
+            // PHASE 17: OUTSOURCING & TUPE, PKB, SATGAS PPKS, VSS PENSIUN DINI, INTERNSHIP
+            // =========================================================================
+
+            // 1. Alih Daya / Outsourcing Vendor & TUPE Protection (PP No. 35/2021)
+            $vendor = OutsourcingVendor::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'vendor_code' => 'VND-SEC-001'],
+                [
+                    'company_id' => $company->id,
+                    'name' => 'PT Garda Bhakti Nusantara Sentosa',
+                    'legal_entity_type' => 'PT',
+                    'nib_oss_license' => '0220109182312-OSS-KEMNAKER',
+                    'disnaker_registration_number' => '560/DISNAKER-REKANAN/2026/089',
+                    'pic_name' => 'Bambang Wijaya, S.E.',
+                    'pic_contact' => '081298765431',
+                    'management_fee_percentage' => 10.00,
+                    'status' => 'active',
+                ]
+            );
+
+            $contract = OutsourcingContract::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'contract_number' => 'SPK-SEC/2026/001'],
+                [
+                    'outsourcing_vendor_id' => $vendor->id,
+                    'service_type' => 'security',
+                    'start_date' => now()->startOfYear()->toDateString(),
+                    'end_date' => now()->endOfYear()->toDateString(),
+                    'tupe_protection_guarantee' => true,
+                    'headcount_quota' => 5,
+                    'monthly_billing_amount' => 27500000.00,
+                    'status' => 'active',
+                ]
+            );
+
+            VendorWorkerAssignment::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'outsourcing_contract_id' => $contract->id, 'nik_ktp' => '3271012304890001'],
+                [
+                    'worker_name' => 'Rahmat Hidayat (Danru Security)',
+                    'assigned_role' => 'Komandan Regu Pengamanan',
+                    'bpjs_tk_registered' => true,
+                    'bpjs_kes_registered' => true,
+                    'monthly_wage_paid' => 5500000.00,
+                    'wage_compliant_with_umk' => true,
+                    'status' => 'active',
+                ]
+            );
+
+            // 2. Serikat Pekerja & Perundingan PKB (UU No. 21/2000 & Permenaker No. 28/2014)
+            $union = LaborUnion::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'registration_number' => '568/DISNAKER-PENCATATAN/2026/041'],
+                [
+                    'company_id' => $company->id,
+                    'union_name' => 'Serikat Pekerja Mandiri Solusindo (SPMS)',
+                    'chairperson_name' => 'Hendra Gunawan',
+                    'total_verified_members' => 18,
+                    'workforce_percentage' => 72.00,
+                    'has_bargaining_rights' => true,
+                    'is_active' => true,
+                ]
+            );
+
+            PkbNegotiation::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'draft_code' => 'PKB-DRAFT/2026/001'],
+                [
+                    'company_id' => $company->id,
+                    'labor_union_id' => $union->id,
+                    'pkb_period_years' => '2026-2028',
+                    'negotiation_start_date' => now()->subDays(20)->toDateString(),
+                    'negotiation_target_end_date' => now()->subDays(20)->addDays(30)->toDateString(),
+                    'employer_delegation_lead' => 'Bambang Soedarmono (Head of People Operations)',
+                    'union_delegation_lead' => 'Hendra Gunawan (Ketua Pengurus Unit Kerja)',
+                    'status' => 'agreed',
+                    'disnaker_decree_number' => 'KEP.560/PKB/089/DISNAKERTRANS/2026',
+                    'summary_clauses' => 'Penyempurnaan jaminan kesehatan rawat inap, batas lembur PP 35/2021, dan tunjangan shift malam.',
+                ]
+            );
+
+            UnionDuesDeduction::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'labor_union_id' => $union->id, 'employee_id' => $empBudi->id],
+                [
+                    'monthly_dues_amount' => 25000.00,
+                    'consent_letter_number' => 'SK-CHECKOFF/2026/012',
+                    'is_active' => true,
+                ]
+            );
+
+            // 3. Satgas PPKS & Fasilitas Ramah Perempuan (Kepmenaker No. 88/2023 & UU TPKS No. 12/2022)
+            PpksComplaintCase::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'ticket_number' => 'PPKS-2026-0001'],
+                [
+                    'company_id' => $company->id,
+                    'incident_date' => now()->subDays(14)->toDateString(),
+                    'allegation_type' => 'verbal',
+                    'is_anonymous' => true,
+                    'complainant_pseudonym' => 'Saksi Terlindungi-B',
+                    'investigator_satgas_lead' => 'Dra. Nurul Hidayati (Satgas PPKS Korporat)',
+                    'victim_support_measures' => 'Pendampingan konseling psikologis kerja dan jaminan tanpa pembalasan (zero retaliation).',
+                    'sanction_recommendation' => 'teguran_tertulis',
+                    'status' => 'resolved',
+                ]
+            );
+
+            FemaleWorkerFacilityCheck::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'inspection_date' => now()->subDays(5)->toDateString()],
+                [
+                    'lactation_room_standard_met' => true,
+                    'night_shift_transport_provided' => true,
+                    'night_shift_nutritious_food_provided' => true,
+                    'daycare_subsidy_available' => true,
+                    'compliance_notes' => 'Ruang laktasi higienis lengkap dengan lemari pendingin ASI, dan armada jemputan malam operasional prima.',
+                    'audited_by_user_id' => $ownerUser->id ?? null,
+                ]
+            );
+
+            // 4. Voluntary Separation Scheme (VSS) & DPLK (UU No. 4/2023 P2SK)
+            $vssProg = VoluntarySeparationProgram::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'program_code' => 'VSS-2026-01'],
+                [
+                    'company_id' => $company->id,
+                    'title' => 'Program Pensiun Dini Sukarela & Transformasi Karir 2026',
+                    'open_date' => now()->subMonth()->toDateString(),
+                    'close_date' => now()->addMonth()->toDateString(),
+                    'severance_multiplier' => 1.75,
+                    'additional_golden_handshake_bonus' => 20000000.00,
+                    'max_quota' => 10,
+                    'approved_applicants_count' => 1,
+                    'status' => 'open',
+                ]
+            );
+
+            VssApplication::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'voluntary_separation_program_id' => $vssProg->id, 'employee_id' => $empAni->id],
+                [
+                    'application_date' => now()->subDays(12)->toDateString(),
+                    'tenure_years' => 4,
+                    'last_basic_salary' => 18000000.00,
+                    'calculated_severance_amount' => 157500000.00,
+                    'total_package_received' => 177500000.00,
+                    'status' => 'approved',
+                    'approved_by_user_id' => $ownerUser->id ?? null,
+                    'settlement_effective_date' => now()->addDays(15)->toDateString(),
+                ]
+            );
+
+            DplkParticipation::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'company_id' => $company->id, 'employee_id' => $empBudi->id],
+                [
+                    'dplk_provider_name' => 'DPLK Bank Mandiri',
+                    'account_number' => 'DPLK-MDR-88910481',
+                    'employer_contribution_percentage' => 5.00,
+                    'employee_contribution_percentage' => 2.50,
+                    'current_accumulated_fund' => 45000000.00,
+                    'status' => 'active',
+                ]
+            );
+
+            // 5. Program Pemagangan Terstruktur Dalam Negeri (Permenaker No. 6/2020)
+            $intern = InternshipProgram::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'agreement_letter_number' => 'SP-MAGANG/2026/001'],
+                [
+                    'company_id' => $company->id,
+                    'program_title' => 'Program Pemagangan Cloud Architecture & DevOps Junior',
+                    'department_id' => $deptTech->id,
+                    'start_date' => now()->subMonths(3)->toDateString(),
+                    'end_date' => now()->subMonths(3)->addMonths(6)->toDateString(),
+                    'pocket_money_allowance_daily' => 85000.00,
+                    'bpjs_bpu_covered' => true,
+                    'mentor_employee_id' => $empBudi->id,
+                    'intern_candidate_name' => 'Dimas Arya Pratama',
+                    'intern_nik_ktp' => '3171012304020005',
+                    'institution_origin' => 'Universitas Indonesia (Fakultas Ilmu Komputer)',
+                    'statutory_ratio_compliant' => true,
+                    'status' => 'active',
+                ]
+            );
+
+            InternshipLogbook::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'internship_program_id' => $intern->id, 'log_date' => now()->subDays(2)->toDateString()],
+                [
+                    'activity_summary' => 'Implementasi CI/CD automated test pipeline dan containerization microservices.',
+                    'competency_mastered' => 'Docker Compose & Kubernetes CI/CD Pipeline',
+                    'mentor_feedback' => 'Pemahaman arsitektur sangat cepat dan eksekusi deployment mandiri.',
+                    'mentor_rating' => 4.80,
+                    'is_verified_by_mentor' => true,
                 ]
             );
         }

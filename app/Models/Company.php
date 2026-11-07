@@ -148,5 +148,47 @@ class Company extends Model
     {
         return $this->hasMany(TripartiteIndustrialDispute::class);
     }
+
+    // --- PHASE 17: OUTSOURCING, PKB, PPKS, VSS & INTERNSHIP ---
+
+    public function outsourcingVendors(): HasMany
+    {
+        return $this->hasMany(OutsourcingVendor::class);
+    }
+
+    public function laborUnions(): HasMany
+    {
+        return $this->hasMany(LaborUnion::class);
+    }
+
+    public function pkbNegotiations(): HasMany
+    {
+        return $this->hasMany(PkbNegotiation::class);
+    }
+
+    public function ppksComplaintCases(): HasMany
+    {
+        return $this->hasMany(PpksComplaintCase::class);
+    }
+
+    public function femaleWorkerFacilityChecks(): HasMany
+    {
+        return $this->hasMany(FemaleWorkerFacilityCheck::class);
+    }
+
+    public function voluntarySeparationPrograms(): HasMany
+    {
+        return $this->hasMany(VoluntarySeparationProgram::class);
+    }
+
+    public function dplkParticipations(): HasMany
+    {
+        return $this->hasMany(DplkParticipation::class);
+    }
+
+    public function internshipPrograms(): HasMany
+    {
+        return $this->hasMany(InternshipProgram::class);
+    }
 }
 

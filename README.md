@@ -38,10 +38,11 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 20. [20. Phase 14: K3 SMK3 & JKK Claims, Pajak Natura PMK 66/2023, SPL PP 35/2021, PP/PKB, & Forum Bipartit](docs/20_PHASE_14_K3_SMK3_JKK_PAJAK_NATURA_SPL_PP_BIPARTIT.md)
 21. [21. Phase 15: Talent Retention, IJP, Onboarding Mentorship, Exit Asset BAST & Disnaker Statutory WLTK / Disability Quota](docs/21_PHASE_15_WLTK_IJP_MENTORSHIP_AND_ACCESSIBILITY.md)
 22. [22. Phase 16: TKA & RPTKA Kemnaker, Klaim JKP BPJS, Koperasi Karyawan, Continuous Shift Roster 24/7 & Mediasi Tripartit PPHI](docs/22_PHASE_16_TKA_RPTKA_JKP_KOPERASI_ROSTER_DAN_PPHI.md)
+23. [23. Phase 17: Alih Daya Outsourcing PP 35/2021, Serikat Pekerja PKB UU 21/2000, Satgas PPKS Kepmenaker 88/2023, Pensiun Dini VSS & Pemagangan Permenaker 6/2020](docs/23_PHASE_17_OUTSOURCING_PKB_PPKS_VSS_DAN_PEMAGANGAN.md)
 
 ---
 
-## 🚀 STATUS IMPLEMENTASI 16 PHASE ROADMAP
+## 🚀 STATUS IMPLEMENTASI 17 PHASE ROADMAP
 
 | Phase | Modul & Cakupan Utama | Status |
 |---|---|---|
@@ -61,6 +62,7 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 | **Phase 14: K3 Safety, Natura, SPL & Bipartit** | Sistem Manajemen Keselamatan Kerja (K3 SMK3 UU 1/1970 & PP 50/2012), Klaim JKK BPJS Ketenagakerjaan (Formulir Tahap I & II, Santunan STMB 100% Upah), Surveilans MCU Kebugaran Kerja (Fit to Work), Pajak Imbalan Natura & Kenikmatan (PMK 66/2023 Ambang Batas PPh 21), Surat Perintah Lembur Resmi (SPL PP 35/2021 Validasi Batas Maks 4 Jam/Hari & 18 Jam/Minggu + Persetujuan Tertulis Pekerja), Register Peraturan Perusahaan (PP/PKB Masa Berlaku 2 Tahun & Early Warning H-90 Renewal), serta Forum Lembaga Kerja Sama (LKS) Bipartit (Permenaker 32/2008 Komposisi Berimbang 1:1 & Laporan Semesteran Disnaker). | ✅ Complete |
 | **Phase 15: Talent Retention, IJP, Mentorship & WLTK** | Wajib Lapor Ketenagakerjaan Perusahaan (WLTK / WLKP UU 7/1981 & Permenaker 18/2017 Format Daring Kemnaker & Siklus 1 Tahun), Internal Job Posting (IJP) & Mobilitas Karir (Gating Masa Kerja, Bebas SP, Nilai Kinerja & Approval Manajer Asal), Onboarding Buddy & Mentorship 90 Hari (Milestone Check-in Day 30-60-90 & Evaluasi 2 Arah), Exit Asset Handover BAST Terstandar & Pemutusan Akses Akun SSO Otomatis (Google Workspace, Slack, VPN), serta Audit Statutori Kuota Disabilitas (Pasal 53 UU 8/2016 Kuota 1% Swasta / 2% BUMN & Inventarisasi Akomodasi yang Layak). | ✅ Complete |
 | **Phase 16: TKA, JKP, KOPKAR, Roster 24/7 & PPHI** | Pengawasan TKA & RPTKA Kemnaker (PP 34/2021, DKPTKA USD 100 & Blokir Jabatan Personalia), Klaim JKP BPJS Ketenagakerjaan (PP 37/2021 Plafon Rp 5 Juta, Manfaat 45% & 25%), Koperasi Karyawan & Simpan Pinjam (UU 25/1992 & Potong Gaji Payroll), Continuous Shift Roster 24/7 (Kepmenakertrans 233/2003 Pola 3 Shift 4 Grup & Tunjangan Malam/Siaga), serta Mediasi Tripartit & PPHI (UU 2/2004 Anjuran Mediator, Perjanjian Bersama PB vs Gugatan PHI). | ✅ Complete |
+| **Phase 17: Outsourcing, PKB, PPKS, VSS & Pemagangan** | Rekanan Alih Daya & Jaminan TUPE (PP 35/2021 & Putusan MK 27/2011), Serikat Pekerja & Perundingan PKB Batas 30 Hari (UU 21/2000 & Permenaker 28/2014), Satgas PPKS Rahasia & Fasilitas Ramah Perempuan (Kepmenaker 88/2023 & Pasal 76 UU 13/2003), Pensiun Dini Sukarela VSS Multiplier & DPLK (UU 4/2023 P2SK), serta Pemagangan Terstruktur Batas Kuota 20% & Durasi 1 Tahun (Permenaker 6/2020). | ✅ Complete |
 
 ---
 
@@ -109,6 +111,16 @@ RiHRIS dibangun dengan kepatuhan hukum sebagai pilar utama tanpa mengunci tarif 
     - Pengaturan pola rotasi shift industri teknologi & operasional kontinu 3 shift 4 grup (siklus 28 hari: 21 hari kerja & 7 hari istirahat bergilir), tunjangan shift malam, dan tunjangan siaga on-call standby.
 16. **Penyelesaian Perselisihan Hubungan Industrial / PPHI (UU No. 2 Tahun 2004)**:
     - Penanganan 4 jenis perselisihan (Hak, Kepentingan, PHK, Antar Serikat), mediasi tripartit Disnaker, anjuran tertulis mediator, Perjanjian Bersama (PB) berkekuatan hukum inkracht di PHI, atau eskalasi ke Gugatan PHI Pengadilan Negeri.
+17. **Tata Kelola Alih Daya / Outsourcing & Jaminan TUPE (PP No. 35 Tahun 2021 & Putusan MK No. 27/PUU-IX/2011)**:
+    - Legalitas rekanan PT berizin NIB OSS Kemnaker, audit upah minimal UMK dan kepesertaan BPJS, serta klausul jaminan kelangsungan bekerja (*Transfer of Undertakings Protection of Employment*).
+18. **Serikat Pekerja & Perundingan PKB (UU No. 21 Tahun 2000 & Permenaker No. 28/2014)**:
+    - Ambang batas keterwakilan perundingan $>50\%$ (Pasal 119 UU 13/2003), batas waktu musyawarah maksimal 30 hari kerja, pendaftaran SK Pengesahan Disnaker, dan pemotongan iuran check-off berbasis surat kuasa tertulis.
+19. **Satgas PPKS & Fasilitas Kesejahteraan Ramah Perempuan (Kepmenaker No. 88/2023 & UU TPKS No. 12/2022)**:
+    - Prosedur aduan rahasia tanpa retaliasi, ruang laktasi higienis (Permenkes 15/2013), serta angkutan antar-jemput dan makanan bergizi bagi pekerja perempuan shift malam (Pasal 76 ayat 3-4 UU 13/2003).
+20. **Pensiun Dini Sukarela (VSS) & DPLK (UU No. 4 Tahun 2023 tentang P2SK)**:
+    - Skema rasionalisasi sukarela dengan pesangon berlipat (multiplier) + bonus tali asih tunai (*Golden Handshake*), serta akumulasi kepesertaan tabungan hari tua DPLK.
+21. **Pemagangan Terstruktur Dalam Negeri (Permenaker No. 6 Tahun 2020)**:
+    - Perjanjian pemagangan tertulis (bukan hubungan kerja), batas kuota maksimal 20% dari total pekerja, durasi maksimal 1 tahun, hak uang saku harian, jaminan BPJS BPU (JKK & JKM), logbook mentor, dan Sertifikat Pemagangan resmi.
 
 ---
 

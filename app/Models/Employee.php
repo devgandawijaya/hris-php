@@ -418,4 +418,26 @@ class Employee extends Model
     {
         return $this->hasMany(TripartiteIndustrialDispute::class);
     }
+
+    // --- PHASE 17: OUTSOURCING, PKB, PPKS, VSS & INTERNSHIP ---
+
+    public function unionDuesDeductions(): HasMany
+    {
+        return $this->hasMany(UnionDuesDeduction::class);
+    }
+
+    public function vssApplications(): HasMany
+    {
+        return $this->hasMany(VssApplication::class);
+    }
+
+    public function dplkParticipation(): HasOne
+    {
+        return $this->hasOne(DplkParticipation::class);
+    }
+
+    public function mentoredInternships(): HasMany
+    {
+        return $this->hasMany(InternshipProgram::class, 'mentor_employee_id');
+    }
 }

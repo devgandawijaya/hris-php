@@ -585,6 +585,34 @@
                             Mediasi Sengketa PHI (UU 2)
                         </a>
 
+                        <!-- Hubungan Kemitraan, PKB, PPKS & Pemagangan (Phase 17) -->
+                        <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Kemitraan, PKB & Pemagangan</div>
+                        <a href="{{ route('outsourcing.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('outsourcing.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="truck" class="w-4 h-4"></i>
+                            Alih Daya & TUPE (PP 35)
+                        </a>
+                        <a href="{{ route('unions.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('unions.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="landmark" class="w-4 h-4"></i>
+                            Serikat Pekerja & PKB
+                        </a>
+                        <a href="{{ route('ppks.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('ppks.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="heart-handshake" class="w-4 h-4"></i>
+                            Satgas PPKS & Ramah Perempuan
+                        </a>
+                        <a href="{{ route('vss.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('vss.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="award" class="w-4 h-4"></i>
+                            Pensiun Dini (VSS) & DPLK
+                        </a>
+                        <a href="{{ route('internships.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('internships.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            Pemagangan (Permenaker 6/20)
+                        </a>
+
                         <!-- Portal ESS -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Portal Karyawan</div>
                         <a href="{{ route('ess.dashboard') }}"
