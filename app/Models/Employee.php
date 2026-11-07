@@ -336,4 +336,24 @@ class Employee extends Model
     {
         return $this->hasMany(FwaSchedule::class);
     }
+
+    public function workplaceIncidents(): HasMany
+    {
+        return $this->hasMany(WorkplaceIncident::class);
+    }
+
+    public function mcuRecords(): HasMany
+    {
+        return $this->hasMany(EmployeeMcuRecord::class);
+    }
+
+    public function fringeBenefits(): HasMany
+    {
+        return $this->hasMany(FringeBenefit::class);
+    }
+
+    public function overtimeOrders(): HasMany
+    {
+        return $this->hasMany(OvertimeOrder::class);
+    }
 }

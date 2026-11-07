@@ -87,6 +87,13 @@ use App\Models\NotificationTemplate;
 use App\Models\NotificationDispatchLog;
 use App\Models\CmsContactMessage;
 use App\Models\FwaSchedule;
+use App\Models\WorkplaceIncident;
+use App\Models\BpjsJkkClaim;
+use App\Models\EmployeeMcuRecord;
+use App\Models\FringeBenefit;
+use App\Models\OvertimeOrder;
+use App\Models\CompanyRegulation;
+use App\Models\BipartiteMeeting;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -1894,6 +1901,132 @@ class DemoCompanySeeder extends Seeder
                     'status' => 'sent',
                     'sent_at' => now()->subHours(2),
                     'dispatched_by_user_id' => $ownerUser->id ?? null,
+                ]
+            );
+
+            // ==========================================
+            // PHASE 14: K3 SAFETY & BPJS JKK, PAJAK NATURA PMK 66/2023, SPL PP 35/2021, PP/PKB & LKS BIPARTIT
+            // ==========================================
+
+            // 1. K3 Workplace Incident & BPJS JKK Claim
+            $k3Incident = WorkplaceIncident::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'incident_number' => 'INC/K3/2026/0001'],
+                [
+                    'company_id' => $company->id,
+                    'incident_date' => now()->subMonths(2)->toDateString(),
+                    'incident_time' => '14:30:00',
+                    'location' => 'Area Pergudangan Logistik Blok B',
+                    'employee_id' => $empAni->id,
+                    'severity' => 'lost_time_injury_lti',
+                    'injury_type' => 'Terkilir Pergelangan Kaki (Sprain)',
+                    'lost_workdays' => 4,
+                    'description' => 'Terpeleset genangan air saat pengecekan stok inventaris rak tingkat dua.',
+                    'root_cause_analysis' => '5-Why: Kebocoran atap saat hujan deras tanpa penanda lantai licin (wet floor sign).',
+                    'corrective_actions' => 'Perbaikan atap bocor dan pemasangan rambu K3 lantai licin permanen.',
+                    'status' => 'closed',
+                    'reported_by_user_id' => $ownerUser->id ?? null,
+                    'investigated_by_user_id' => $ownerUser->id ?? null,
+                ]
+            );
+
+            BpjsJkkClaim::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'claim_number' => 'JKK-BPJS-2026-0001'],
+                [
+                    'workplace_incident_id' => $k3Incident->id,
+                    'stage' => 'tahap_2',
+                    'medical_facility_name' => 'RS PLKK Mitra BPJS Siloam Kebon Jeruk',
+                    'estimated_medical_expense' => 3500000.00,
+                    'approved_bpjs_coverage' => 3500000.00,
+                    'temporary_disability_allowance' => 1666666.67, // STMB 4 hari upah penuh
+                    'claim_status' => 'reimbursed',
+                    'submitted_at' => now()->subMonths(2)->addDays(1)->toDateString(),
+                    'settled_at' => now()->subMonths(2)->addDays(15)->toDateString(),
+                    'bpjs_notes' => 'Klaim JKK telah diverifikasi penuh dan biaya perawatan dicairkan 100% oleh BPJS.',
+                ]
+            );
+
+            EmployeeMcuRecord::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empAni->id, 'mcu_date' => now()->subMonths(3)->toDateString()],
+                [
+                    'clinic_provider' => 'Laboratorium Klinik Prodia Gambir',
+                    'blood_pressure' => '118/78',
+                    'cholesterol' => 175.00,
+                    'blood_sugar' => 92.00,
+                    'fitness_category' => 'fit_to_work',
+                    'doctor_notes' => 'Profil kesehatan umum sangat prima. Tidak ada kontraindikasi pekerjaan.',
+                    'follow_up_recommendation' => 'Pemeriksaan rutin berkala tahunan berikutnya.',
+                ]
+            );
+
+            // 2. Pajak Natura & Kenikmatan (PMK No. 66 Tahun 2023)
+            FringeBenefit::firstOrCreate(
+                [
+                    'tenant_id' => $tenant->id,
+                    'employee_id' => $empAni->id,
+                    'tax_year' => (int) date('Y'),
+                    'period_month' => (int) date('n'),
+                    'benefit_type' => 'groceries_vouchers',
+                ],
+                [
+                    'company_id' => $company->id,
+                    'description' => 'Paket Voucher Sembako & Belanja Bulanan',
+                    'gross_market_value' => 4500000.00,
+                    'non_taxable_threshold' => 3000000.00, // Batas bebas PMK 66/2023
+                    'taxable_natura_value' => 1500000.00, // Selisih kena PPh 21
+                    'is_taxable_object' => true,
+                    'fiscal_notes' => 'Sesuai Pasal 3 ayat 2 PMK No. 66/2023: Dikecualikan s/d Rp 3.000.000/bulan.',
+                ]
+            );
+
+            // 3. Surat Perintah Lembur (SPL PP 35/2021)
+            OvertimeOrder::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'order_number' => 'SPL/2026/11/0001'],
+                [
+                    'company_id' => $company->id,
+                    'employee_id' => $empAni->id,
+                    'overtime_date' => now()->subDays(3)->toDateString(),
+                    'start_time' => '17:00:00',
+                    'end_time' => '20:00:00',
+                    'planned_duration_hours' => 3.00,
+                    'actual_duration_hours' => 3.00,
+                    'reason_task_description' => 'Penyelesaian deployment modul kepatuhan statutori dan closing sprint rilis.',
+                    'is_day_off' => false,
+                    'manager_approved_by' => $ownerUser->id ?? null,
+                    'manager_approved_at' => now()->subDays(3)->setTime(16, 30),
+                    'employee_consented_at' => now()->subDays(3)->setTime(16, 45),
+                    'status' => 'completed_verified',
+                ]
+            );
+
+            // 4. Peraturan Perusahaan (PP UU 13/2003 Pasal 108)
+            CompanyRegulation::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'title' => 'Peraturan Perusahaan PT Demo Solusindo 2026-2028'],
+                [
+                    'company_id' => $company->id,
+                    'document_type' => 'peraturan_perusahaan_pp',
+                    'reg_number' => 'KEP.560/088/DISNAKERTRANS/2026',
+                    'effective_start_date' => now()->subMonths(6)->toDateString(),
+                    'effective_end_date' => now()->subMonths(6)->addYears(2)->toDateString(),
+                    'disnaker_office' => 'Disnakertrans Provinsi DKI Jakarta',
+                    'status' => 'active',
+                    'summary_provisions' => 'Mengatur tata tertib kerja, waktu kerja 40 jam/minggu, hak cuti tahunan, dan sanksi disiplin SP1-SP3.',
+                ]
+            );
+
+            // 5. Forum Lembaga Kerja Sama (LKS) Bipartit
+            BipartiteMeeting::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'meeting_number' => 'BIPARTIT/2026/11/0001'],
+                [
+                    'company_id' => $company->id,
+                    'meeting_date' => now()->subDays(10)->toDateString(),
+                    'meeting_title' => 'Sidang Musyawarah Bipartit Evaluasi Keselamatan K3 & Fasilitas Kerja',
+                    'agenda_topics' => 'Evaluasi penerapan SOP K3 pergudangan, fasilitas makanan sehat, dan penyesuaian jam kerja fleksibel.',
+                    'employer_representatives' => ['Bambang Soedarmono (Direktur HR)', 'Rian Hidayat (Manajer Operasional)'],
+                    'worker_representatives' => ['Ani Widyastuti (Perwakilan Pekerja)', 'Hendra Gunawan (Perwakilan Pekerja)'],
+                    'meeting_minutes' => 'Dicapai kesepakatan bersama bahwa perusahaan akan meningkatkan inspeksi K3 mingguan dan menyediakan subsidi makan bergizi.',
+                    'action_items' => 'Implementasi rambu K3 baru dan audit APD sebelum akhir bulan berjalan.',
+                    'disnaker_reported_at' => now()->subDays(5)->toDateString(),
+                    'status' => 'reported_to_disnaker',
                 ]
             );
         }

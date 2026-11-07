@@ -607,4 +607,43 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/templates', [App\Http\Controllers\Company\NotificationHubController::class, 'storeTemplate'])->name('templates.store');
         Route::post('/test', [App\Http\Controllers\Company\NotificationHubController::class, 'dispatchTest'])->name('test.dispatch');
     });
+
+    // --- PHASE 14: K3 SAFETY & BPJS JKK, PAJAK NATURA PMK 66/2023, SPL PP 35/2021, PP/PKB, DAN LKS BIPARTIT ---
+
+    // 51. Keselamatan dan Kesehatan Kerja (K3) & Klaim JKK BPJS Ketenagakerjaan
+    Route::prefix('k3')->name('company.k3.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\K3IncidentController::class, 'index'])->name('index');
+        Route::post('/incidents', [App\Http\Controllers\Company\K3IncidentController::class, 'storeIncident'])->name('incidents.store');
+        Route::post('/incidents/{incident}/jkk-claim', [App\Http\Controllers\Company\K3IncidentController::class, 'fileJkkClaim'])->name('jkk-claim.store');
+        Route::get('/jkk-claims/{claim}/print', [App\Http\Controllers\Company\K3IncidentController::class, 'printJkkClaim'])->name('jkk-claim.print');
+        Route::post('/mcu', [App\Http\Controllers\Company\K3IncidentController::class, 'storeMcu'])->name('mcu.store');
+    });
+
+    // 52. Pajak Natura & Kenikmatan (PMK No. 66 Tahun 2023)
+    Route::prefix('fringe-benefits')->name('company.fringe-benefits.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\FringeBenefitController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Company\FringeBenefitController::class, 'store'])->name('store');
+    });
+
+    // 53. Surat Perintah Lembur (SPL) Resmi & Batas Maksimal PP No. 35/2021
+    Route::prefix('spl')->name('company.spl.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\SplOvertimeController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Company\SplOvertimeController::class, 'store'])->name('store');
+        Route::post('/{order}/approve', [App\Http\Controllers\Company\SplOvertimeController::class, 'approve'])->name('approve');
+        Route::post('/{order}/consent', [App\Http\Controllers\Company\SplOvertimeController::class, 'consent'])->name('consent');
+        Route::post('/{order}/verify', [App\Http\Controllers\Company\SplOvertimeController::class, 'verify'])->name('verify');
+    });
+
+    // 54. Peraturan Perusahaan (PP) & PKB Register (UU No. 13/2003 & H-90 Renewal)
+    Route::prefix('regulations')->name('company.regulations.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\CompanyRegulationController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Company\CompanyRegulationController::class, 'store'])->name('store');
+    });
+
+    // 55. Forum Lembaga Kerja Sama (LKS) Bipartit (Permenaker No. 32/2008)
+    Route::prefix('bipartite')->name('company.bipartite.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Company\BipartiteController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Company\BipartiteController::class, 'store'])->name('store');
+        Route::post('/{meeting}/report-disnaker', [App\Http\Controllers\Company\BipartiteController::class, 'reportDisnaker'])->name('report-disnaker');
+    });
 });

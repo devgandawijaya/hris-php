@@ -309,6 +309,11 @@
                             <i data-lucide="timer" class="w-4 h-4"></i>
                             Lembur (PP 35/2021)
                         </a>
+                        <a href="{{ route('company.spl.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.spl.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="file-check" class="w-4 h-4"></i>
+                            Surat Perintah Lembur (SPL)
+                        </a>
 
                         <!-- Payroll, BPJS & Pajak (Phase 3) -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Payroll & Kepatuhan</div>
@@ -341,6 +346,11 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.taxes.ebupot.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="file-check-2" class="w-4 h-4"></i>
                             e-Bupot & 1721-A1
+                        </a>
+                        <a href="{{ route('company.fringe-benefits.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.fringe-benefits.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="gift" class="w-4 h-4"></i>
+                            Pajak Natura (PMK 66)
                         </a>
                         <a href="{{ route('company.disbursal.index') }}"
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.disbursal.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
@@ -508,6 +518,21 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.engagement.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="heart-handshake" class="w-4 h-4"></i>
                             Survei eNPS & Apresiasi
+                        </a>
+                        <a href="{{ route('company.k3.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.k3.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="shield" class="w-4 h-4"></i>
+                            K3 & Klaim JKK BPJS
+                        </a>
+                        <a href="{{ route('company.regulations.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.regulations.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="book-marked" class="w-4 h-4"></i>
+                            Peraturan Perusahaan (PP)
+                        </a>
+                        <a href="{{ route('company.bipartite.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.bipartite.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            Forum LKS Bipartit
                         </a>
 
                         <!-- Portal ESS -->

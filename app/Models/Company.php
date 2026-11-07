@@ -64,5 +64,30 @@ class Company extends Model
     {
         return $this->hasMany(FwaSchedule::class);
     }
+
+    public function workplaceIncidents(): HasMany
+    {
+        return $this->hasMany(WorkplaceIncident::class);
+    }
+
+    public function fringeBenefits(): HasMany
+    {
+        return $this->hasMany(FringeBenefit::class);
+    }
+
+    public function overtimeOrders(): HasMany
+    {
+        return $this->hasMany(OvertimeOrder::class);
+    }
+
+    public function companyRegulations(): HasMany
+    {
+        return $this->hasMany(CompanyRegulation::class);
+    }
+
+    public function bipartiteMeetings(): HasMany
+    {
+        return $this->hasMany(BipartiteMeeting::class);
+    }
 }
 
