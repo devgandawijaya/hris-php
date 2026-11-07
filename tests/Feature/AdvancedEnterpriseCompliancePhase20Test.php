@@ -39,9 +39,8 @@ class AdvancedEnterpriseCompliancePhase20Test extends TestCase
         );
 
         $this->company = Company::firstOrCreate(
-            ['tenant_id' => $this->tenant->id, 'slug' => 'pt-test-p20-dr-pdp'],
+            ['tenant_id' => $this->tenant->id, 'name' => 'PT Test Phase 20 Enterprise DR & PDP'],
             [
-                'name' => 'PT Test Phase 20 Enterprise DR & PDP',
                 'legal_name' => 'PT Test Phase 20 Enterprise DR & PDP Tbk',
                 'npwp' => '01.234.567.8-020.000',
                 'address' => 'Cyber 2 Tower Lt. 35, Jl. H.R. Rasuna Said Blok X-5',
@@ -50,7 +49,6 @@ class AdvancedEnterpriseCompliancePhase20Test extends TestCase
                 'postal_code' => '12950',
                 'phone' => '+62 21 8899 0020',
                 'email' => 'dpo-secops@p20drpdp.test',
-                'industry' => 'Cloud Infrastructure & High-Security Financial SaaS',
             ]
         );
 
@@ -59,12 +57,14 @@ class AdvancedEnterpriseCompliancePhase20Test extends TestCase
         );
 
         $this->dpoPos = Position::firstOrCreate(
-            ['tenant_id' => $this->tenant->id, 'company_id' => $this->company->id, 'name' => 'Data Protection Officer (DPO)']
+            ['tenant_id' => $this->tenant->id, 'department_id' => $this->secDept->id, 'title' => 'Data Protection Officer (DPO)']
         );
 
         $this->employee = Employee::firstOrCreate(
-            ['tenant_id' => $this->tenant->id, 'company_id' => $this->company->id, 'nik' => 'P20-EMP-DPO-001'],
+            ['tenant_id' => $this->tenant->id, 'employee_number' => 'P20-EMP-DPO-001'],
             [
+                'company_id' => $this->company->id,
+                'nik_ktp' => '3171012345678001',
                 'first_name' => 'Aditya',
                 'last_name' => 'Kurniawan',
                 'email' => 'aditya.kurniawan@p20drpdp.test',
@@ -72,7 +72,7 @@ class AdvancedEnterpriseCompliancePhase20Test extends TestCase
                 'department_id' => $this->secDept->id,
                 'position_id' => $this->dpoPos->id,
                 'join_date' => Carbon::now()->subMonths(24)->toDateString(),
-                'employment_type' => 'permanent',
+                'employment_status' => 'pkwtt',
                 'basic_salary' => 28000000.00,
                 'status' => 'active',
             ]

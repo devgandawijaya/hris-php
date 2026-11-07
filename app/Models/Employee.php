@@ -18,6 +18,7 @@ class Employee extends Model
         'user_id',
         'employee_number',
         'nik_ktp',
+        'nik',
         'first_name',
         'last_name',
         'email',
@@ -35,6 +36,7 @@ class Employee extends Model
         'job_grade_id',
         'reports_to_id',
         'employment_status',
+        'employment_type',
         'join_date',
         'end_date',
         'bank_name',
@@ -58,6 +60,35 @@ class Employee extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::creating(function (Employee $emp) {
+            $rawNik = $emp->attributes['nik'] ?? $emp->attributes['nik_ktp'] ?? null;
+            if (empty($emp->attributes['employee_number']) && !empty($rawNik)) {
+                $emp->attributes['employee_number'] = $rawNik;
+            }
+            if (empty($emp->attributes['nik']) && !empty($emp->attributes['employee_number'])) {
+                $emp->attributes['nik'] = $emp->attributes['employee_number'];
+            }
+            if (empty($emp->attributes['employment_status']) && !empty($emp->attributes['employment_type'])) {
+                $emp->attributes['employment_status'] = $emp->attributes['employment_type'];
+            }
+            if (empty($emp->attributes['employment_type']) && !empty($emp->attributes['employment_status'])) {
+                $emp->attributes['employment_type'] = $emp->attributes['employment_status'];
+            }
+        });
+
+        static::saving(function (Employee $emp) {
+            $rawNik = $emp->attributes['nik'] ?? $emp->attributes['nik_ktp'] ?? null;
+            if (empty($emp->attributes['employee_number']) && !empty($rawNik)) {
+                $emp->attributes['employee_number'] = $rawNik;
+            }
+            if (empty($emp->attributes['nik']) && !empty($emp->attributes['employee_number'])) {
+                $emp->attributes['nik'] = $emp->attributes['employee_number'];
+            }
+        });
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim("{$this->first_name} {$this->last_name}");
@@ -71,6 +102,21 @@ class Employee extends Model
     public function getPositionTitleAttribute(): string
     {
         return $this->position?->title ?? 'Staff';
+    }
+
+    public function getNikAttribute(): ?string
+    {
+        return $this->attributes['nik'] ?? $this->attributes['nik_ktp'] ?? $this->attributes['employee_number'] ?? null;
+    }
+
+    public function getEmploymentTypeAttribute(): string
+    {
+        return $this->employment_status ?? 'pkwt';
+    }
+
+    public function getDateOfBirthAttribute(): ?string
+    {
+        return $this->birth_date ? (is_string($this->birth_date) ? $this->birth_date : $this->birth_date->toDateString()) : null;
     }
 
     public function company(): BelongsTo

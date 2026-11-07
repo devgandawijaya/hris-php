@@ -15,6 +15,7 @@ class Company extends Model
     protected $fillable = [
         'tenant_id',
         'name',
+        'slug',
         'legal_name',
         'npwp',
         'email',
@@ -23,6 +24,7 @@ class Company extends Model
         'city',
         'province',
         'postal_code',
+        'industry',
         'logo_path',
     ];
 

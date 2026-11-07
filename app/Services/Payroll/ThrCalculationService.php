@@ -31,7 +31,7 @@ class ThrCalculationService
         $paymentDate = $actualPaymentDate ? Carbon::parse($actualPaymentDate) : $statutoryDeadline->copy();
 
         $joinDate = Carbon::parse($employee->join_date);
-        $tenureMonths = $joinDate->diffInMonths($holiday);
+        $tenureMonths = $joinDate->gt($holiday) ? 0 : $joinDate->diffInMonths($holiday);
 
         // Fetch wage basis: Basic Salary + Fixed Allowances
         $basicSalary = (float) $employee->basic_salary;
@@ -125,7 +125,7 @@ class ThrCalculationService
                 'religious_holiday_type' => $religiousHolidayType,
             ],
             [
-                'tenure_months' => $calculation['tenure_months'],
+                'tenure_months' => (int) round($calculation['tenure_months']),
                 'prorata_multiplier' => $calculation['prorata_multiplier'],
                 'regular_wage_basis' => $calculation['regular_wage_basis'],
                 'calculated_thr_amount' => $calculation['calculated_thr_amount'],

@@ -91,6 +91,18 @@ services:
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
+    environment:
+      - APP_ENV=local
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=rihris_db
+      - DB_USERNAME=rihris_user
+      - DB_PASSWORD=rihris_password_secure
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUE_CONNECTION=redis
+      - CACHE_STORE=redis
     depends_on:
       postgres:
         condition: service_healthy
@@ -109,6 +121,18 @@ services:
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
+    environment:
+      - APP_ENV=local
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=rihris_db
+      - DB_USERNAME=rihris_user
+      - DB_PASSWORD=rihris_password_secure
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUE_CONNECTION=redis
+      - CACHE_STORE=redis
     depends_on:
       postgres:
         condition: service_healthy

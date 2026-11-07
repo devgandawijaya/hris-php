@@ -952,8 +952,7 @@ class DemoCompanySeeder extends Seeder
                 'is_anonymous' => false,
                 'status' => 'resolved',
                 'resolved_by_user_id' => $hr->id,
-                'investigation_notes' => 'Telah dilakukan pengecekan bersama teknisi Building Management.',
-                'resolution_notes' => 'Kompresor AC lantai 18 telah diperbaiki dan filter pendingin telah diganti per tanggal ' . now()->subDays(3)->format('d/m/Y') . '.',
+                'resolution_notes' => 'Telah dilakukan pengecekan bersama teknisi Building Management. Kompresor AC lantai 18 telah diperbaiki dan filter pendingin telah diganti per tanggal ' . now()->subDays(3)->format('d/m/Y') . '.',
                 'resolved_at' => now()->subDays(3),
             ]
         );
@@ -2147,7 +2146,7 @@ class DemoCompanySeeder extends Seeder
 
             // 2. Internal Job Posting (IJP) Vacancy & Application
             $techDept = Department::where('company_id', $company->id)->where('name', 'Technology')->first() ?? Department::where('company_id', $company->id)->first();
-            $posLead = Position::where('company_id', $company->id)->first();
+            $posLead = Position::where('department_id', $techDept->id)->first() ?? Position::first();
 
             $vacancy = IjpVacancy::firstOrCreate(
                 ['tenant_id' => $tenant->id, 'vacancy_code' => 'IJP-2026-0001'],

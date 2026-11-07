@@ -70,16 +70,15 @@ class AdvancedEnterpriseCompliancePhase18Test extends TestCase
         );
 
         $this->hrManager = User::firstOrCreate(
-            ['tenant_id' => $this->tenant->id, 'email' => 'hrmanager.p18@p18kesejahteraan.test'],
+            ['email' => 'hrmanager.p18@p18kesejahteraan.test'],
             [
                 'name' => 'Kusuma Wardani, S.Psi, CHRP',
                 'password' => bcrypt('Password123!'),
-                'is_active' => true,
             ]
         );
 
         // Senior employee (Tenure: 24 months, Basic Salary: Rp 16.000.000)
-        $this->employeeSenior = Employee::firstOrCreate(
+        $this->employeeSenior = Employee::updateOrCreate(
             ['tenant_id' => $this->tenant->id, 'company_id' => $this->company->id, 'nik' => 'P18-EMP-001'],
             [
                 'first_name' => 'Arya',
@@ -87,7 +86,7 @@ class AdvancedEnterpriseCompliancePhase18Test extends TestCase
                 'email' => 'arya.wicaksana@p18kesejahteraan.test',
                 'department_id' => $this->techDept->id,
                 'position_id' => $this->devPos->id,
-                'join_date' => Carbon::now()->subMonths(24)->toDateString(),
+                'join_date' => Carbon::parse('2026-03-21')->subMonths(24)->toDateString(),
                 'employment_type' => 'permanent',
                 'basic_salary' => 16000000.00,
                 'status' => 'active',
@@ -95,7 +94,7 @@ class AdvancedEnterpriseCompliancePhase18Test extends TestCase
         );
 
         // Junior employee (Tenure: 6 months, Basic Salary: Rp 10.000.000)
-        $this->employeeJunior = Employee::firstOrCreate(
+        $this->employeeJunior = Employee::updateOrCreate(
             ['tenant_id' => $this->tenant->id, 'company_id' => $this->company->id, 'nik' => 'P18-EMP-002'],
             [
                 'first_name' => 'Siti',
@@ -103,7 +102,7 @@ class AdvancedEnterpriseCompliancePhase18Test extends TestCase
                 'email' => 'siti.nurhaliza@p18kesejahteraan.test',
                 'department_id' => $this->techDept->id,
                 'position_id' => $this->devPos->id,
-                'join_date' => Carbon::now()->subMonths(6)->toDateString(),
+                'join_date' => Carbon::parse('2026-03-21')->subMonths(6)->toDateString(),
                 'employment_type' => 'contract',
                 'basic_salary' => 10000000.00,
                 'status' => 'active',
@@ -111,7 +110,7 @@ class AdvancedEnterpriseCompliancePhase18Test extends TestCase
         );
 
         // Newbie employee (Tenure: 15 days, Basic Salary: Rp 8.000.000)
-        $this->employeeNewbie = Employee::firstOrCreate(
+        $this->employeeNewbie = Employee::updateOrCreate(
             ['tenant_id' => $this->tenant->id, 'company_id' => $this->company->id, 'nik' => 'P18-EMP-003'],
             [
                 'first_name' => 'Rian',
@@ -119,7 +118,7 @@ class AdvancedEnterpriseCompliancePhase18Test extends TestCase
                 'email' => 'rian.kurnia@p18kesejahteraan.test',
                 'department_id' => $this->techDept->id,
                 'position_id' => $this->devPos->id,
-                'join_date' => Carbon::now()->subDays(15)->toDateString(),
+                'join_date' => Carbon::parse('2026-03-21')->subDays(15)->toDateString(),
                 'employment_type' => 'probation',
                 'basic_salary' => 8000000.00,
                 'status' => 'active',

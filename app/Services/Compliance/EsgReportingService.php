@@ -60,9 +60,9 @@ class EsgReportingService
         // 3. Training & Education (GRI 404-1)
         $totalTrainingHours = 0.0;
         if (class_exists(TrainingEnrollment::class)) {
-            $totalTrainingHours = (float) TrainingEnrollment::where('tenant_id', $company->tenant_id)
-                ->where('status', 'completed')
-                ->whereYear('completed_at', $reportingYear)
+            $totalTrainingHours = (float) TrainingEnrollment::where('training_enrollments.tenant_id', $company->tenant_id)
+                ->where('training_enrollments.status', 'completed')
+                ->whereYear('training_enrollments.updated_at', $reportingYear)
                 ->join('training_courses', 'training_enrollments.training_course_id', '=', 'training_courses.id')
                 ->sum('training_courses.duration_hours');
         }

@@ -33,6 +33,7 @@ class CobInsuranceService
                 'bpjs_health_card_number' => $bpjsHealthCardNumber,
                 'cob_claim_mechanism' => $cobMechanism,
                 'annual_limit_amount' => $annualLimit,
+                'current_usage_amount' => 0.00,
                 'status' => 'active',
             ]
         );

@@ -14,10 +14,28 @@ class Position extends Model
 
     protected $fillable = [
         'tenant_id',
+        'company_id',
         'department_id',
         'title',
+        'name',
         'job_level',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (Position $pos) {
+            if (empty($pos->title) && !empty($pos->name)) {
+                $pos->title = $pos->name;
+            } elseif (empty($pos->name) && !empty($pos->title)) {
+                $pos->name = $pos->title;
+            }
+        });
+    }
+
+    public function getNameAttribute(): ?string
+    {
+        return $this->attributes['name'] ?? $this->attributes['title'] ?? null;
+    }
 
     public function department(): BelongsTo
     {

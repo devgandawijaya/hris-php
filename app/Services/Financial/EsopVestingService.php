@@ -51,8 +51,8 @@ class EsopVestingService
      */
     public function updateVestingProgress(EsopGrant $grant, Carbon|string|null $asOfDate = null): EsopGrant
     {
-        $asOf = $asOfDate ? Carbon::parse($asOfDate) : Carbon::today();
-        $grantDate = Carbon::parse($grant->grant_date);
+        $asOf = $asOfDate ? Carbon::parse($asOfDate)->startOfDay() : Carbon::today();
+        $grantDate = Carbon::parse($grant->grant_date)->startOfDay();
 
         if ($asOf->lessThan($grantDate)) {
             $grant->vested_shares_count = 0;
