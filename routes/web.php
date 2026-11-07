@@ -51,6 +51,11 @@ use App\Http\Controllers\Company\BusinessTripController;
 use App\Http\Controllers\Company\OffboardingClearanceController;
 use App\Http\Controllers\Company\TaxEbupotController;
 use App\Http\Controllers\Company\OrgChartController;
+use App\Http\Controllers\Company\DigitalContractController;
+use App\Http\Controllers\Company\ProbationEvaluationController;
+use App\Http\Controllers\Company\PaymentGatewayController;
+use App\Http\Controllers\Company\KirkpatrickTrainingController;
+use App\Http\Controllers\Company\FwaController;
 use App\Http\Controllers\NotificationController;
 
 /*
@@ -286,6 +291,9 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/business-trip/{order}/expense', [EmployeeDashboardController::class, 'addEssBusinessTripExpense'])->name('business-trip.expense');
         Route::get('/form1721a1/{record}', [EmployeeDashboardController::class, 'viewEssForm1721A1'])->name('form1721a1.show');
         Route::get('/paklaring/{letter}', [EmployeeDashboardController::class, 'viewEssPaklaring'])->name('paklaring.show');
+        Route::post('/contracts/{contract}/sign', [EmployeeDashboardController::class, 'signEssContract'])->name('contract.sign');
+        Route::get('/certificates/{certificate}', [EmployeeDashboardController::class, 'viewEssCertificate'])->name('certificate.show');
+        Route::post('/fwa', [EmployeeDashboardController::class, 'requestEssFwa'])->name('fwa.request');
         Route::get('/payslip/{payroll}', [PayslipController::class, 'employeePayslip'])->name('payslip.show');
     });
 
@@ -518,4 +526,46 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
 
     // 43. Interactive Organizational Chart
     Route::get('/orgchart', [OrgChartController::class, 'index'])->name('company.orgchart.index');
+
+    // --- PHASE 12: DIGITAL CONTRACTS & E-SIGNATURES, PROBATION EVALUATION & SK PKWTT, SAAS MIDTRANS GATEWAY, KIRKPATRICK L&D, AND FWA ---
+
+    // 44. Digital Employment Contracts & E-Signatures (UU ITE No. 1/2024 & PP 35/2021)
+    Route::prefix('digital-contracts')->name('company.digital-contracts.')->group(function () {
+        Route::get('/', [DigitalContractController::class, 'index'])->name('index');
+        Route::post('/', [DigitalContractController::class, 'store'])->name('store');
+        Route::get('/{contract}', [DigitalContractController::class, 'show'])->name('show');
+        Route::post('/{contract}/sign-company', [DigitalContractController::class, 'signCompany'])->name('sign-company');
+        Route::get('/{contract}/print', [DigitalContractController::class, 'printContract'])->name('print');
+    });
+
+    // 45. Masa Percobaan & Evaluasi Karyawan Tetap (Pasal 60 UU Ketenagakerjaan No. 13/2003)
+    Route::prefix('probation')->name('company.probation.')->group(function () {
+        Route::get('/', [ProbationEvaluationController::class, 'index'])->name('index');
+        Route::post('/', [ProbationEvaluationController::class, 'store'])->name('store');
+        Route::get('/{evaluation}', [ProbationEvaluationController::class, 'show'])->name('show');
+        Route::get('/{evaluation}/print-sk', [ProbationEvaluationController::class, 'printSk'])->name('print-sk');
+    });
+
+    // 46. SaaS Midtrans Payment Gateway & Subscription Checkout
+    Route::prefix('payment-gateway')->name('company.payment-gateway.')->group(function () {
+        Route::get('/checkout/{invoice}', [PaymentGatewayController::class, 'checkout'])->name('checkout');
+        Route::post('/simulate-success/{transaction}', [PaymentGatewayController::class, 'simulateSuccess'])->name('simulate-success');
+    });
+
+    // 47. Kirkpatrick 4-Level Training Evaluation & Digital Certificates
+    Route::prefix('kirkpatrick')->name('company.kirkpatrick.')->group(function () {
+        Route::get('/', [KirkpatrickTrainingController::class, 'index'])->name('index');
+        Route::post('/{enrollment}/test-scores', [KirkpatrickTrainingController::class, 'storeTestScores'])->name('test-scores.store');
+        Route::post('/{enrollment}/reaction', [KirkpatrickTrainingController::class, 'storeReaction'])->name('reaction.store');
+        Route::post('/{enrollment}/behavior', [KirkpatrickTrainingController::class, 'storeBehavior'])->name('behavior.store');
+        Route::post('/{enrollment}/certificate', [KirkpatrickTrainingController::class, 'issueCertificate'])->name('certificate.issue');
+        Route::get('/certificates/{certificate}/print', [KirkpatrickTrainingController::class, 'printCertificate'])->name('certificate.print');
+    });
+
+    // 48. Flexible Working Arrangement (FWA WFH/WFO Scheduler)
+    Route::prefix('fwa')->name('company.fwa.')->group(function () {
+        Route::get('/', [FwaController::class, 'index'])->name('index');
+        Route::post('/', [FwaController::class, 'store'])->name('store');
+        Route::post('/{schedule}/approve', [FwaController::class, 'approve'])->name('approve');
+    });
 });

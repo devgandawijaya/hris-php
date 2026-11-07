@@ -25,6 +25,17 @@ class EmploymentContract extends Model
         'renewal_count',
         'document_path',
         'notes',
+        'contract_body',
+        'employee_signature',
+        'employee_signed_at',
+        'employee_sign_ip',
+        'company_signature',
+        'company_signed_at',
+        'company_sign_ip',
+        'signer_name',
+        'signer_position',
+        'signed_hash',
+        'is_digitally_signed',
     ];
 
     protected function casts(): array
@@ -37,12 +48,55 @@ class EmploymentContract extends Model
             'compensation_calculated' => 'decimal:2',
             'compensation_paid' => 'boolean',
             'renewal_count' => 'integer',
+            'employee_signed_at' => 'datetime',
+            'company_signed_at' => 'datetime',
+            'is_digitally_signed' => 'boolean',
         ];
     }
 
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function getContractTypeAttribute(): string
+    {
+        return strtoupper($this->type ?? 'PKWT');
+    }
+
+    public function getDocumentIntegrityHashAttribute(): ?string
+    {
+        return $this->signed_hash;
+    }
+
+    public function getCompanySignerNameAttribute(): ?string
+    {
+        return $this->signer_name;
+    }
+
+    public function getCompanySignerTitleAttribute(): ?string
+    {
+        return $this->signer_position;
+    }
+
+    public function getCompanySignerIpAttribute(): ?string
+    {
+        return $this->company_sign_ip;
+    }
+
+    public function getEmployeeSignerIpAttribute(): ?string
+    {
+        return $this->employee_sign_ip;
+    }
+
+    public function getBasicSalaryAttribute(): float
+    {
+        return (float) ($this->monthly_wage ?? 0);
+    }
+
+    public function getAllowancesAttribute(): float
+    {
+        return 0.00;
     }
 }
 

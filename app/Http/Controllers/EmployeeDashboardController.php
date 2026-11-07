@@ -36,7 +36,11 @@ use App\Models\EmployeeEmergencyContact;
 use App\Models\BusinessTripOrder;
 use App\Models\TaxForm1721A1Record;
 use App\Models\WorkExperienceLetter;
+use App\Models\TrainingCertificate;
+use App\Models\FwaSchedule;
 use App\Services\Travel\BusinessTripService;
+use App\Services\Contract\DigitalContractService;
+use App\Services\Attendance\FwaService;
 use App\Services\Talent\Appraisal360Service;
 use App\Services\Attendance\QrAttendanceService;
 use App\Services\Finance\EmployeeLoanService;
@@ -64,7 +68,9 @@ class EmployeeDashboardController extends Controller
         protected SkillMatrixService $skillMatrixService,
         protected Appraisal360Service $appraisalService,
         protected QrAttendanceService $qrAttendanceService,
-        protected BusinessTripService $travelService
+        protected BusinessTripService $travelService,
+        protected DigitalContractService $digitalContractService,
+        protected FwaService $fwaService
     ) {}
 
     public function index(): View
@@ -200,6 +206,10 @@ class EmployeeDashboardController extends Controller
                 ->latest('tax_year')
                 ->get();
             $myPaklaring = WorkExperienceLetter::where('employee_id', $employee->id)->first();
+
+            // Phase 12: Certificates & FWA Schedules
+            $myCertificates = TrainingCertificate::whereHas('enrollment', fn($q) => $q->where('employee_id', $employee->id))->latest()->get();
+            $myFwaSchedules = FwaSchedule::where('employee_id', $employee->id)->latest('date')->take(10)->get();
         } else {
             $myWarnings = collect();
             $myGrievances = collect();
@@ -228,6 +238,8 @@ class EmployeeDashboardController extends Controller
             $myBusinessTrips = collect();
             $myTaxForms1721A1 = collect();
             $myPaklaring = null;
+            $myCertificates = collect();
+            $myFwaSchedules = collect();
         }
 
         return view('employee.dashboard', compact(
@@ -267,7 +279,9 @@ class EmployeeDashboardController extends Controller
             'myEmergencyContacts',
             'myBusinessTrips',
             'myTaxForms1721A1',
-            'myPaklaring'
+            'myPaklaring',
+            'myCertificates',
+            'myFwaSchedules'
         ));
     }
 
@@ -799,5 +813,53 @@ class EmployeeDashboardController extends Controller
 
         $letter->load(['company', 'employee.department', 'employee.position']);
         return view('company.clearance.paklaring', compact('letter'));
+    }
+
+    public function signEssContract(Request $request, EmploymentContract $contract): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        if ($contract->employee_id !== $employee->id) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $validated = $request->validate([
+            'signature_data' => ['required', 'string'],
+        ]);
+
+        $this->digitalContractService->signByEmployee($contract, $validated['signature_data'], $request->ip());
+
+        return back()->with('success', 'Perjanjian kerja berhasil Anda tandatangani secara digital dengan segel hash UU ITE.');
+    }
+
+    public function viewEssCertificate(TrainingCertificate $certificate): View
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        if ($certificate->enrollment->employee_id !== $employee->id) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $certificate->load('enrollment.employee.department');
+        $company = $employee->company ?? \App\Models\Company::first();
+        return view('company.training.certificate', compact('company', 'certificate'));
+    }
+
+    public function requestEssFwa(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        $validated = $request->validate([
+            'date' => ['required', 'date'],
+            'work_mode' => ['required', 'in:wfh,wfo'],
+            'reason' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $this->fwaService->requestFwa($employee, $validated['date'], $validated['work_mode'], $validated['reason'] ?? null);
+
+        return back()->with('success', "Permohonan jadwal kerja {$validated['work_mode']} berhasil diajukan ke atasan.");
     }
 }

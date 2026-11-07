@@ -260,6 +260,11 @@
                             <i data-lucide="qr-code" class="w-4 h-4"></i>
                             Kios QR Presensi
                         </a>
+                        <a href="{{ route('company.fwa.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.fwa.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="home" class="w-4 h-4"></i>
+                            Jadwal Kerja Fleksibel (FWA)
+                        </a>
 
                         <!-- Cuti & Lembur (Phase 2) -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Izin & Beban Kerja</div>
@@ -334,6 +339,16 @@
                             <i data-lucide="file-signature" class="w-4 h-4"></i>
                             Manajemen Kontrak PKWT
                         </a>
+                        <a href="{{ route('company.digital-contracts.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.digital-contracts.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                            Kontrak Digital & TTE (UU ITE)
+                        </a>
+                        <a href="{{ route('company.probation.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.probation.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="user-check" class="w-4 h-4"></i>
+                            Evaluasi Probation (SK PKWTT)
+                        </a>
 
                         <!-- Talenta & Pengembangan SDM (Phase 4) -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Manajemen Talenta</div>
@@ -356,6 +371,11 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.training.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="graduation-cap" class="w-4 h-4"></i>
                             Pelatihan & Sertifikasi
+                        </a>
+                        <a href="{{ route('company.kirkpatrick.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.kirkpatrick.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="medal" class="w-4 h-4"></i>
+                            Evaluasi Kirkpatrick & Sertifikat
                         </a>
                         <a href="{{ route('company.skills.index') }}"
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.skills.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">

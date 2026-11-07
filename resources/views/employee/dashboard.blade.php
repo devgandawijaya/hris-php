@@ -181,6 +181,23 @@
             Bukti Potong & Dokumen
         </button>
 
+        <button type="button" @click="activeEssTab = 'fwa'"
+                :class="activeEssTab === 'fwa' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="home" class="w-4 h-4"></i>
+            Jadwal Fleksibel (FWA)
+        </button>
+
+        <button type="button" @click="activeEssTab = 'certificates'"
+                :class="activeEssTab === 'certificates' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="award" class="w-4 h-4"></i>
+            Sertifikat Digital
+            @if(isset($myCertificates) && $myCertificates->isNotEmpty())
+                <span class="px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold">{{ $myCertificates->count() }}</span>
+            @endif
+        </button>
+
         <button type="button" @click="activeEssTab = 'profile'"
                 :class="activeEssTab === 'profile' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
@@ -659,6 +676,32 @@
                             <span class="text-slate-400 block">Hak Kompensasi PP 35:</span>
                             <strong class="text-purple-700">Rp {{ number_format($ctr->compensation_calculated, 0, ',', '.') }}</strong>
                         </div>
+                    </div>
+
+                    <!-- Phase 12: Digital E-Signature Seal & Action -->
+                    <div class="pt-3 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        @if($ctr->employee_signed_at)
+                            <div class="flex items-center gap-2 text-emerald-700 font-medium">
+                                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+                                <span>Telah ditandatangani secara elektronik ({{ $ctr->employee_signed_at->format('d/m/Y H:i') }})</span>
+                                @if($ctr->signed_hash)
+                                    <span class="font-mono text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">SHA256: {{ substr($ctr->signed_hash, 0, 8) }}...</span>
+                                @endif
+                            </div>
+                        @else
+                            <div class="flex items-center justify-between w-full">
+                                <div class="text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 flex items-center gap-2">
+                                    <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600"></i>
+                                    <span>Menunggu tanda tangan elektronik Anda sesuai UU ITE No. 1/2024.</span>
+                                </div>
+                                <form action="{{ route('ess.contract.sign', $ctr) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition shadow-sm">
+                                        ✍️ Tandatangani Sekarang
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @empty
@@ -2197,6 +2240,127 @@
                 </div>
             </div>
         @endif
+    </div>
+
+    <!-- TAB 15: JADWAL KERJA FLEKSIBEL (FWA WFH/WFO) -->
+    <div x-show="activeEssTab === 'fwa'" x-cloak class="space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Form Pengajuan FWA -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+                <div class="border-b border-slate-100 pb-3">
+                    <h3 class="font-bold text-sm text-slate-900">Ajukan Jadwal Kerja Fleksibel</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Pilih tanggal dan moda kerja (WFH / WFO) untuk disetujui atasan.</p>
+                </div>
+
+                <form action="{{ route('ess.fwa.request') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Kerja *</label>
+                        <input type="date" name="date" required value="{{ date('Y-m-d') }}" min="{{ date('Y-m-d') }}" class="w-full text-sm border-slate-300 rounded-lg p-2.5 border focus:ring-red-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Moda Kerja *</label>
+                        <select name="work_mode" required class="w-full text-sm border-slate-300 rounded-lg p-2.5 border focus:ring-red-500">
+                            <option value="wfh">🏠 WFH (Work From Home / Remote)</option>
+                            <option value="wfo">🏢 WFO (Work From Office / Kantor)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Alasan / Keterangan</label>
+                        <textarea name="reason" rows="2" placeholder="Contoh: Fokus penyusunan dokumen arsitektur teknis..." class="w-full text-sm border-slate-300 rounded-lg p-2.5 border"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
+                        Ajukan Jadwal FWA
+                    </button>
+                </form>
+            </div>
+
+            <!-- Riwayat FWA -->
+            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                    <h3 class="font-bold text-sm text-slate-800">Riwayat Jadwal & Persetujuan FWA</h3>
+                    <span class="text-xs text-slate-500">{{ count($myFwaSchedules ?? []) }} jadwal</span>
+                </div>
+                <div class="divide-y divide-slate-100">
+                    @forelse($myFwaSchedules ?? [] as $sched)
+                        <div class="p-4 flex items-center justify-between text-xs hover:bg-slate-50 transition">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-slate-900 text-sm">{{ \Carbon\Carbon::parse($sched->date)->translatedFormat('l, d M Y') }}</span>
+                                    @if($sched->work_mode === 'wfh')
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">🏠 WFH</span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">🏢 WFO</span>
+                                    @endif
+                                </div>
+                                <p class="text-slate-500 text-[11px]">{{ $sched->reason ?? 'Tidak ada keterangan khusus' }}</p>
+                            </div>
+                            <div>
+                                @if($sched->status === 'approved')
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                        ✓ Disetujui
+                                    </span>
+                                @elseif($sched->status === 'rejected')
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">
+                                        ✕ Ditolak
+                                    </span>
+                                @else
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                                        Menunggu
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-8 text-center text-xs text-slate-400">
+                            Belum ada jadwal FWA yang diajukan. Gunakan form di samping untuk mengajukan jadwal remote.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 16: SERTIFIKAT PELATIHAN DIGITAL -->
+    <div x-show="activeEssTab === 'certificates'" x-cloak class="space-y-4">
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <div class="border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-sm text-slate-900">Koleksi E-Sertifikat Kompetensi Digital</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Sertifikat resmi kelulusan pelatihan berintegritas tinggi dengan hash SHA256.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                @forelse($myCertificates ?? [] as $cert)
+                    <div class="rounded-2xl border border-slate-200 p-5 bg-gradient-to-br from-white to-slate-50 hover:shadow-md transition space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                🎖️ Lulus Pelatihan
+                            </span>
+                            <span class="font-mono text-[10px] text-slate-400">{{ \Carbon\Carbon::parse($cert->completion_date)->format('d/m/Y') }}</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-sm leading-snug">{{ $cert->course_title }}</h4>
+                            <p class="font-mono text-[11px] text-slate-500 mt-1">No: {{ $cert->certificate_number }}</p>
+                        </div>
+                        <div class="font-mono text-[10px] text-slate-400 bg-slate-100 p-2 rounded truncate" title="{{ $cert->verification_hash }}">
+                            Hash: {{ $cert->verification_hash }}
+                        </div>
+                        <div class="pt-2 border-t border-slate-100 flex justify-end">
+                            <a href="{{ route('ess.certificate.show', $cert) }}" target="_blank" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                                📜 Buka E-Sertifikat
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-3 py-12 text-center text-xs text-slate-400">
+                        Belum ada sertifikat pelatihan yang diterbitkan. Sertifikat akan muncul setelah evaluasi kelulusan Kirkpatrick diselesaikan.
+                    </div>
+                @endforelse
+            </div>
+        </div>
     </div>
 
 </div>

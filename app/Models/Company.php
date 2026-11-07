@@ -54,5 +54,15 @@ class Company extends Model
     {
         return $this->hasMany(OffboardingClearance::class);
     }
+
+    public function probationEvaluations(): HasMany
+    {
+        return $this->hasMany(ProbationEvaluation::class);
+    }
+
+    public function fwaSchedules(): HasMany
+    {
+        return $this->hasMany(FwaSchedule::class);
+    }
 }
 

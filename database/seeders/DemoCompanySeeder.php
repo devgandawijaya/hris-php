@@ -79,6 +79,11 @@ use App\Models\BusinessTripSettlement;
 use App\Models\OffboardingClearance;
 use App\Models\WorkExperienceLetter;
 use App\Models\TaxForm1721A1Record;
+use App\Models\ProbationEvaluation;
+use App\Models\PaymentGatewayTransaction;
+use App\Models\TrainingKirkpatrickEvaluation;
+use App\Models\TrainingCertificate;
+use App\Models\FwaSchedule;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -1617,6 +1622,133 @@ class DemoCompanySeeder extends Seeder
                     'conduct_appraisal' => 'very_good',
                     'achievement_summary' => 'Menunjukkan loyalitas, integritas, dan dedikasi luar biasa dalam pengembangan core HR & perbankan.',
                     'issued_date' => now()->toDateString(),
+                ]
+            );
+
+            // ==========================================
+            // PHASE 12: DIGITAL CONTRACTS, PROBATION EVALUATION, SAAS MIDTRANS GATEWAY, KIRKPATRICK & FWA
+            // ==========================================
+
+            // 1. Digital Employment Contract with Cryptographic E-Signature (UU ITE 1/2024)
+            $digContract = EmploymentContract::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'contract_number' => '001/HRD-PKWTT/I/2026'],
+                [
+                    'employee_id' => $empAni->id,
+                    'type' => 'pkwtt',
+                    'start_date' => now()->subMonths(6)->toDateString(),
+                    'end_date' => null,
+                    'monthly_wage' => 12500000,
+                    'status' => 'active',
+                    'contract_body' => 'Perjanjian Kerja Waktu Tidak Tertentu (PKWTT) sesuai ketentuan UU Ketenagakerjaan No. 13/2003 dan PP No. 35/2021.',
+                    'employee_signature' => 'SIG_DIGITAL_ANI_WIDYASTUTI_' . sha1('ani@example.com'),
+                    'employee_signed_at' => now()->subMonths(5),
+                    'employee_sign_ip' => '180.252.164.22',
+                    'company_signature' => 'SIG_DIGITAL_DIRECTOR_PT_DEMO_' . sha1('director@example.com'),
+                    'company_signed_at' => now()->subMonths(5),
+                    'company_sign_ip' => '103.111.200.15',
+                    'signer_name' => 'Bambang Soedarmono, M.B.A.',
+                    'signer_position' => 'Direktur Utama & HR Executive',
+                    'signed_hash' => hash('sha256', '001/HRD-PKWTT/I/2026|' . $empAni->id . '|12500000'),
+                    'is_digitally_signed' => true,
+                ]
+            );
+
+            // 2. Probation Evaluation (Pasal 60 UU Ketenagakerjaan No. 13/2003)
+            $probEvaluation = ProbationEvaluation::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empAni->id],
+                [
+                    'company_id' => $company->id,
+                    'evaluator_user_id' => $ownerUser->id ?? 1,
+                    'evaluation_date' => now()->subMonths(3)->toDateString(),
+                    'technical_competence_score' => 88.00,
+                    'attendance_discipline_score' => 95.00,
+                    'culture_integrity_score' => 90.00,
+                    'final_score' => 90.70, // (88*0.4)+(95*0.3)+(90*0.3)
+                    'decision' => 'passed_pkwtt',
+                    'sk_number' => '001/SK-DIR/PKWTT/2026',
+                    'evaluator_notes' => 'Menunjukkan keahlian teknis prima, kepemimpinan tim, dan integrasi nilai budaya perusahaan yang luar biasa.',
+                    'development_recommendations' => 'Direkomendasikan memimpin arsitektur sistem enterprise multi-tenant.',
+                    'decided_at' => now()->subMonths(3),
+                ]
+            );
+
+            // 3. SaaS Midtrans Payment Gateway Transaction
+            $subInvoice = SubscriptionInvoice::where('tenant_id', $tenant->id)->latest()->first();
+            if ($subInvoice) {
+                PaymentGatewayTransaction::firstOrCreate(
+                    ['tenant_id' => $tenant->id, 'order_id' => 'MIDTRANS-INV-' . $subInvoice->id],
+                    [
+                        'subscription_invoice_id' => $subInvoice->id,
+                        'gateway_provider' => 'midtrans',
+                        'transaction_id' => 'TRX-MIDTRANS-' . uniqid(),
+                        'gross_amount' => $subInvoice->amount,
+                        'payment_type' => 'qris',
+                        'transaction_status' => 'settlement',
+                        'signature_hash' => hash('sha512', 'MIDTRANS-INV-' . $subInvoice->id . '200' . $subInvoice->amount . 'SB-Mid-server-demo'),
+                        'snap_token' => 'SNAP-TOKEN-' . bin2hex(random_bytes(16)),
+                        'payment_url' => 'https://app.sandbox.midtrans.com/snap/v2/vtweb/demo-payment',
+                        'paid_at' => now(),
+                    ]
+                );
+            }
+
+            // 4. Kirkpatrick Training Evaluation (Level 1-4) & Verifiable Certificate
+            $enrollment = TrainingEnrollment::where('tenant_id', $tenant->id)->where('employee_id', $empAni->id)->first();
+            if ($enrollment) {
+                $kirkEval = TrainingKirkpatrickEvaluation::firstOrCreate(
+                    ['tenant_id' => $tenant->id, 'training_enrollment_id' => $enrollment->id],
+                    [
+                        'pre_test_score' => 60.00,
+                        'post_test_score' => 90.00,
+                        'learning_gain_percentage' => 75.00, // (90-60)/(100-60)*100
+                        'level1_reaction_score' => 4.85,
+                        'level1_feedback' => 'Materi pelatihan sangat aplikatif dan instruktur memiliki pemahaman industri mendalam.',
+                        'level3_behavior_score' => 4.70,
+                        'level3_notes' => 'Menerapkan metodologi TDD dan clean architecture secara konsisten dalam sprint pengembangan.',
+                        'level3_evaluated_by' => $ownerUser->id ?? null,
+                        'level3_evaluated_at' => now()->subDays(10),
+                        'status' => 'completed',
+                    ]
+                );
+
+                TrainingCertificate::firstOrCreate(
+                    ['tenant_id' => $tenant->id, 'training_enrollment_id' => $enrollment->id],
+                    [
+                        'certificate_number' => 'CERT-LND-2026-0001',
+                        'recipient_name' => $empAni->full_name,
+                        'course_title' => $enrollment->trainingCourse->title ?? 'Enterprise Laravel & SaaS Architecture',
+                        'completion_date' => now()->subDays(15)->toDateString(),
+                        'score_achieved' => 90.00,
+                        'grade_label' => 'Lulus Dengan Predikat Sangat Memuaskan',
+                        'verification_hash' => hash('sha256', 'CERT-LND-2026-0001|' . $empAni->id . '|90.00'),
+                        'signer_name' => 'Dr. Hendra Gunawan, S.Kom., M.T.',
+                        'signer_title' => 'Director of Corporate Learning & Development',
+                    ]
+                );
+            }
+
+            // 5. Flexible Working Arrangement (FWA - WFH & WFO)
+            FwaSchedule::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empAni->id, 'date' => now()->toDateString()],
+                [
+                    'company_id' => $company->id,
+                    'work_mode' => 'wfh',
+                    'reason' => 'Jadwal kerja fokus pengembangan modul dan deep coding session.',
+                    'status' => 'approved',
+                    'approved_by' => $ownerUser->id ?? null,
+                    'approved_at' => now()->subHours(8),
+                ]
+            );
+
+            FwaSchedule::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empAni->id, 'date' => now()->addDay()->toDateString()],
+                [
+                    'company_id' => $company->id,
+                    'work_mode' => 'wfo',
+                    'reason' => 'Sprint planning tatap muka dan koordinasi tim arsitektur.',
+                    'status' => 'approved',
+                    'approved_by' => $ownerUser->id ?? null,
+                    'approved_at' => now()->subHours(8),
                 ]
             );
         }

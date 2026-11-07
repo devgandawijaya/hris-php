@@ -60,6 +60,16 @@ class Employee extends Model
         return trim("{$this->first_name} {$this->last_name}");
     }
 
+    public function getNameAttribute(): string
+    {
+        return $this->full_name;
+    }
+
+    public function getPositionTitleAttribute(): string
+    {
+        return $this->position?->title ?? 'Staff';
+    }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
@@ -310,5 +320,20 @@ class Employee extends Model
     public function taxForms1721A1(): HasMany
     {
         return $this->hasMany(TaxForm1721A1Record::class);
+    }
+
+    public function contracts(): HasMany
+    {
+        return $this->hasMany(EmploymentContract::class);
+    }
+
+    public function probationEvaluations(): HasMany
+    {
+        return $this->hasMany(ProbationEvaluation::class);
+    }
+
+    public function fwaSchedules(): HasMany
+    {
+        return $this->hasMany(FwaSchedule::class);
     }
 }

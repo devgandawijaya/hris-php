@@ -36,5 +36,20 @@ class TrainingEnrollment extends Model
     {
         return $this->belongsTo(Employee::class);
     }
+
+    public function kirkpatrickEvaluation(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(TrainingKirkpatrickEvaluation::class);
+    }
+
+    public function digitalCertificate(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(TrainingCertificate::class);
+    }
+
+    public function getTrainingAttribute()
+    {
+        return $this->trainingCourse;
+    }
 }
 
