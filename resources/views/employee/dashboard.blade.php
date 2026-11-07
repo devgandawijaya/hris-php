@@ -150,6 +150,23 @@
             Keahlian & Karir
         </button>
 
+        <button type="button" @click="activeEssTab = 'feedback360'"
+                :class="activeEssTab === 'feedback360' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="compass" class="w-4 h-4"></i>
+            Review 360° & PIP
+            @if(isset($pending360Requests) && $pending360Requests->isNotEmpty())
+                <span class="px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-bold">{{ $pending360Requests->count() }}</span>
+            @endif
+        </button>
+
+        <button type="button" @click="activeEssTab = 'extended-profile'"
+                :class="activeEssTab === 'extended-profile' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
+                class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
+            <i data-lucide="users" class="w-4 h-4"></i>
+            Keluarga & Edukasi
+        </button>
+
         <button type="button" @click="activeEssTab = 'profile'"
                 :class="activeEssTab === 'profile' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
@@ -210,6 +227,24 @@
                     </div>
                 @endif
             </form>
+
+            <!-- Touchless QR Kiosk Clock In (Phase 10) -->
+            <div class="pt-4 border-t border-slate-100" x-data="{ showQrInput: false }">
+                <button type="button" @click="showQrInput = !showQrInput" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                    <i data-lucide="qr-code" class="w-4 h-4 text-slate-600"></i>
+                    <span>Presensi via Pindai QR Kios Kantor (Touchless)</span>
+                </button>
+
+                <form x-show="showQrInput" action="{{ route('ess.attendance.qr') }}" method="POST" class="mt-3 space-y-2">
+                    @csrf
+                    <input type="hidden" name="latitude" value="-6.2088">
+                    <input type="hidden" name="longitude" value="106.8456">
+                    <input type="text" name="qr_code" required placeholder="Tempel kode QR / hasil scan kios" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-mono text-slate-800">
+                    <button type="submit" class="w-full py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition">
+                        Verifikasi QR & Catat Kehadiran
+                    </button>
+                </form>
+            </div>
         </div>
 
         <!-- Attendance History -->
@@ -1647,6 +1682,327 @@
                     </div>
                 </div>
             @endif
+        </div>
+    </div>
+
+    <!-- TAB 15: REVIEW 360 DERAJAT & PIP (PHASE 10) -->
+    <div x-show="activeEssTab === 'feedback360'" x-cloak class="space-y-6">
+        <!-- Active PIP Alert Banner (If Any) -->
+        @if($myActivePip)
+            <div class="p-6 rounded-2xl bg-amber-50/80 border-2 border-amber-300 shadow-sm space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-200 text-amber-900">
+                        <i data-lucide="alert-octagon" class="w-4 h-4"></i>
+                        Program Peningkatan Kinerja (PIP) Aktif
+                    </span>
+                    <span class="text-xs font-semibold text-amber-800">
+                        Periode: {{ $myActivePip->start_date->format('d M') }} s/d {{ $myActivePip->end_date->format('d M Y') }}
+                    </span>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-black text-slate-900">{{ $myActivePip->title }}</h3>
+                    <p class="text-xs text-slate-700 mt-1 leading-relaxed">{{ $myActivePip->reason }}</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div class="p-4 rounded-xl bg-white border border-amber-200 text-xs space-y-1">
+                        <div class="font-bold text-slate-800">Sasaran & Target Yang Wajib Dicapai:</div>
+                        <p class="text-slate-600 leading-relaxed">{{ $myActivePip->target_objectives }}</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-white border border-amber-200 text-xs space-y-1">
+                        <div class="font-bold text-slate-800">Rencana Aksi & Pendampingan:</div>
+                        <p class="text-slate-600 leading-relaxed">{{ $myActivePip->action_plan }}</p>
+                        <div class="text-[10px] text-amber-800 font-semibold pt-1">
+                            Supervisor Pembimbing: {{ $myActivePip->supervisor?->full_name ?? 'HR Management' }}
+                        </div>
+                    </div>
+                </div>
+
+                @if($myActivePip->progress_notes)
+                    <div class="p-3.5 rounded-xl bg-white/70 border border-amber-200 text-xs text-slate-700">
+                        <div class="font-bold text-slate-800 mb-1">Catatan Evaluasi & Progres:</div>
+                        <pre class="text-[11px] font-sans whitespace-pre-wrap text-slate-600 leading-relaxed">{{ $myActivePip->progress_notes }}</pre>
+                    </div>
+                @endif
+            </div>
+        @endif
+
+        <!-- Pending 360 Feedback Requests -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                    <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                        <i data-lucide="compass" class="w-4 h-4 text-red-600"></i>
+                        Permintaan Evaluasi 360 Derajat Yang Menunggu Respon Anda
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Bantu rekan kerja Anda berkembang melalui umpan balik yang konstruktif dan objektif.</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">
+                    {{ $pending360Requests->count() }} Menunggu
+                </span>
+            </div>
+
+            <div class="space-y-4">
+                @forelse($pending360Requests as $req)
+                    <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-4" x-data="{ openForm: false }">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <div class="text-sm font-black text-slate-900">{{ $req->subjectEmployee->full_name }}</div>
+                                <div class="text-xs text-slate-500">
+                                    Posisi: {{ $req->subjectEmployee->position?->title ?? '-' }} • Penilaian Sebagai: <strong class="capitalize text-slate-800">{{ $req->rater_relationship }}</strong>
+                                </div>
+                            </div>
+                            <button type="button" @click="openForm = !openForm" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition flex items-center gap-1.5 shrink-0">
+                                <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+                                <span x-text="openForm ? 'Tutup Formulir' : 'Isi Evaluasi 360°'"></span>
+                            </button>
+                        </div>
+
+                        <!-- 360 Questionnaire Form -->
+                        <form x-show="openForm" action="{{ route('ess.360.submit', $req->id) }}" method="POST" class="p-5 bg-white rounded-xl border border-slate-200 space-y-4 text-xs">
+                            @csrf
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">1. Nilai Inti & Integritas *</label>
+                                    <select name="core_values_score" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                                        <option value="5">5 - Sangat Istimewa (Role Model)</option>
+                                        <option value="4" selected>4 - Baik / Melebihi Harapan</option>
+                                        <option value="3">3 - Sesuai Standar Kebutuhan</option>
+                                        <option value="2">2 - Perlu Bimbingan Tambahan</option>
+                                        <option value="1">1 - Kurang Memuaskan</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">2. Kepemimpinan & Inisiatif *</label>
+                                    <select name="leadership_score" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                                        <option value="5">5 - Sangat Istimewa</option>
+                                        <option value="4" selected>4 - Baik / Proaktif</option>
+                                        <option value="3">3 - Cukup Baik</option>
+                                        <option value="2">2 - Butuh Arahan Rutin</option>
+                                        <option value="1">1 - Pasif</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">3. Kolaborasi & Timbal Balik *</label>
+                                    <select name="collaboration_score" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                                        <option value="5">5 - Sangat Kooperatif</option>
+                                        <option value="4" selected>4 - Terbuka & Komunikatif</option>
+                                        <option value="3">3 - Cukup Bekerjasama</option>
+                                        <option value="2">2 - Sering Silo / Kurang Terbuka</option>
+                                        <option value="1">1 - Sulit Berkoordinasi</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">4. Kualitas & Ketepatan Eksekusi *</label>
+                                    <select name="execution_score" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                                        <option value="5">5 - Selalu Tepat & Berkualitas</option>
+                                        <option value="4" selected>4 - Tepat Waktu</option>
+                                        <option value="3">3 - Cukup Baik</option>
+                                        <option value="2">2 - Kerap Menunda</option>
+                                        <option value="1">1 - Tidak Memenuhi Deadline</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">Kekuatan & Nilai Unggul Yang Menonjol:</label>
+                                    <textarea name="strengths" rows="2" placeholder="Tuliskan aspek positif yang sangat membantu kinerja tim..." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">Area Yang Dapat Ditingkatkan (Growth Areas):</label>
+                                    <textarea name="areas_for_improvement" rows="2" placeholder="Saran masukan positif untuk pengembangan diri..." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-2">
+                                <span class="text-[11px] text-slate-400 italic">Identitas Anda akan dirahasiakan (100% anonim).</span>
+                                <button type="submit" class="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs transition shadow-sm">
+                                    Kirim Penilaian 360°
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                @empty
+                    <div class="py-8 text-center text-xs text-slate-400">
+                        <i data-lucide="check-circle" class="w-8 h-8 text-emerald-500 mx-auto mb-2"></i>
+                        Tidak ada permintaan evaluasi 360 derajat yang tertunda. Semua kuesioner telah terisi!
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 16: DATA KELUARGA, PENDIDIKAN & PENGALAMAN (PHASE 10) -->
+    <div x-show="activeEssTab === 'extended-profile'" x-cloak class="space-y-6">
+        <!-- Family Section -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
+                <i data-lucide="users" class="w-4 h-4 text-red-600"></i>
+                Data Anggota Keluarga & Tanggungan (BPJS / PTKP)
+            </h3>
+
+            <form action="{{ route('ess.profile.family') }}" method="POST" class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs p-4 rounded-xl bg-slate-50 border border-slate-200">
+                @csrf
+                <div class="sm:col-span-3">
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap *</label>
+                    <input type="text" name="name" required placeholder="Nama anggota keluarga" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block font-semibold text-slate-700 mb-1">Hubungan *</label>
+                    <select name="relationship" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                        <option value="spouse">Pasangan (Suami/Istri)</option>
+                        <option value="child">Anak Kandung</option>
+                        <option value="parent">Orang Tua</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block font-semibold text-slate-700 mb-1">Jenis Kelamin</label>
+                    <select name="gender" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                        <option value="male">Laki-laki</option>
+                        <option value="female">Perempuan</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block font-semibold text-slate-700 mb-1">Tanggal Lahir</label>
+                    <input type="date" name="birth_date" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div class="sm:col-span-3">
+                    <label class="block font-semibold text-slate-700 mb-1">NIK KTP / KIA</label>
+                    <input type="text" name="nik" placeholder="16 digit NIK" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-mono">
+                </div>
+                <div class="sm:col-span-12 flex items-center justify-between pt-1">
+                    <div class="flex items-center gap-4">
+                        <label class="inline-flex items-center gap-1.5 text-xs text-slate-700">
+                            <input type="checkbox" name="is_bpjs_covered" value="1" class="rounded text-red-600"> Tanggungan BPJS Kes
+                        </label>
+                        <label class="inline-flex items-center gap-1.5 text-xs text-slate-700">
+                            <input type="checkbox" name="is_tax_dependent" value="1" class="rounded text-red-600"> Tanggungan Pajak PTKP
+                        </label>
+                    </div>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800 transition">
+                        + Tambah Anggota Keluarga
+                    </button>
+                </div>
+            </form>
+
+            <div class="divide-y divide-slate-100">
+                @forelse($myFamilies as $f)
+                    <div class="py-3 flex items-center justify-between text-xs">
+                        <div>
+                            <div class="font-bold text-slate-900">{{ $f->name }}</div>
+                            <div class="text-[11px] text-slate-500 capitalize">
+                                {{ $f->relationship }} • {{ $f->birth_date?->format('d M Y') ?? '-' }}
+                                @if($f->nik) • NIK: {{ $f->nik }} @endif
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            @if($f->is_bpjs_covered)
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">BPJS</span>
+                            @endif
+                            @if($f->is_tax_dependent)
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">PTKP</span>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-4 text-center text-xs text-slate-400">Belum ada data keluarga yang didaftarkan.</div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Education Section -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
+                <i data-lucide="graduation-cap" class="w-4 h-4 text-red-600"></i>
+                Riwayat Pendidikan Formal
+            </h3>
+
+            <form action="{{ route('ess.profile.education') }}" method="POST" class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs p-4 rounded-xl bg-slate-50 border border-slate-200">
+                @csrf
+                <div class="sm:col-span-2">
+                    <label class="block font-semibold text-slate-700 mb-1">Jenjang *</label>
+                    <select name="degree_level" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                        <option value="S1/D4">S1 / D4</option>
+                        <option value="D3">D3</option>
+                        <option value="SMA/SMK">SMA / SMK</option>
+                        <option value="S2">S2</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-4">
+                    <label class="block font-semibold text-slate-700 mb-1">Institusi / Universitas *</label>
+                    <input type="text" name="institution_name" required placeholder="Universitas Indonesia" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div class="sm:col-span-3">
+                    <label class="block font-semibold text-slate-700 mb-1">Jurusan</label>
+                    <input type="text" name="major" placeholder="Ilmu Komputer" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div class="sm:col-span-1">
+                    <label class="block font-semibold text-slate-700 mb-1">Lulus *</label>
+                    <input type="number" name="graduation_year" required value="2022" class="w-full rounded-xl border border-slate-300 px-2 py-2 text-xs font-mono">
+                </div>
+                <div class="sm:col-span-2 flex items-end">
+                    <button type="submit" class="w-full py-2 rounded-xl bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800 transition">
+                        + Tambah Edukasi
+                    </button>
+                </div>
+            </form>
+
+            <div class="divide-y divide-slate-100">
+                @forelse($myEducations as $ed)
+                    <div class="py-3 flex items-center justify-between text-xs">
+                        <div>
+                            <div class="font-bold text-slate-900">{{ $ed->degree_level }} — {{ $ed->institution_name }}</div>
+                            <div class="text-[11px] text-slate-500">{{ $ed->major ?: 'Umum' }} • Lulus Tahun {{ $ed->graduation_year }}</div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-4 text-center text-xs text-slate-400">Belum ada riwayat pendidikan yang dicatat.</div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Emergency Contacts Section -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
+                <i data-lucide="phone-call" class="w-4 h-4 text-red-600"></i>
+                Kontak Darurat (Emergency Contact)
+            </h3>
+
+            <form action="{{ route('ess.profile.emergency') }}" method="POST" class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs p-4 rounded-xl bg-slate-50 border border-slate-200">
+                @csrf
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Kontak *</label>
+                    <input type="text" name="contact_name" required placeholder="Nama kerabat" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Hubungan *</label>
+                    <input type="text" name="relationship" required placeholder="Pasangan / Saudara / Ibu" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">No. Handphone *</label>
+                    <input type="text" name="phone" required placeholder="08123456789" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-mono">
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full py-2 rounded-xl bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800 transition">
+                        + Tambah Kontak
+                    </button>
+                </div>
+            </form>
+
+            <div class="divide-y divide-slate-100">
+                @forelse($myEmergencyContacts as $ec)
+                    <div class="py-3 flex items-center justify-between text-xs">
+                        <div>
+                            <div class="font-bold text-slate-900">{{ $ec->contact_name }} <span class="text-slate-400 font-normal">({{ $ec->relationship }})</span></div>
+                            <div class="text-[11px] font-mono text-slate-600">{{ $ec->phone }}</div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-4 text-center text-xs text-slate-400">Belum ada kontak darurat.</div>
+                @endforelse
+            </div>
         </div>
     </div>
 

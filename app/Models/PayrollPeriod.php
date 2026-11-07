@@ -33,6 +33,16 @@ class PayrollPeriod extends Model
         return $this->hasMany(Payroll::class);
     }
 
+    public function bankDisbursalBatches(): HasMany
+    {
+        return $this->hasMany(BankDisbursalBatch::class);
+    }
+
+    public function bpjsReports(): HasMany
+    {
+        return $this->hasMany(BpjsComplianceReport::class);
+    }
+
     public function getTotalGrossAttribute(): float
     {
         return (float) $this->payrolls()->sum('gross_salary');

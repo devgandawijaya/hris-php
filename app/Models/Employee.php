@@ -32,6 +32,7 @@ class Employee extends Model
         'bpjs_kes_number',
         'department_id',
         'position_id',
+        'reports_to_id',
         'employment_status',
         'join_date',
         'end_date',
@@ -231,5 +232,57 @@ class Employee extends Model
     public function successionNominations(): HasMany
     {
         return $this->hasMany(SuccessionCandidate::class, 'candidate_employee_id');
+    }
+
+    // --- PHASE 10: EXTENDED PROFILE, 360 FEEDBACK & PIP ---
+
+    public function reportsTo(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'reports_to_id');
+    }
+
+    public function subordinates(): HasMany
+    {
+        return $this->hasMany(Employee::class, 'reports_to_id');
+    }
+
+    public function families(): HasMany
+    {
+        return $this->hasMany(EmployeeFamily::class);
+    }
+
+    public function educations(): HasMany
+    {
+        return $this->hasMany(EmployeeEducation::class);
+    }
+
+    public function employmentHistories(): HasMany
+    {
+        return $this->hasMany(EmployeeEmploymentHistory::class);
+    }
+
+    public function emergencyContacts(): HasMany
+    {
+        return $this->hasMany(EmployeeEmergencyContact::class);
+    }
+
+    public function feedbacks360(): HasMany
+    {
+        return $this->hasMany(PerformanceFeedback360::class, 'subject_employee_id');
+    }
+
+    public function givenFeedbacks360(): HasMany
+    {
+        return $this->hasMany(PerformanceFeedback360::class, 'reviewer_employee_id');
+    }
+
+    public function pips(): HasMany
+    {
+        return $this->hasMany(PerformanceImprovementPlan::class);
+    }
+
+    public function supervisedPips(): HasMany
+    {
+        return $this->hasMany(PerformanceImprovementPlan::class, 'supervisor_employee_id');
     }
 }

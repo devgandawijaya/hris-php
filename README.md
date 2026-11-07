@@ -12,7 +12,7 @@ RiHRIS adalah aplikasi Software-as-a-Service (SaaS) Multi-Tenant berbasis arsite
 
 ---
 
-## 📑 DAFTAR DOKUMENTASI LENGKAP (15 MODUL TEKNIS)
+## 📑 DAFTAR DOKUMENTASI LENGKAP (16 MODUL TEKNIS)
 
 Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumentasi secara lengkap pada direktori `docs/`:
 
@@ -31,10 +31,11 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 13. [13. Phase 7: Career Transitions, Severance & Notifications](docs/13_PHASE_7_CAREER_TRANSITIONS_AND_SEVERANCE.md)
 14. [14. Phase 8: Financial Well-being & Advanced Engagement](docs/14_PHASE_8_FINANCIAL_WELLBEING_AND_ENGAGEMENT.md)
 15. [15. Phase 9: Competency Skill Matrix, Succession & Background Cron](docs/15_PHASE_9_SKILL_MATRIX_AND_SUCCESSION.md)
+16. [16. Phase 10: Appraisals 360°, Extended Profile, Bank Disbursal & UMK/BPJS Gateway](docs/16_PHASE_10_APPRAISALS_EXTENDED_PROFILE_AND_BANK_DISBURSAL.md)
 
 ---
 
-## 🚀 STATUS IMPLEMENTASI 9 PHASE ROADMAP
+## 🚀 STATUS IMPLEMENTASI 10 PHASE ROADMAP
 
 | Phase | Modul & Cakupan Utama | Status |
 |---|---|---|
@@ -47,6 +48,7 @@ Seluruh rancangan arsitektur, kepatuhan hukum, dan spesifikasi sistem terdokumen
 | **Phase 7: Transitions & Notifications** | Pergerakan Karir (Mutasi, Promosi, Demosi, SK Direksi), Kompensasi PHK & Pesangon (PP 35/2021 & UU Cipta Kerja: UP, UPMK, UPH, Uang Pisah), In-App Notification Center & Unread Badges. | ✅ Complete |
 | **Phase 8: Financial Well-being & Engagement** | Fasilitas Pinjaman Karyawan & Kasbon Darurat (Bunga 0%, Angsuran Payroll), Survei Kepuasan Kerja & Metrik eNPS, Wall of Fame (Kudos), dan Kalender Agenda Acara Perusahaan. | ✅ Complete |
 | **Phase 9: Competency, Succession & Cron** | Kamus Kompetensi & Standar Jabatan (Level 1-5), Matriks Kesenjangan (Skill Gap Analysis), Rencana Suksesi Kepemimpinan (Ready Now / 1 Yr / 2+ Yrs), dan Background Cron Workers Kepatuhan Ketenagakerjaan (PP 35/2021 PKWT H-30, SP 6 Bulan Pasal 161, Probasi 3 Bulan Pasal 60). | ✅ Complete |
+| **Phase 10: Appraisals, Lifecycle & Bank Disbursal** | Evaluasi Kinerja 360° Multi-Penilai & Bimbingan PIP, Profil Mandiri Karyawan Lengkap (Keluarga, Pendidikan, Pengalaman Kerja, Kontak Darurat, Supervisor Atasan), Generator Mass Disbursal Perbankan Nasional (BCA KlikBCA, Mandiri MCM, BNI Direct, BRI CMS), Audit Kepatuhan Upah Minimum Regional (UMK PP 51/2023), Berkas Statutori BPJS SIPP Online & e-Dabu, serta Kios Presensi QR Touchless Geofencing. | ✅ Complete |
 
 ---
 

@@ -245,6 +245,11 @@
                             <i data-lucide="calendar" class="w-4 h-4"></i>
                             Shift & Kalender Kerja
                         </a>
+                        <a href="{{ route('company.qr.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.qr.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="qr-code" class="w-4 h-4"></i>
+                            Kios QR Presensi
+                        </a>
 
                         <!-- Cuti & Lembur (Phase 2) -->
                         <div class="pt-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Izin & Beban Kerja</div>
@@ -280,6 +285,16 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.tax.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
                             PPh 21 & Bukti Potong 1721-A1
+                        </a>
+                        <a href="{{ route('company.disbursal.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.disbursal.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            Disbursal Bank (Payroll)
+                        </a>
+                        <a href="{{ route('company.compliance.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.compliance.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i>
+                            Kepatuhan UMK & BPJS
                         </a>
 
                         <!-- Biaya & Kontrak (Phase 3) -->
@@ -326,6 +341,11 @@
                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.succession.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
                             <i data-lucide="git-pull-request" class="w-4 h-4"></i>
                             Rencana Suksesi & Bench
+                        </a>
+                        <a href="{{ route('company.appraisals360.index') }}"
+                           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('company.appraisals360.*') ? 'bg-[#DC2626] text-white shadow-sm shadow-red-500/20' : 'text-slate-600 hover:bg-white hover:text-slate-900' }}">
+                            <i data-lucide="compass" class="w-4 h-4"></i>
+                            Evaluasi 360° & PIP
                         </a>
 
                         <!-- Enterprise & Sistem (Phase 5) -->

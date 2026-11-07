@@ -10,6 +10,10 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\EmployeeDocument;
 use App\Models\EmployeeMutation;
+use App\Models\EmployeeFamily;
+use App\Models\EmployeeEducation;
+use App\Models\EmployeeEmploymentHistory;
+use App\Models\EmployeeEmergencyContact;
 use App\Tenancy\TenantManager;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -134,7 +138,13 @@ class EmployeeController extends Controller
         $employee = Employee::with([
             'department',
             'position',
+            'reportsTo',
+            'subordinates',
             'documents',
+            'families',
+            'educations',
+            'employmentHistories',
+            'emergencyContacts',
             'mutations.fromDepartment',
             'mutations.toDepartment',
             'mutations.fromPosition',
@@ -145,8 +155,9 @@ class EmployeeController extends Controller
 
         $departments = Department::all();
         $positions = Position::all();
+        $allEmployees = Employee::where('tenant_id', $employee->tenant_id)->where('id', '!=', $employee->id)->get();
 
-        return view('company.employees.show', compact('employee', 'departments', 'positions'));
+        return view('company.employees.show', compact('employee', 'departments', 'positions', 'allEmployees'));
     }
 
     public function edit(int $id): View
@@ -274,6 +285,144 @@ class EmployeeController extends Controller
         });
 
         return back()->with('success', 'Mutasi / Promosi karier karyawan berhasil dicatat dan diterapkan.');
+    }
+
+    // --- PHASE 10: EXTENDED PROFILE METHODS ---
+
+    public function addFamilyMember(Request $request, int $id): RedirectResponse
+    {
+        $employee = Employee::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:150',
+            'relationship' => 'required|in:spouse,child,parent,sibling',
+            'gender' => 'required|in:male,female',
+            'birth_date' => 'nullable|date',
+            'nik' => 'nullable|string|max:30',
+            'education_level' => 'nullable|string|max:50',
+            'is_bpjs_covered' => 'nullable|boolean',
+            'is_tax_dependent' => 'nullable|boolean',
+            'contact_number' => 'nullable|string|max:50',
+        ]);
+
+        $validated['tenant_id'] = $employee->tenant_id;
+        $validated['employee_id'] = $employee->id;
+        $validated['is_bpjs_covered'] = $request->boolean('is_bpjs_covered');
+        $validated['is_tax_dependent'] = $request->boolean('is_tax_dependent');
+
+        EmployeeFamily::create($validated);
+
+        return back()->with('success', 'Data anggota keluarga berhasil ditambahkan.');
+    }
+
+    public function deleteFamilyMember(int $id, int $familyId): RedirectResponse
+    {
+        $family = EmployeeFamily::where('employee_id', $id)->findOrFail($familyId);
+        $family->delete();
+
+        return back()->with('success', 'Data anggota keluarga berhasil dihapus.');
+    }
+
+    public function addEducation(Request $request, int $id): RedirectResponse
+    {
+        $employee = Employee::findOrFail($id);
+
+        $validated = $request->validate([
+            'degree_level' => 'required|string|max:50',
+            'institution_name' => 'required|string|max:150',
+            'major' => 'nullable|string|max:150',
+            'graduation_year' => 'required|integer|min:1970|max:2050',
+            'gpa' => 'nullable|numeric|between:0,4.00',
+            'certificate_number' => 'nullable|string|max:100',
+        ]);
+
+        $validated['tenant_id'] = $employee->tenant_id;
+        $validated['employee_id'] = $employee->id;
+
+        EmployeeEducation::create($validated);
+
+        return back()->with('success', 'Riwayat pendidikan berhasil ditambahkan.');
+    }
+
+    public function deleteEducation(int $id, int $eduId): RedirectResponse
+    {
+        $edu = EmployeeEducation::where('employee_id', $id)->findOrFail($eduId);
+        $edu->delete();
+
+        return back()->with('success', 'Riwayat pendidikan berhasil dihapus.');
+    }
+
+    public function addEmploymentHistory(Request $request, int $id): RedirectResponse
+    {
+        $employee = Employee::findOrFail($id);
+
+        $validated = $request->validate([
+            'company_name' => 'required|string|max:150',
+            'position_title' => 'required|string|max:150',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'last_salary' => 'nullable|numeric|min:0',
+            'leaving_reason' => 'nullable|string',
+        ]);
+
+        $validated['tenant_id'] = $employee->tenant_id;
+        $validated['employee_id'] = $employee->id;
+
+        EmployeeEmploymentHistory::create($validated);
+
+        return back()->with('success', 'Pengalaman kerja terdahulu berhasil ditambahkan.');
+    }
+
+    public function deleteEmploymentHistory(int $id, int $historyId): RedirectResponse
+    {
+        $hist = EmployeeEmploymentHistory::where('employee_id', $id)->findOrFail($historyId);
+        $hist->delete();
+
+        return back()->with('success', 'Riwayat pengalaman kerja berhasil dihapus.');
+    }
+
+    public function addEmergencyContact(Request $request, int $id): RedirectResponse
+    {
+        $employee = Employee::findOrFail($id);
+
+        $validated = $request->validate([
+            'contact_name' => 'required|string|max:150',
+            'relationship' => 'required|string|max:50',
+            'phone' => 'required|string|max:50',
+            'address' => 'nullable|string',
+            'is_primary' => 'nullable|boolean',
+        ]);
+
+        $validated['tenant_id'] = $employee->tenant_id;
+        $validated['employee_id'] = $employee->id;
+        $validated['is_primary'] = $request->boolean('is_primary', true);
+
+        EmployeeEmergencyContact::create($validated);
+
+        return back()->with('success', 'Kontak darurat berhasil ditambahkan.');
+    }
+
+    public function deleteEmergencyContact(int $id, int $contactId): RedirectResponse
+    {
+        $contact = EmployeeEmergencyContact::where('employee_id', $id)->findOrFail($contactId);
+        $contact->delete();
+
+        return back()->with('success', 'Kontak darurat berhasil dihapus.');
+    }
+
+    public function assignSupervisor(Request $request, int $id): RedirectResponse
+    {
+        $employee = Employee::findOrFail($id);
+
+        $validated = $request->validate([
+            'reports_to_id' => 'nullable|exists:employees,id|different:id',
+        ]);
+
+        $employee->update([
+            'reports_to_id' => $validated['reports_to_id'] ?? null,
+        ]);
+
+        return back()->with('success', 'Atasan langsung (Supervisor) berhasil diperbarui.');
     }
 }
 

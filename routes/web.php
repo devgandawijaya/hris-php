@@ -42,6 +42,10 @@ use App\Http\Controllers\Company\EngagementController;
 use App\Http\Controllers\Company\SkillMatrixController;
 use App\Http\Controllers\Company\SuccessionController;
 use App\Http\Controllers\Company\CronMonitoringController;
+use App\Http\Controllers\Company\Appraisal360Controller;
+use App\Http\Controllers\Company\BankDisbursalController;
+use App\Http\Controllers\Company\ComplianceGatewayController;
+use App\Http\Controllers\Company\QrKioskController;
 use App\Http\Controllers\NotificationController;
 
 /*
@@ -267,6 +271,12 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
         Route::post('/helpdesk', [EmployeeDashboardController::class, 'submitHelpdeskTicket'])->name('helpdesk.submit');
         Route::post('/loan', [EmployeeDashboardController::class, 'applyLoan'])->name('loan.apply');
         Route::post('/surveys/{survey}/submit', [EmployeeDashboardController::class, 'submitSurvey'])->name('surveys.submit');
+        Route::post('/360/{feedback}', [EmployeeDashboardController::class, 'submit360Feedback'])->name('360.submit');
+        Route::post('/attendance/qr', [EmployeeDashboardController::class, 'clockWithQr'])->name('attendance.qr');
+        Route::post('/profile/family', [EmployeeDashboardController::class, 'addEssFamily'])->name('profile.family');
+        Route::post('/profile/education', [EmployeeDashboardController::class, 'addEssEducation'])->name('profile.education');
+        Route::post('/profile/history', [EmployeeDashboardController::class, 'addEssEmploymentHistory'])->name('profile.history');
+        Route::post('/profile/emergency', [EmployeeDashboardController::class, 'addEssEmergencyContact'])->name('profile.emergency');
         Route::get('/payslip/{payroll}', [PayslipController::class, 'employeePayslip'])->name('payslip.show');
     });
 
@@ -407,5 +417,53 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
     Route::prefix('cron')->name('company.cron.')->group(function () {
         Route::get('/', [CronMonitoringController::class, 'index'])->name('index');
         Route::post('/run', [CronMonitoringController::class, 'runCommand'])->name('run');
+    });
+
+    // --- PHASE 10: ADVANCED TALENT APPRAISALS, EXTENDED LIFECYCLE PROFILE & STATUTORY COMPLIANCE ---
+
+    // 34. 360-Degree Performance Feedback & PIP
+    Route::prefix('appraisals360')->name('company.appraisals360.')->group(function () {
+        Route::get('/', [Appraisal360Controller::class, 'index'])->name('index');
+        Route::post('/requests', [Appraisal360Controller::class, 'storeFeedbackRequest'])->name('requests.store');
+        Route::post('/pips', [Appraisal360Controller::class, 'storePip'])->name('pips.store');
+        Route::post('/pips/{pip}/notes', [Appraisal360Controller::class, 'updatePipNotes'])->name('pips.notes');
+        Route::post('/pips/{pip}/resolve', [Appraisal360Controller::class, 'resolvePip'])->name('pips.resolve');
+        Route::get('/summary/{employee}', [Appraisal360Controller::class, 'showSummary'])->name('summary');
+    });
+
+    // 35. Indonesian Banking Mass Disbursal
+    Route::prefix('disbursal')->name('company.disbursal.')->group(function () {
+        Route::get('/', [BankDisbursalController::class, 'index'])->name('index');
+        Route::post('/generate', [BankDisbursalController::class, 'generate'])->name('generate');
+        Route::get('/download/{batch}', [BankDisbursalController::class, 'download'])->name('download');
+    });
+
+    // 36. Regulatory Compliance Gateway (UMK & BPJS Statutory Filings)
+    Route::prefix('compliance')->name('company.compliance.')->group(function () {
+        Route::get('/', [ComplianceGatewayController::class, 'index'])->name('index');
+        Route::post('/umk', [ComplianceGatewayController::class, 'storeUmk'])->name('umk.store');
+        Route::post('/bpjs/generate', [ComplianceGatewayController::class, 'generateBpjsReport'])->name('bpjs.generate');
+        Route::get('/bpjs/download/{report}', [ComplianceGatewayController::class, 'downloadBpjsCsv'])->name('bpjs.download');
+    });
+
+    // 37. Branch QR Attendance Kiosks
+    Route::prefix('qr')->name('company.qr.')->group(function () {
+        Route::get('/', [QrKioskController::class, 'index'])->name('index');
+        Route::post('/', [QrKioskController::class, 'store'])->name('store');
+        Route::post('/{kiosk}/refresh', [QrKioskController::class, 'refresh'])->name('refresh');
+        Route::get('/display/{kiosk}', [QrKioskController::class, 'display'])->name('display');
+    });
+
+    // 38. Extended Employee Lifecycle Profile Management
+    Route::prefix('employees/{id}')->name('company.employees.')->group(function () {
+        Route::post('/family', [EmployeeController::class, 'addFamilyMember'])->name('family.store');
+        Route::delete('/family/{familyId}', [EmployeeController::class, 'deleteFamilyMember'])->name('family.delete');
+        Route::post('/education', [EmployeeController::class, 'addEducation'])->name('education.store');
+        Route::delete('/education/{eduId}', [EmployeeController::class, 'deleteEducation'])->name('education.delete');
+        Route::post('/history', [EmployeeController::class, 'addEmploymentHistory'])->name('history.store');
+        Route::delete('/history/{historyId}', [EmployeeController::class, 'deleteEmploymentHistory'])->name('history.delete');
+        Route::post('/emergency', [EmployeeController::class, 'addEmergencyContact'])->name('emergency.store');
+        Route::delete('/emergency/{contactId}', [EmployeeController::class, 'deleteEmergencyContact'])->name('emergency.delete');
+        Route::post('/supervisor', [EmployeeController::class, 'assignSupervisor'])->name('supervisor.assign');
     });
 });

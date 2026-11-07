@@ -61,6 +61,16 @@ use App\Models\EmployeeSkill;
 use App\Models\SuccessionPlan;
 use App\Models\SuccessionCandidate;
 use App\Models\CronExecutionLog;
+use App\Models\EmployeeFamily;
+use App\Models\EmployeeEducation;
+use App\Models\EmployeeEmploymentHistory;
+use App\Models\EmployeeEmergencyContact;
+use App\Models\PerformanceFeedback360;
+use App\Models\PerformanceImprovementPlan;
+use App\Models\BankDisbursalBatch;
+use App\Models\RegionalMinimumWage;
+use App\Models\BpjsComplianceReport;
+use App\Models\BranchQrKiosk;
 use App\Services\Payroll\PayrollProcessorService;
 use App\Services\Talent\OnboardingOffboardingService;
 use App\Services\Workflow\WorkflowEngineService;
@@ -1241,5 +1251,139 @@ class DemoCompanySeeder extends Seeder
                 'executed_at' => now()->subHours(3),
             ]
         );
+
+        // ==========================================
+        // 40. PHASE 10: ADVANCED TALENT, EXTENDED PROFILE & COMPLIANCE SEEDING
+        // ==========================================
+
+        // A. Indonesian Regional Minimum Wage (UMK 2026 Standards)
+        $umkList = [
+            ['province' => 'DKI Jakarta', 'city_or_regency' => 'Kota Jakarta Pusat', 'year' => 2026, 'minimum_wage_amount' => 5340000.00, 'legal_reference' => 'Kepgub DKI No. 112 Tahun 2025'],
+            ['province' => 'Jawa Barat', 'city_or_regency' => 'Kota Bekasi', 'year' => 2026, 'minimum_wage_amount' => 5343430.00, 'legal_reference' => 'Kepgub Jabar No. 561/2025'],
+            ['province' => 'Jawa Barat', 'city_or_regency' => 'Kabupaten Karawang', 'year' => 2026, 'minimum_wage_amount' => 5257834.00, 'legal_reference' => 'Kepgub Jabar No. 561/2025'],
+            ['province' => 'Jawa Timur', 'city_or_regency' => 'Kota Surabaya', 'year' => 2026, 'minimum_wage_amount' => 4725479.00, 'legal_reference' => 'Kepgub Jatim No. 188/2025'],
+            ['province' => 'Jawa Barat', 'city_or_regency' => 'Kota Bandung', 'year' => 2026, 'minimum_wage_amount' => 4209309.00, 'legal_reference' => 'Kepgub Jabar No. 561/2025'],
+        ];
+        foreach ($umkList as $u) {
+            RegionalMinimumWage::firstOrCreate(
+                ['province' => $u['province'], 'city_or_regency' => $u['city_or_regency'], 'year' => $u['year']],
+                ['tenant_id' => $tenant->id, 'minimum_wage_amount' => $u['minimum_wage_amount'], 'legal_reference' => $u['legal_reference']]
+            );
+        }
+
+        // B. Supervisor Hierarchy & Extended Profile
+        if (isset($empBudi) && isset($empAni)) {
+            $empBudi->update(['reports_to_id' => $empAni->id]);
+
+            // Family members
+            EmployeeFamily::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empBudi->id, 'name' => 'Siti Rahmawati'],
+                [
+                    'relationship' => 'spouse',
+                    'gender' => 'female',
+                    'birth_date' => '1994-08-12',
+                    'nik' => '3201123456780001',
+                    'is_bpjs_covered' => true,
+                    'is_tax_dependent' => true,
+                ]
+            );
+
+            // Education
+            EmployeeEducation::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empBudi->id, 'institution_name' => 'Institut Teknologi Bandung'],
+                [
+                    'degree_level' => 'S1/D4',
+                    'major' => 'Teknik Informatika',
+                    'graduation_year' => 2016,
+                    'gpa' => 3.75,
+                ]
+            );
+
+            // Employment History
+            EmployeeEmploymentHistory::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empBudi->id, 'company_name' => 'PT Nusantara Digital Inovasi'],
+                [
+                    'position_title' => 'Software Engineer',
+                    'start_date' => '2017-01-01',
+                    'end_date' => '2021-12-31',
+                    'last_salary' => 12000000.00,
+                    'leaving_reason' => 'Pengembangan karir di bidang sistem SaaS SDM.',
+                ]
+            );
+
+            // Emergency contact
+            EmployeeEmergencyContact::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'employee_id' => $empBudi->id, 'contact_name' => 'Hendra Santoso'],
+                [
+                    'relationship' => 'Saudara Kandung (Kakak)',
+                    'phone' => '081298765432',
+                    'address' => 'Jakarta Selatan',
+                    'is_primary' => true,
+                ]
+            );
+
+            // C. 360-Degree Feedback
+            PerformanceFeedback360::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'subject_employee_id' => $empBudi->id, 'reviewer_employee_id' => $empAni->id],
+                [
+                    'review_cycle_id' => $cycle->id ?? null,
+                    'rater_relationship' => 'supervisor',
+                    'is_anonymous' => true,
+                    'core_values_score' => 5,
+                    'leadership_score' => 4,
+                    'collaboration_score' => 5,
+                    'execution_score' => 5,
+                    'overall_score' => 4.75,
+                    'strengths' => 'Sangat bertanggung jawab dan mampu mengorkestrasi sistem perbankan dengan rapi.',
+                    'areas_for_improvement' => 'Dapat mendelegasikan tugas-tugas mikro kepada talenta junior.',
+                    'status' => 'completed',
+                    'completed_at' => now()->subDays(2),
+                ]
+            );
+
+            // D. Performance Improvement Plan (PIP)
+            PerformanceImprovementPlan::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'title' => 'Program Bimbingan Teknis Standar Kualitas Q1'],
+                [
+                    'employee_id' => $empBudi->id,
+                    'supervisor_employee_id' => $empAni->id,
+                    'reason' => 'Penguatan kepatuhan prosedur rilis sistem produksi perbankan.',
+                    'start_date' => now()->subDays(10)->toDateString(),
+                    'end_date' => now()->addDays(20)->toDateString(),
+                    'target_objectives' => 'Mencapai zero defect pada modul integrasi perbankan.',
+                    'action_plan' => 'Mentoring teknis mingguan bersama Head of HR & Engineering.',
+                    'progress_notes' => '[' . now()->subDays(3)->format('Y-m-d H:i') . '] Sesi 1: Peninjauan checklist rilis berhasil dilaksanakan.',
+                    'status' => 'in_progress',
+                ]
+            );
+        }
+
+        // E. Branch QR Attendance Kiosk
+        if (isset($branchJkt)) {
+            BranchQrKiosk::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'branch_id' => $branchJkt->id, 'kiosk_name' => 'Kios Lobby Gedung Utama'],
+                [
+                    'secret_token' => 'sec_kiosk_jkt_lobby_2026_demo_token',
+                    'current_qr_code' => 'RIHRIS-KIOSK:' . $branchJkt->id . ':sec_kiosk_jkt_lobby_2026_demo_token:' . time(),
+                    'qr_refreshed_at' => now(),
+                    'is_active' => true,
+                ]
+            );
+        }
+
+        // F. Bank Disbursal Batch
+        if (isset($periodJan)) {
+            BankDisbursalBatch::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'payroll_period_id' => $periodJan->id, 'batch_number' => 'DISB-BCA-202601-DEMO'],
+                [
+                    'bank_target' => 'bca',
+                    'total_records' => 5,
+                    'total_amount' => 55000000.00,
+                    'file_format' => 'csv',
+                    'status' => 'generated',
+                    'created_by_user_id' => $ownerUser->id ?? null,
+                ]
+            );
+        }
     }
 }

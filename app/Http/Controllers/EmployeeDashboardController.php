@@ -27,6 +27,14 @@ use App\Models\EmployeeLoan;
 use App\Models\EmployeeSurvey;
 use App\Models\EmployeeRecognition;
 use App\Models\CompanyEvent;
+use App\Models\PerformanceFeedback360;
+use App\Models\PerformanceImprovementPlan;
+use App\Models\EmployeeFamily;
+use App\Models\EmployeeEducation;
+use App\Models\EmployeeEmploymentHistory;
+use App\Models\EmployeeEmergencyContact;
+use App\Services\Talent\Appraisal360Service;
+use App\Services\Attendance\QrAttendanceService;
 use App\Services\Finance\EmployeeLoanService;
 use App\Services\Engagement\SurveyAndRecognitionService;
 use App\Services\Reimbursement\ReimbursementService;
@@ -49,7 +57,9 @@ class EmployeeDashboardController extends Controller
         protected EngagementService $engagementService,
         protected EmployeeLoanService $loanService,
         protected SurveyAndRecognitionService $surveyService,
-        protected SkillMatrixService $skillMatrixService
+        protected SkillMatrixService $skillMatrixService,
+        protected Appraisal360Service $appraisalService,
+        protected QrAttendanceService $qrAttendanceService
     ) {}
 
     public function index(): View
@@ -158,6 +168,23 @@ class EmployeeDashboardController extends Controller
 
             // Phase 9: Competency and Skill Gap Analysis
             $mySkillAnalysis = $this->skillMatrixService->calculateEmployeeSkillGap($employee);
+
+            // Phase 10: 360 Feedback, PIP, and Extended Profile
+            $pending360Requests = PerformanceFeedback360::with('subjectEmployee.position')
+                ->where('reviewer_employee_id', $employee->id)
+                ->where('status', 'pending')
+                ->get();
+            $myCompletedFeedbacks = PerformanceFeedback360::where('subject_employee_id', $employee->id)
+                ->where('status', 'completed')
+                ->get();
+            $myActivePip = PerformanceImprovementPlan::with('supervisor')
+                ->where('employee_id', $employee->id)
+                ->where('status', 'in_progress')
+                ->first();
+            $myFamilies = EmployeeFamily::where('employee_id', $employee->id)->get();
+            $myEducations = EmployeeEducation::where('employee_id', $employee->id)->get();
+            $myEmploymentHistories = EmployeeEmploymentHistory::where('employee_id', $employee->id)->get();
+            $myEmergencyContacts = EmployeeEmergencyContact::where('employee_id', $employee->id)->get();
         } else {
             $myWarnings = collect();
             $myGrievances = collect();
@@ -176,6 +203,13 @@ class EmployeeDashboardController extends Controller
                 'skills' => [],
                 'recommended_trainings' => collect(),
             ];
+            $pending360Requests = collect();
+            $myCompletedFeedbacks = collect();
+            $myActivePip = null;
+            $myFamilies = collect();
+            $myEducations = collect();
+            $myEmploymentHistories = collect();
+            $myEmergencyContacts = collect();
         }
 
         return view('employee.dashboard', compact(
@@ -205,7 +239,14 @@ class EmployeeDashboardController extends Controller
             'myRecognitions',
             'upcomingEvents',
             'announcements',
-            'mySkillAnalysis'
+            'mySkillAnalysis',
+            'pending360Requests',
+            'myCompletedFeedbacks',
+            'myActivePip',
+            'myFamilies',
+            'myEducations',
+            'myEmploymentHistories',
+            'myEmergencyContacts'
         ));
     }
 
@@ -529,5 +570,144 @@ class EmployeeDashboardController extends Controller
         $this->surveyService->submitSurveyResponse($survey, $employee, $validated);
 
         return back()->with('success', 'Terima kasih! Tanggapan survei Anda telah berhasil tersimpan secara aman.');
+    }
+
+    // --- PHASE 10: 360 FEEDBACK, QR CLOCK, EXTENDED ESS PROFILE ---
+
+    public function submit360Feedback(Request $request, PerformanceFeedback360 $feedback): RedirectResponse
+    {
+        $validated = $request->validate([
+            'core_values_score' => 'required|integer|min:1|max:5',
+            'leadership_score' => 'required|integer|min:1|max:5',
+            'collaboration_score' => 'required|integer|min:1|max:5',
+            'execution_score' => 'required|integer|min:1|max:5',
+            'strengths' => 'nullable|string|max:1000',
+            'areas_for_improvement' => 'nullable|string|max:1000',
+        ]);
+
+        $this->appraisalService->submitFeedback($feedback, $validated);
+
+        return back()->with('success', 'Penilaian umpan balik 360 derajat berhasil diserahkan.');
+    }
+
+    public function clockWithQr(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->first();
+        if (!$employee) {
+            return back()->with('error', 'Profil karyawan tidak ditemukan.');
+        }
+
+        $validated = $request->validate([
+            'qr_code' => 'required|string',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+        ]);
+
+        $result = $this->qrAttendanceService->recordQrAttendance(
+            $employee,
+            $validated['qr_code'],
+            (float) $validated['latitude'],
+            (float) $validated['longitude']
+        );
+
+        if (!$result['success']) {
+            return back()->with('error', $result['message']);
+        }
+
+        return back()->with('success', $result['message']);
+    }
+
+    public function addEssFamily(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:150',
+            'relationship' => 'required|in:spouse,child,parent,sibling',
+            'gender' => 'required|in:male,female',
+            'birth_date' => 'nullable|date',
+            'nik' => 'nullable|string|max:30',
+            'education_level' => 'nullable|string|max:50',
+            'is_bpjs_covered' => 'nullable|boolean',
+            'is_tax_dependent' => 'nullable|boolean',
+            'contact_number' => 'nullable|string|max:50',
+        ]);
+
+        $validated['tenant_id'] = $employee->tenant_id;
+        $validated['employee_id'] = $employee->id;
+        $validated['is_bpjs_covered'] = $request->boolean('is_bpjs_covered');
+        $validated['is_tax_dependent'] = $request->boolean('is_tax_dependent');
+
+        EmployeeFamily::create($validated);
+
+        return back()->with('success', 'Data anggota keluarga berhasil ditambahkan ke profil Anda.');
+    }
+
+    public function addEssEducation(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        $validated = $request->validate([
+            'degree_level' => 'required|string|max:50',
+            'institution_name' => 'required|string|max:150',
+            'major' => 'nullable|string|max:150',
+            'graduation_year' => 'required|integer|min:1970|max:2050',
+            'gpa' => 'nullable|numeric|between:0,4.00',
+            'certificate_number' => 'nullable|string|max:100',
+        ]);
+
+        $validated['tenant_id'] = $employee->tenant_id;
+        $validated['employee_id'] = $employee->id;
+
+        EmployeeEducation::create($validated);
+
+        return back()->with('success', 'Riwayat pendidikan berhasil diperbarui.');
+    }
+
+    public function addEssEmploymentHistory(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        $validated = $request->validate([
+            'company_name' => 'required|string|max:150',
+            'position_title' => 'required|string|max:150',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'last_salary' => 'nullable|numeric|min:0',
+            'leaving_reason' => 'nullable|string',
+        ]);
+
+        $validated['tenant_id'] = $employee->tenant_id;
+        $validated['employee_id'] = $employee->id;
+
+        EmployeeEmploymentHistory::create($validated);
+
+        return back()->with('success', 'Pengalaman kerja sebelumnya berhasil ditambahkan.');
+    }
+
+    public function addEssEmergencyContact(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->firstOrFail();
+
+        $validated = $request->validate([
+            'contact_name' => 'required|string|max:150',
+            'relationship' => 'required|string|max:50',
+            'phone' => 'required|string|max:50',
+            'address' => 'nullable|string',
+            'is_primary' => 'nullable|boolean',
+        ]);
+
+        $validated['tenant_id'] = $employee->tenant_id;
+        $validated['employee_id'] = $employee->id;
+        $validated['is_primary'] = $request->boolean('is_primary', true);
+
+        EmployeeEmergencyContact::create($validated);
+
+        return back()->with('success', 'Kontak darurat berhasil disimpan.');
     }
 }
