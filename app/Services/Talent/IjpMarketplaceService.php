@@ -53,7 +53,7 @@ class IjpMarketplaceService
         // 3. Check latest performance score
         $latestReview = PerformanceReview::where('tenant_id', $employee->tenant_id)
             ->where('employee_id', $employee->id)
-            ->latest('review_period_end')
+            ->latest()
             ->first();
 
         $performanceScore = $latestReview ? (float) ($latestReview->final_score ?? $latestReview->score ?? 3.50) : 3.50;

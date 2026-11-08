@@ -14,6 +14,7 @@ class TrainingEnrollment extends Model
         'tenant_id',
         'training_course_id',
         'employee_id',
+        'enrolled_at',
         'status', // enrolled, attended, completed, dropped
         'score',
         'certificate_number',
@@ -24,6 +25,7 @@ class TrainingEnrollment extends Model
     {
         return [
             'score' => 'decimal:2',
+            'enrolled_at' => 'datetime',
         ];
     }
 
@@ -52,4 +54,3 @@ class TrainingEnrollment extends Model
         return $this->trainingCourse;
     }
 }
-

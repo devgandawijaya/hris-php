@@ -105,18 +105,22 @@ class AdvancedEnterpriseCompliancePhase11Test extends TestCase
 
         $this->hrUser = User::create([
             'tenant_id' => $this->tenant->id,
+            'active_tenant_id' => $this->tenant->id,
             'name' => 'HR Director Sisca',
             'email' => 'hr.sisca@enterprise.co.id',
             'password' => bcrypt('password123'),
         ]);
+        $this->hrUser->tenants()->attach($this->tenant->id, ['is_owner' => false, 'role_id' => $hrRole->id]);
         $this->hrUser->roles()->attach($hrRole);
 
         $this->empUser = User::create([
             'tenant_id' => $this->tenant->id,
+            'active_tenant_id' => $this->tenant->id,
             'name' => 'Budi Santoso',
             'email' => 'budi.santoso@enterprise.co.id',
             'password' => bcrypt('password123'),
         ]);
+        $this->empUser->tenants()->attach($this->tenant->id, ['is_owner' => false, 'role_id' => $empRole->id]);
         $this->empUser->roles()->attach($empRole);
 
         $this->employeeAni = Employee::create([

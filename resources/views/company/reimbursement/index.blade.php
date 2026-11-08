@@ -8,7 +8,7 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Klaim Reimbursement & Biaya</h1>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Klaim Reimbursement &amp; Biaya</h1>
             <p class="text-sm text-slate-500 mt-1">Kelola pengajuan klaim biaya operasional, medis, transportasi, dan perjalanan dinas karyawan.</p>
         </div>
         <div class="flex items-center gap-3">

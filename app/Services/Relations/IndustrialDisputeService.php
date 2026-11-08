@@ -21,8 +21,10 @@ class IndustrialDisputeService
             throw new InvalidArgumentException("Jenis perselisihan tidak valid. Harus salah satu dari 4 klasifikasi UU No. 2/2004.");
         }
 
-        $nextNum = TripartiteIndustrialDispute::where('tenant_id', $tenantId)->count() + 1;
-        $caseNumber = sprintf('PHI-CASE/%s/%04d', date('Y'), $nextNum);
+        $seq = TripartiteIndustrialDispute::where('tenant_id', $tenantId)->count() + 1;
+        do {
+            $caseNumber = sprintf('PHI-CASE/%s/%04d', date('Y'), $seq++);
+        } while (TripartiteIndustrialDispute::where('case_number', $caseNumber)->exists());
 
         return TripartiteIndustrialDispute::create([
             'tenant_id' => $tenantId,
@@ -78,5 +80,29 @@ class IndustrialDisputeService
         ]);
 
         return $dispute->fresh();
+    }
+
+    /**
+     * Alias for responding to mediator recommendation
+     */
+    public function respondToRecommendation(TripartiteIndustrialDispute $dispute, string $companyResponse, string $workerResponse, ?string $jointAgreementNumber = null): TripartiteIndustrialDispute
+    {
+        return $this->recordPartyResponses($dispute, $companyResponse, $workerResponse, $jointAgreementNumber);
+    }
+
+    /**
+     * Generate PPHI docket for court / Disnaker
+     */
+    public function generateDisputeFilingDocket(TripartiteIndustrialDispute $dispute): array
+    {
+        return [
+            'dasar_hukum' => 'UU No. 2 Tahun 2004 tentang PPHI',
+            'nomor_perkara' => $dispute->case_number,
+            'jenis_perselisihan' => strtoupper($dispute->dispute_type),
+            'status_penyelesaian' => $dispute->settlement_status === 'peaceful_agreement_pb'
+                ? 'PERDAMAIAN TERCAPAI (PERJANJIAN BERSAMA / PB)'
+                : 'DILIMPAHKAN KE PENGADILAN HUBUNGAN INDUSTRIAL (PHI)',
+            'nomor_akta_pb' => $dispute->joint_agreement_number,
+        ];
     }
 }

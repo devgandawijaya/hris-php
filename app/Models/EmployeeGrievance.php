@@ -19,6 +19,7 @@ class EmployeeGrievance extends Model
         'is_anonymous',
         'status', // submitted, in_review, investigating, resolved, closed
         'resolution_notes',
+        'investigation_notes',
         'resolved_by_user_id',
         'resolved_at',
     ];

@@ -33,6 +33,16 @@ class Company extends Model
         return $this->belongsTo(Tenant::class);
     }
 
+    protected static function booted(): void
+    {
+        static::creating(function (Company $company) {
+            if (empty($company->email)) {
+                $slug = $company->slug ?: \Illuminate\Support\Str::slug($company->name ?: 'company');
+                $company->email = "info@{$slug}.local";
+            }
+        });
+    }
+
     public function settings(): HasOne
     {
         return $this->hasOne(CompanySetting::class);

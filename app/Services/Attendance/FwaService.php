@@ -55,4 +55,22 @@ class FwaService
             ->where('status', 'approved')
             ->exists();
     }
+
+    /**
+     * Check employee attendance policy and scheduled mode for a date.
+     */
+    public function checkAttendancePolicy(Employee $employee, string $date): array
+    {
+        $fwa = FwaSchedule::where('employee_id', $employee->id)
+            ->where('date', Carbon::parse($date)->toDateString())
+            ->where('status', 'approved')
+            ->first();
+
+        $scheduledMode = $fwa ? $fwa->work_mode : 'wfo';
+
+        return [
+            'scheduled_mode' => $scheduledMode,
+            'wfh_permitted' => $scheduledMode === 'wfh',
+        ];
+    }
 }

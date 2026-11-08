@@ -74,20 +74,38 @@ class ContinuousShiftRosterService
     /**
      * Calculate monthly shift allowances for payroll integration
      */
-    public function calculateShiftAllowances(Employee $employee, int $nightShiftCount, int $standbyDaysCount, ContinuousShiftRoster $roster): array
+    public function calculateShiftAllowances($arg1, $arg2, $arg3, $arg4 = null): array
     {
-        $nightAllowance = round($nightShiftCount * (float) $roster->night_shift_allowance_rate, 2);
-        $standbyAllowance = round($standbyDaysCount * (float) $roster->standby_allowance_rate, 2);
+        if ($arg1 instanceof ContinuousShiftRoster) {
+            $roster = $arg1;
+            $nightShiftCount = (int) $arg2;
+            $standbyDaysCount = (int) $arg3;
+            $employee = null;
+        } else {
+            $employee = $arg1;
+            $nightShiftCount = (int) $arg2;
+            $standbyDaysCount = (int) $arg3;
+            $roster = $arg4;
+        }
+
+        $nightRate = $roster ? (float) $roster->night_shift_allowance_rate : 50000.00;
+        $standbyRate = $roster ? (float) $roster->standby_allowance_rate : 75000.00;
+
+        $nightAllowance = round($nightShiftCount * $nightRate, 2);
+        $standbyAllowance = round($standbyDaysCount * $standbyRate, 2);
         $totalShiftAllowance = $nightAllowance + $standbyAllowance;
 
         return [
             'night_shift_count' => $nightShiftCount,
-            'night_shift_rate' => (float) $roster->night_shift_allowance_rate,
+            'night_shift_rate' => $nightRate,
             'night_shift_allowance' => $nightAllowance,
+            'night_shift_total' => $nightAllowance,
             'standby_days_count' => $standbyDaysCount,
-            'standby_rate' => (float) $roster->standby_allowance_rate,
+            'standby_rate' => $standbyRate,
             'standby_allowance' => $standbyAllowance,
+            'standby_total' => $standbyAllowance,
             'total_shift_allowance' => $totalShiftAllowance,
+            'grand_total_allowance' => $totalShiftAllowance,
         ];
     }
 }

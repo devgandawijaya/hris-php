@@ -84,22 +84,39 @@ class OnboardingOffboardingService
     /**
      * Complete a checklist task.
      */
-    public function completeTask(OnboardingOffboardingChecklist $task): void
+    public function completeTask(OnboardingOffboardingChecklist $task, ?string $notes = null): void
     {
         $task->update([
             'is_completed' => true,
             'completed_at' => now(),
+            'notes' => $notes,
+        ]);
+    }
+
+    /**
+     * Create/register a company asset.
+     */
+    public function createAsset(int $tenantId, array $data): CompanyAsset
+    {
+        return CompanyAsset::create([
+            'tenant_id' => $tenantId,
+            'asset_code' => $data['asset_code'],
+            'name' => $data['name'],
+            'category' => $data['category'] ?? 'hardware',
+            'serial_number' => $data['serial_number'] ?? null,
+            'notes' => $data['notes'] ?? null,
+            'status' => 'available',
         ]);
     }
 
     /**
      * Assign a company asset to an employee.
      */
-    public function assignAsset(CompanyAsset $asset, Employee $employee): CompanyAsset
+    public function assignAsset(CompanyAsset $asset, Employee $employee, ?string $assignedDate = null): CompanyAsset
     {
         $asset->update([
             'assigned_employee_id' => $employee->id,
-            'assigned_date' => now()->toDateString(),
+            'assigned_date' => $assignedDate ?? now()->toDateString(),
             'status' => 'assigned',
         ]);
 
@@ -109,13 +126,18 @@ class OnboardingOffboardingService
     /**
      * Return a company asset (back to available inventory).
      */
-    public function returnAsset(CompanyAsset $asset): CompanyAsset
+    public function returnAsset(CompanyAsset $asset, ?string $notes = null): CompanyAsset
     {
-        $asset->update([
+        $data = [
             'assigned_employee_id' => null,
             'assigned_date' => null,
             'status' => 'available',
-        ]);
+        ];
+        if ($notes !== null) {
+            $data['notes'] = $notes;
+        }
+
+        $asset->update($data);
 
         return $asset;
     }

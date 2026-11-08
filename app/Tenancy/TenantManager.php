@@ -30,6 +30,14 @@ class TenantManager
     }
 
     /**
+     * Alias for setCurrentTenant for compatibility with test suites and helpers.
+     */
+    public function setTenant(?Tenant $tenant): self
+    {
+        return $this->setCurrentTenant($tenant);
+    }
+
+    /**
      * Get the active tenant model instance.
      */
     public function getTenant(): ?Tenant
@@ -51,6 +59,14 @@ class TenantManager
     public function getActiveTenantId(): ?int
     {
         return $this->currentTenant?->id;
+    }
+
+    /**
+     * Alias for getActiveTenantId.
+     */
+    public function getCurrentTenantId(): ?int
+    {
+        return $this->getActiveTenantId();
     }
 
     /**

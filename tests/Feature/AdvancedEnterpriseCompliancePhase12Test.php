@@ -104,25 +104,29 @@ class AdvancedEnterpriseCompliancePhase12Test extends TestCase
             'code' => 'SE-01',
         ]);
 
-        $hrRole = Role::firstOrCreate(['name' => 'hr_admin', 'guard_name' => 'web']);
-        $empRole = Role::firstOrCreate(['name' => 'employee', 'guard_name' => 'web']);
+        $hrRole = Role::whereIn('slug', ['hr_manager', 'hr-manager'])->first() ?? Role::firstOrCreate(['slug' => 'hr-manager'], ['name' => 'HR Manager']);
+        $empRole = Role::where('slug', 'employee')->first() ?? Role::firstOrCreate(['slug' => 'employee'], ['name' => 'Employee']);
 
         $this->hrUser = User::create([
             'tenant_id' => $this->tenant->id,
+            'active_tenant_id' => $this->tenant->id,
             'name' => 'Dewi HR Director',
             'email' => 'dewi.hr@enterprisenusantara.co.id',
             'password' => bcrypt('Password123!'),
             'status' => 'active',
         ]);
+        $this->hrUser->tenants()->attach($this->tenant->id, ['is_owner' => false, 'role_id' => $hrRole->id]);
         $this->hrUser->roles()->attach($hrRole->id, ['tenant_id' => $this->tenant->id]);
 
         $this->empUser = User::create([
             'tenant_id' => $this->tenant->id,
+            'active_tenant_id' => $this->tenant->id,
             'name' => 'Budi Santoso',
             'email' => 'budi.santoso@enterprisenusantara.co.id',
             'password' => bcrypt('Password123!'),
             'status' => 'active',
         ]);
+        $this->empUser->tenants()->attach($this->tenant->id, ['is_owner' => false, 'role_id' => $empRole->id]);
         $this->empUser->roles()->attach($empRole->id, ['tenant_id' => $this->tenant->id]);
 
         $this->employeeBudi = Employee::create([

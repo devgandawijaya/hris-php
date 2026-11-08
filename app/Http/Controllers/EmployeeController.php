@@ -125,8 +125,8 @@ class EmployeeController extends Controller
                 $user = User::firstOrCreate(
                     ['email' => $validated['email']],
                     [
-                        'name' => trim("{$validated['first_name']} {$validated['last_name']}"),
-                        'phone' => $validated['phone'],
+                        'name' => trim(($validated['first_name'] ?? '') . ' ' . ($validated['last_name'] ?? '')),
+                        'phone' => $validated['phone'] ?? null,
                         'password' => Hash::make('Password123#'), // Default temp password
                         'active_tenant_id' => $tenantId,
                         'email_verified_at' => now(),

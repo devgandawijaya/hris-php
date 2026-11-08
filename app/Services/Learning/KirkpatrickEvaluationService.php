@@ -19,7 +19,8 @@ class KirkpatrickEvaluationService
         float $postTest
     ): TrainingKirkpatrickEvaluation {
         $delta = round($postTest - $preTest, 2);
-        $gainPercentage = $preTest > 0 ? round(($delta / $preTest) * 100, 2) : $postTest;
+        $maxGain = 100.0 - $preTest;
+        $gainPercentage = $maxGain > 0 ? round(($delta / $maxGain) * 100, 2) : 0.0;
 
         $eval = TrainingKirkpatrickEvaluation::updateOrCreate(
             [

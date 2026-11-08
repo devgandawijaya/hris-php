@@ -117,7 +117,7 @@ class DisabilityComplianceAuditService
     public function generateDisnakerComplianceReport(DisabilityEmploymentAudit $audit): array
     {
         return [
-            'dasar_hukum' => 'Undang-Undang Republik Indonesia Nomor 8 Tahun 2016 tentang Penyandang Disabilitas (Pasal 53 ayat 1 & 2)',
+            'dasar_hukum' => 'UU No. 8/2016 (Undang-Undang Republik Indonesia Nomor 8 Tahun 2016) tentang Penyandang Disabilitas (Pasal 53 ayat 1 & 2)',
             'kode_audit' => $audit->audit_code,
             'tanggal_audit' => $audit->audit_date->toDateString(),
             'perusahaan' => [

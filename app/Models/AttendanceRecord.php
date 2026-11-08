@@ -23,6 +23,7 @@ class AttendanceRecord extends Model
         'late_minutes',
         'early_out_minutes',
         'work_hours',
+        'notes',
     ];
 
     protected function casts(): array

@@ -13,6 +13,7 @@ class Payroll extends Model
 
     protected $fillable = [
         'tenant_id',
+        'company_id',
         'payroll_period_id',
         'employee_id',
         'basic_salary',
@@ -62,6 +63,30 @@ class Payroll extends Model
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function getNetSalaryAttribute(): float
+    {
+        return (float) $this->take_home_pay;
+    }
+
+    public function getPph21AmountAttribute(): float
+    {
+        return (float) $this->pph21_tax;
+    }
+
+    public function getBpjsCompanyTotalAttribute(): float
+    {
+        return (float) ($this->bpjs_tk_employer + $this->bpjs_kes_employer);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Payroll $p) {
+            if (empty($p->company_id) && !empty($p->tenant_id)) {
+                $p->company_id = Company::withoutGlobalScopes()->where('tenant_id', $p->tenant_id)->value('id');
+            }
+        });
     }
 
     public function reimbursements(): HasMany

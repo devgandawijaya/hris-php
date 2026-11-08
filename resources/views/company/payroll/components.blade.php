@@ -8,7 +8,7 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Komponen Gaji & Tunjangan</h1>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Komponen Gaji &amp; Tunjangan</h1>
             <p class="text-sm text-slate-500 mt-1">Konfigurasikan tunjangan tetap, tunjangan variabel, dan potongan kustom karyawan.</p>
         </div>
         <div class="flex items-center gap-3">

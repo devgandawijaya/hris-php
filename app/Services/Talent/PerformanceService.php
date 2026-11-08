@@ -81,7 +81,7 @@ class PerformanceService
             [
                 'self_rating' => $rating,
                 'self_feedback' => $feedback,
-                'status' => 'submitted',
+                'status' => 'self_reviewed',
             ]
         );
     }
@@ -90,13 +90,32 @@ class PerformanceService
      * Submit manager review & calculate final score.
      */
     public function submitManagerReview(
-        PerformanceReview $review,
-        User $manager,
-        float $rating,
-        string $feedback
+        $arg1,
+        $arg2,
+        $arg3 = null,
+        $arg4 = null,
+        $arg5 = null
     ): PerformanceReview {
+        if ($arg1 instanceof PerformanceCycle) {
+            $cycle = $arg1;
+            $employee = $arg2;
+            $manager = $arg3;
+            $rating = (float) $arg4;
+            $feedback = (string) $arg5;
+
+            $review = PerformanceReview::where('tenant_id', $employee->tenant_id)
+                ->where('performance_cycle_id', $cycle->id)
+                ->where('employee_id', $employee->id)
+                ->first();
+        } else {
+            $review = $arg1;
+            $manager = $arg2;
+            $rating = (float) $arg3;
+            $feedback = (string) $arg4;
+        }
+
         // Final score formula: 30% Self + 70% Manager (or 100% Manager if self rating is empty)
-        $selfRating = (float) ($review->self_rating ?? $rating);
+        $selfRating = (float) ($review?->self_rating ?? $rating);
         $finalScore = round(($selfRating * 0.30) + ($rating * 0.70), 2);
 
         $review->update([
@@ -104,10 +123,9 @@ class PerformanceService
             'manager_rating' => $rating,
             'manager_feedback' => $feedback,
             'final_score' => $finalScore,
-            'status' => 'finalized',
+            'status' => 'completed',
         ]);
 
-        return $review;
+        return $review->fresh();
     }
 }
-

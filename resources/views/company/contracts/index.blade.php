@@ -9,7 +9,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <div class="flex items-center gap-2">
-                <h1 class="text-2xl font-black text-slate-900 tracking-tight">Manajemen Kontrak PKWT & Kompensasi</h1>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">Manajemen Kontrak PKWT &amp; Kompensasi</h1>
                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
                     PP 35/2021 Pasal 61A
                 </span>

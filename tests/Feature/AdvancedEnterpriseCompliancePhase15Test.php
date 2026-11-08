@@ -408,15 +408,16 @@ class AdvancedEnterpriseCompliancePhase15Test extends TestCase
     {
         $service = app(ExitAssetClearanceService::class);
 
-        $assetLaptop = CompanyAsset::create([
-            'tenant_id' => $this->tenant->id,
-            'asset_code' => 'ASSET-P15-MBP',
-            'name' => 'MacBook Pro 16 M2',
-            'category' => 'laptop',
-            'serial_number' => 'C02TEST98124',
-            'status' => 'assigned',
-            'assigned_employee_id' => $this->employeeSenior->id,
-        ]);
+        $assetLaptop = CompanyAsset::firstOrCreate(
+            ['tenant_id' => $this->tenant->id, 'asset_code' => 'ASSET-P15-MBP'],
+            [
+                'name' => 'MacBook Pro 16 M2',
+                'category' => 'laptop',
+                'serial_number' => 'C02TEST98124',
+                'status' => 'assigned',
+                'assigned_employee_id' => $this->employeeSenior->id,
+            ]
+        );
 
         $items = [
             [
@@ -456,15 +457,16 @@ class AdvancedEnterpriseCompliancePhase15Test extends TestCase
     {
         $service = app(ExitAssetClearanceService::class);
 
-        $assetLaptop = CompanyAsset::create([
-            'tenant_id' => $this->tenant->id,
-            'asset_code' => 'ASSET-P15-DEL',
-            'name' => 'Dell Latitude 7420',
-            'category' => 'laptop',
-            'serial_number' => 'DELL-P15-7420',
-            'status' => 'assigned',
-            'assigned_employee_id' => $this->employeeSenior->id,
-        ]);
+        $assetLaptop = CompanyAsset::firstOrCreate(
+            ['tenant_id' => $this->tenant->id, 'asset_code' => 'ASSET-P15-DEL'],
+            [
+                'name' => 'Dell Latitude 7420',
+                'category' => 'laptop',
+                'serial_number' => 'DELL-P15-7420',
+                'status' => 'assigned',
+                'assigned_employee_id' => $this->employeeSenior->id,
+            ]
+        );
 
         $bast = $service->createBast(
             $this->employeeSenior,

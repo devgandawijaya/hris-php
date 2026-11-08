@@ -222,7 +222,11 @@ class AdvancedHrAnalyticsService
         $year = $year ?? (int) date('Y');
 
         $payrolls = Payroll::where('company_id', $company->id)
-            ->whereYear('period_end', $year)
+            ->where(function ($q) use ($year) {
+                $q->whereHas('payrollPeriod', function ($pq) use ($year) {
+                    $pq->whereYear('end_date', $year);
+                })->orWhereYear('created_at', $year);
+            })
             ->where('status', 'paid')
             ->get();
 

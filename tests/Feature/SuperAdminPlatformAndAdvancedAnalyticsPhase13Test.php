@@ -139,7 +139,7 @@ class SuperAdminPlatformAndAdvancedAnalyticsPhase13Test extends TestCase
                 'last_name' => 'Pratama',
                 'status' => 'active',
                 'employment_status' => 'pkwt',
-                'join_date' => now()->subMonths(10)->toDateString(),
+                'join_date' => now()->subYears(2)->toDateString(),
                 'phone' => '081299998888',
                 'basic_salary' => 9000000,
             ]
@@ -199,17 +199,21 @@ class SuperAdminPlatformAndAdvancedAnalyticsPhase13Test extends TestCase
     {
         $gatingService = app(PlanGatingService::class);
 
+        Employee::withoutGlobalScopes()->where('tenant_id', $this->tenant->id)->where('employee_number', '!=', 'EMP-P13-001')->delete();
+
         // Set tenant to starter plan with limit of 2
-        $limitedPlan = SubscriptionPlan::create([
-            'name' => 'Mini SME 2 Pax',
-            'slug' => 'mini-sme-2',
-            'price_monthly' => 100000,
-            'price_yearly' => 1000000,
-            'max_employees' => 2,
-            'max_admins' => 1,
-            'storage_limit_mb' => 500,
-            'is_active' => true,
-        ]);
+        $limitedPlan = SubscriptionPlan::firstOrCreate(
+            ['slug' => 'mini-sme-2'],
+            [
+                'name' => 'Mini SME 2 Pax',
+                'price_monthly' => 100000,
+                'price_yearly' => 1000000,
+                'max_employees' => 2,
+                'max_admins' => 1,
+                'storage_limit_mb' => 500,
+                'is_active' => true,
+            ]
+        );
 
         Subscription::where('tenant_id', $this->tenant->id)->update(['plan_id' => $limitedPlan->id]);
 
@@ -359,19 +363,20 @@ class SuperAdminPlatformAndAdvancedAnalyticsPhase13Test extends TestCase
         $analyticsService = app(AdvancedHrAnalyticsService::class);
 
         // Simulate 1 resigned employee in the company
-        Employee::withoutGlobalScopes()->create([
-            'tenant_id' => $this->tenant->id,
-            'company_id' => $this->company->id,
-            'employee_number' => 'EMP-P13-RESIGNED',
-            'first_name' => 'Dimas',
-            'last_name' => 'Surya',
-            'status' => 'resigned',
-            'employment_status' => 'resigned',
-            'join_date' => now()->subMonths(8)->toDateString(),
-            'termination_date' => now()->subMonth()->toDateString(),
-            'email' => 'dimas.resigned@testphase13.com',
-            'basic_salary' => 8000000,
-        ]);
+        Employee::withoutGlobalScopes()->firstOrCreate(
+            ['tenant_id' => $this->tenant->id, 'employee_number' => 'EMP-P13-RESIGNED'],
+            [
+                'company_id' => $this->company->id,
+                'first_name' => 'Dimas',
+                'last_name' => 'Surya',
+                'status' => 'resigned',
+                'employment_status' => 'resigned',
+                'join_date' => now()->subYears(2)->toDateString(),
+                'termination_date' => now()->subMonth()->toDateString(),
+                'email' => 'dimas.resigned@testphase13.com',
+                'basic_salary' => 8000000,
+            ]
+        );
 
         $metrics = $analyticsService->getTurnoverMetrics($this->company, (int) date('Y'));
 
@@ -392,24 +397,21 @@ class SuperAdminPlatformAndAdvancedAnalyticsPhase13Test extends TestCase
         // Record 3 distinct non-contiguous absence dates for employee:
         // Jan 10, Feb 15, Mar 20 -> Spells S = 3, Total Days D = 3
         // Bradford B = 3^2 * 3 = 9 * 3 = 27 (Low Risk < 50)
-        Attendance::withoutGlobalScopes()->create([
+        Attendance::withoutGlobalScopes()->firstOrCreate([
             'tenant_id' => $this->tenant->id,
             'employee_id' => $this->employee->id,
             'date' => date('Y') . '-01-10',
-            'status' => 'absent',
-        ]);
-        Attendance::withoutGlobalScopes()->create([
+        ], ['status' => 'absent']);
+        Attendance::withoutGlobalScopes()->firstOrCreate([
             'tenant_id' => $this->tenant->id,
             'employee_id' => $this->employee->id,
             'date' => date('Y') . '-02-15',
-            'status' => 'absent',
-        ]);
-        Attendance::withoutGlobalScopes()->create([
+        ], ['status' => 'absent']);
+        Attendance::withoutGlobalScopes()->firstOrCreate([
             'tenant_id' => $this->tenant->id,
             'employee_id' => $this->employee->id,
             'date' => date('Y') . '-03-20',
-            'status' => 'absent',
-        ]);
+        ], ['status' => 'absent']);
 
         $bradford = $analyticsService->getBradfordFactorMetrics($this->company, (int) date('Y'));
 

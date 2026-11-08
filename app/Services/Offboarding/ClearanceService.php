@@ -23,6 +23,10 @@ class ClearanceService
         $clearance->resignation_date = $data['resignation_date'] ?? date('Y-m-d');
         $clearance->last_working_day = $data['last_working_day'] ?? Carbon::parse($clearance->resignation_date)->addMonth()->toDateString();
         $clearance->separation_reason = $data['separation_reason'] ?? 'resigned';
+        $clearance->hr_status = 'pending';
+        $clearance->it_status = 'pending';
+        $clearance->finance_status = 'pending';
+        $clearance->supervisor_status = 'pending';
         $clearance->overall_status = 'in_progress';
         $clearance->save();
 

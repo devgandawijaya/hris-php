@@ -13,7 +13,7 @@ class PlanGatingService
      */
     public function getPlan(Tenant $tenant): ?SubscriptionPlan
     {
-        $tenant->loadMissing('activeSubscription.plan');
+        $tenant->load('activeSubscription.plan');
         return $tenant->activeSubscription?->plan;
     }
 

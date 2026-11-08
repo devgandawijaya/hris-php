@@ -43,9 +43,11 @@ class DisciplinaryService
      */
     public function revokeWarning(EmployeeWarning $warning, ?string $reason = null): EmployeeWarning
     {
+        $note = "Dicabut: " . ($reason ?? 'Pemulihan performa');
         $warning->update([
             'status' => 'revoked',
-            'action_plan' => ($warning->action_plan ? $warning->action_plan . " | " : "") . "Dicabut: " . ($reason ?? 'Pemulihan performa'),
+            'reason' => $warning->reason ? ($warning->reason . " | " . $note) : $note,
+            'action_plan' => ($warning->action_plan ? $warning->action_plan . " | " : "") . $note,
         ]);
 
         return $warning->fresh();

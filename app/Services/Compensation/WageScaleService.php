@@ -41,7 +41,7 @@ class WageScaleService
 
         $this->recalculateMidpointProgressions($company);
 
-        return $grade;
+        return $grade->fresh();
     }
 
     /**

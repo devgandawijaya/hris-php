@@ -30,10 +30,13 @@ class GrievanceService
      */
     public function updateStatus(EmployeeGrievance $grievance, string $status, ?string $notes = null): EmployeeGrievance
     {
-        $grievance->update([
-            'status' => $status,
-            'resolution_notes' => $notes ?? $grievance->resolution_notes,
-        ]);
+        $payload = ['status' => $status];
+        if ($notes !== null) {
+            $payload['investigation_notes'] = $notes;
+            $payload['resolution_notes'] = $notes;
+        }
+
+        $grievance->update($payload);
 
         return $grievance->fresh();
     }

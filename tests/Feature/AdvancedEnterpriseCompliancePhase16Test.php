@@ -142,6 +142,11 @@ class AdvancedEnterpriseCompliancePhase16Test extends TestCase
                 'status' => 'inactive',
             ]
         );
+
+        JkpClaimCertification::where('certificate_number', 'JKP-CERT/TEST/005')->delete();
+        EmployeeCooperative::whereIn('member_number', ['KOPKAR-TEST-007', 'KOPKAR-TEST-008', 'KOPKAR-TEST-009'])->delete();
+        EmployeeCooperative::where('employee_id', $this->employeeWni->id)->delete();
+        TripartiteIndustrialDispute::where('case_number', 'PHI-CASE/TEST/012')->delete();
     }
 
     /**

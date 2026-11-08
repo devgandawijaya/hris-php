@@ -39,10 +39,13 @@ class Employee extends Model
         'employment_type',
         'join_date',
         'end_date',
+        'resigned_date',
+        'termination_date',
         'bank_name',
         'bank_account_number',
         'bank_account_holder',
         'basic_salary',
+        'base_salary',
         'photo_path',
         'status',
         'citizenship',
@@ -55,6 +58,8 @@ class Employee extends Model
             'birth_date' => 'date',
             'join_date' => 'date',
             'end_date' => 'date',
+            'resigned_date' => 'date',
+            'termination_date' => 'date',
             'basic_salary' => 'decimal:2',
             'has_disability' => 'boolean',
         ];
@@ -63,6 +68,29 @@ class Employee extends Model
     protected static function booted(): void
     {
         static::creating(function (Employee $emp) {
+            if (empty($emp->company_id) && !empty($emp->tenant_id)) {
+                $emp->company_id = Company::withoutGlobalScopes()->where('tenant_id', $emp->tenant_id)->value('id');
+            }
+            if (empty($emp->first_name)) {
+                if (!empty($emp->user_id)) {
+                    $u = User::find($emp->user_id);
+                    if ($u && !empty($u->name)) {
+                        $parts = explode(' ', trim($u->name), 2);
+                        $emp->first_name = $parts[0];
+                        $emp->last_name = $emp->last_name ?? ($parts[1] ?? '');
+                    }
+                }
+                if (empty($emp->first_name)) {
+                    $emp->first_name = 'Karyawan';
+                    $emp->last_name = $emp->last_name ?? '';
+                }
+            }
+            if (isset($emp->attributes['base_salary'])) {
+                if (empty($emp->attributes['basic_salary'])) {
+                    $emp->attributes['basic_salary'] = $emp->attributes['base_salary'];
+                }
+                unset($emp->attributes['base_salary']);
+            }
             $rawNik = $emp->attributes['nik'] ?? $emp->attributes['nik_ktp'] ?? null;
             if (empty($emp->attributes['employee_number']) && !empty($rawNik)) {
                 $emp->attributes['employee_number'] = $rawNik;
@@ -79,6 +107,12 @@ class Employee extends Model
         });
 
         static::saving(function (Employee $emp) {
+            if (isset($emp->attributes['base_salary'])) {
+                if (empty($emp->attributes['basic_salary'])) {
+                    $emp->attributes['basic_salary'] = $emp->attributes['base_salary'];
+                }
+                unset($emp->attributes['base_salary']);
+            }
             $rawNik = $emp->attributes['nik'] ?? $emp->attributes['nik_ktp'] ?? null;
             if (empty($emp->attributes['employee_number']) && !empty($rawNik)) {
                 $emp->attributes['employee_number'] = $rawNik;
@@ -316,6 +350,11 @@ class Employee extends Model
         return $this->hasMany(EmployeeEducation::class);
     }
 
+    public function educationHistories(): HasMany
+    {
+        return $this->educations();
+    }
+
     public function employmentHistories(): HasMany
     {
         return $this->hasMany(EmployeeEmploymentHistory::class);
@@ -541,5 +580,15 @@ class Employee extends Model
     public function pdpDsarRequests(): HasMany
     {
         return $this->hasMany(PdpDsarRequest::class);
+    }
+
+    public function setBaseSalaryAttribute($value): void
+    {
+        $this->attributes['basic_salary'] = $value;
+    }
+
+    public function getBaseSalaryAttribute(): ?float
+    {
+        return isset($this->attributes['basic_salary']) ? (float) $this->attributes['basic_salary'] : null;
     }
 }

@@ -49,6 +49,7 @@ class ContractService
             'status' => 'active',
             'compensation_calculated' => $compensation,
             'compensation_paid' => false,
+            'renewal_count' => $data['renewal_count'] ?? 0,
             'document_path' => $docPath,
             'notes' => $data['notes'] ?? null,
         ]);

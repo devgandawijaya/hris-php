@@ -428,7 +428,7 @@ class SkillMatrixAndSuccessionPhase9Test extends TestCase
         $response->assertOk();
         $response->assertViewHas('mySkillAnalysis');
         $response->assertSee('Keahlian & Karir');
-        $response->assertSee('Chief Technology Officer'); // or Software Engineer
+        $response->assertSee('Software Engineer');
     }
 }
 

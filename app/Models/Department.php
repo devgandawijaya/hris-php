@@ -19,6 +19,15 @@ class Department extends Model
         'parent_id',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function ($department) {
+            if (empty($department->company_id) && !empty($department->tenant_id)) {
+                $department->company_id = Company::withoutGlobalScopes()->where('tenant_id', $department->tenant_id)->value('id');
+            }
+        });
+    }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);

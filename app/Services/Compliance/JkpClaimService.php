@@ -2,6 +2,7 @@
 
 namespace App\Services\Compliance;
 
+use App\Models\Company;
 use App\Models\Employee;
 use App\Models\JkpClaimCertification;
 use Carbon\Carbon;
@@ -12,16 +13,26 @@ class JkpClaimService
     /**
      * Certify employee eligibility and generate JKP Claim Certificate (PP No. 37 Tahun 2021)
      */
-    public function certifyClaim(Employee $employee, array $data): JkpClaimCertification
+    public function certifyClaim($arg1, $arg2 = [], $arg3 = []): JkpClaimCertification
     {
+        if ($arg1 instanceof Company) {
+            $company = $arg1;
+            $employee = $arg2;
+            $data = is_array($arg3) ? $arg3 : [];
+        } else {
+            $employee = $arg1;
+            $data = is_array($arg2) ? $arg2 : [];
+            $company = $employee->company;
+        }
+
         $tenantId = $employee->tenant_id;
         $consecutiveMonths = (int) ($data['consecutive_paid_months'] ?? 6);
         $totalMonths24m = (int) ($data['total_paid_months_24m'] ?? 12);
         $reasonCode = strtolower($data['termination_reason_code'] ?? 'efisiensi_merger');
 
         // Check voluntary resignation restriction (Pasal 19 ayat 3 PP 37/2021: Mengundurkan diri sukarela tidak berhak JKP)
-        if (in_array($reasonCode, ['resigned', 'voluntary_resignation', 'mengundurkan_diri'])) {
-            throw new InvalidArgumentException("Pekerja yang mengundurkan diri atas kemauan sendiri tidak berhak atas manfaat Jaminan Kehilangan Pekerjaan (JKP) sesuai Pasal 19 ayat (3) PP No. 37 Tahun 2021.");
+        if (in_array($reasonCode, ['resigned', 'resignation', 'voluntary_resignation', 'mengundurkan_diri']) || str_contains($reasonCode, 'resign')) {
+            throw new InvalidArgumentException("Pekerja yang mengundurkan diri atas kemauan sendiri tidak berhak atas manfaat JKP sesuai Pasal 19 ayat (3) PP No. 37 Tahun 2021.");
         }
 
         // Statutory eligibility: Minimal 6 bulan berturut-turut dan minimal 12 bulan dalam 24 bulan
@@ -37,12 +48,14 @@ class JkpClaimService
         $m46Monthly = round($basisSalary * 0.25, 2);
         $totalBenefit = round(($m13Monthly * 3) + ($m46Monthly * 3), 2);
 
-        $nextNum = JkpClaimCertification::where('tenant_id', $tenantId)->count() + 1;
-        $certNumber = sprintf('JKP-CERT/%s/%04d', date('Y'), $nextNum);
+        $seq = JkpClaimCertification::where('tenant_id', $tenantId)->count() + 1;
+        do {
+            $certNumber = sprintf('JKP-CERT/%s/%04d', date('Y'), $seq++);
+        } while (JkpClaimCertification::where('certificate_number', $certNumber)->exists());
 
         return JkpClaimCertification::create([
             'tenant_id' => $tenantId,
-            'company_id' => $employee->company_id,
+            'company_id' => $company ? $company->id : $employee->company_id,
             'certificate_number' => $certNumber,
             'employee_id' => $employee->id,
             'termination_date' => Carbon::parse($data['termination_date'])->toDateString(),
@@ -67,7 +80,8 @@ class JkpClaimService
     public function generateDisnakerRecommendation(JkpClaimCertification $certification): array
     {
         return [
-            'dasar_hukum' => 'PP No. 37 Tahun 2021 tentang Penyelenggaraan Program Jaminan Kehilangan Pekerjaan (JKP)',
+            'dasar_hukum' => 'PP No. 37 Tahun 2021',
+            'nomor_sertifikat' => $certification->certificate_number,
             'nomor_sertifikasi' => $certification->certificate_number,
             'identitas_pekerja' => [
                 'nama' => $certification->employee->full_name,
@@ -75,6 +89,9 @@ class JkpClaimService
                 'nomor_kpj_bpjs' => $certification->bpjs_tk_card_number,
                 'tanggal_phk' => $certification->termination_date->toDateString(),
                 'alasan_phk' => strtoupper($certification->termination_reason_code),
+            ],
+            'manfaat_tunai' => [
+                'total_manfaat_maksimal' => (float) $certification->total_potential_cash_benefit,
             ],
             'kalkulasi_manfaat_tunai' => [
                 'upah_terakhir' => (float) $certification->employee->basic_salary,
@@ -88,5 +105,13 @@ class JkpClaimService
                 'status_lapor' => $certification->disnaker_reporting_status,
             ],
         ];
+    }
+
+    /**
+     * Alias for generateDisnakerRecommendation
+     */
+    public function generateDisnakerReportingPayload(JkpClaimCertification $certification): array
+    {
+        return $this->generateDisnakerRecommendation($certification);
     }
 }

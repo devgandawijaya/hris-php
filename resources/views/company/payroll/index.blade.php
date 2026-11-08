@@ -8,7 +8,7 @@
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Penggajian & Kepatuhan Pajak</h1>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Penggajian &amp; Kepatuhan Pajak</h1>
             <p class="text-sm text-slate-500 mt-1">Kelola siklus payroll bulanan, integrasi lembur PP 35/2021, BPJS 5 program, dan PPh 21 TER.</p>
         </div>
         <div class="flex items-center gap-3">

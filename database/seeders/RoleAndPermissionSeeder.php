@@ -74,6 +74,7 @@ class RoleAndPermissionSeeder extends Seeder
             ['name' => 'Company Admin', 'slug' => 'company-admin', 'description' => 'Primary Administrator of Company Tenant'],
             ['name' => 'HR Director', 'slug' => 'hr-director', 'description' => 'Strategic HR Executive'],
             ['name' => 'HR Manager', 'slug' => 'hr-manager', 'description' => 'Operational Human Resource Manager'],
+            ['name' => 'HR Manager', 'slug' => 'hr_manager', 'description' => 'Operational Human Resource Manager'],
             ['name' => 'HR Staff', 'slug' => 'hr-staff', 'description' => 'Daily HR Operations and Personnel Admin'],
             ['name' => 'Payroll Staff', 'slug' => 'payroll-staff', 'description' => 'Compensation & Benefits Specialist'],
             ['name' => 'Finance', 'slug' => 'finance', 'description' => 'Company Finance & Treasury'],

@@ -38,5 +38,16 @@ class SubscriptionInvoice extends Model
     {
         return $this->belongsTo(Subscription::class);
     }
+
+    protected static function booted(): void
+    {
+        static::creating(function (SubscriptionInvoice $inv) {
+            if ($inv->total_amount === null) {
+                $amount = (float) ($inv->amount ?? 0);
+                $tax = (float) ($inv->tax_amount ?? 0);
+                $inv->total_amount = $amount + $tax;
+            }
+        });
+    }
 }
 

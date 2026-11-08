@@ -22,7 +22,52 @@ class EmployeeWarning extends Model
         'authorized_by_user_id',
         'status', // active, expired, revoked
         'file_path',
+        'level',
+        'sp_number',
+        'warning_letter_number',
     ];
+
+    public function setWarningLetterNumberAttribute($value): void
+    {
+        $this->attributes['letter_number'] = $value;
+    }
+
+    public function getWarningLetterNumberAttribute(): ?string
+    {
+        return $this->letter_number;
+    }
+
+    public function setLevelAttribute($value): void
+    {
+        $this->attributes['warning_level'] = is_numeric($value) ? "sp{$value}" : (string)$value;
+    }
+
+    public function getLevelAttribute(): ?string
+    {
+        return $this->warning_level;
+    }
+
+    public function setSpNumberAttribute($value): void
+    {
+        $this->attributes['letter_number'] = $value;
+    }
+
+    public function getSpNumberAttribute(): ?string
+    {
+        return $this->letter_number;
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (EmployeeWarning $w) {
+            if (empty($w->warning_level)) {
+                $w->warning_level = 'sp1';
+            }
+            if (empty($w->letter_number)) {
+                $w->letter_number = $w->warning_letter_number ?? ('SP/' . date('Ymd') . '/' . uniqid());
+            }
+        });
+    }
 
     protected function casts(): array
     {

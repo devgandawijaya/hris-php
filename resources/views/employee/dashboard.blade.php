@@ -112,14 +112,14 @@
                 :class="activeEssTab === 'performance' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
             <i data-lucide="target" class="w-4 h-4"></i>
-            Kinerja & Evaluasi
+            Kinerja &amp; Evaluasi
         </button>
 
         <button type="button" @click="activeEssTab = 'assets-training'"
                 :class="activeEssTab === 'assets-training' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
             <i data-lucide="award" class="w-4 h-4"></i>
-            Aset & Pelatihan
+            Aset &amp; Pelatihan
         </button>
 
         <button type="button" @click="activeEssTab = 'grievance-helpdesk'"
@@ -147,14 +147,14 @@
                 :class="activeEssTab === 'skills-career' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
             <i data-lucide="award" class="w-4 h-4"></i>
-            Keahlian & Karir
+            Keahlian &amp; Karir
         </button>
 
         <button type="button" @click="activeEssTab = 'feedback360'"
                 :class="activeEssTab === 'feedback360' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
             <i data-lucide="compass" class="w-4 h-4"></i>
-            Review 360° & PIP
+            Review 360° &amp; PIP
             @if(isset($pending360Requests) && $pending360Requests->isNotEmpty())
                 <span class="px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-bold">{{ $pending360Requests->count() }}</span>
             @endif
@@ -164,7 +164,7 @@
                 :class="activeEssTab === 'extended-profile' ? 'border-[#DC2626] text-[#DC2626] font-bold' : 'border-transparent text-slate-500 hover:text-slate-800 font-medium'"
                 class="px-4 py-2.5 border-b-2 text-xs transition whitespace-nowrap flex items-center gap-2">
             <i data-lucide="users" class="w-4 h-4"></i>
-            Keluarga & Edukasi
+            Keluarga &amp; Edukasi
         </button>
 
         <button type="button" @click="activeEssTab = 'sppd'"
@@ -1671,7 +1671,7 @@
 
             <!-- Skill Breakdown List -->
             <div class="mt-6">
-                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Daftar Keahlian & Kesenjangan (Gap)</h3>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Daftar Keahlian &amp; Kesenjangan (Gap)</h3>
                 @if(empty($mySkillAnalysis['skills']))
                     <div class="py-8 text-center text-xs text-slate-400">
                         Belum ada standar kompetensi jabatan yang ditetapkan untuk posisi Anda oleh HR.

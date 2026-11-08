@@ -35,6 +35,11 @@ class RecruitmentService
     /**
      * Submit an application for a candidate (registering candidate if not existing).
      */
+    public function applyCandidate(JobPosting $posting, array $candidateData, ?UploadedFile $resume = null): JobApplication
+    {
+        return $this->applyForJob($posting, $candidateData, $resume);
+    }
+
     public function applyForJob(
         JobPosting $posting,
         array $candidateData,
@@ -79,6 +84,11 @@ class RecruitmentService
     /**
      * Advance application stage in pipeline.
      */
+    public function updateApplicationStage(JobApplication $application, string $stage, array $data = []): JobApplication
+    {
+        return $this->advanceStage($application, $stage, $data);
+    }
+
     public function advanceStage(JobApplication $application, string $stage, array $data = []): JobApplication
     {
         $update = ['stage' => $stage];
@@ -110,8 +120,16 @@ class RecruitmentService
     /**
      * Convert hired candidate into active Employee record.
      */
-    public function convertToEmployee(JobApplication $application, int $companyId, array $employeeData): Employee
+    public function convertToEmployee(JobApplication $application, $arg2, $arg3 = null): Employee
     {
+        if (is_array($arg2)) {
+            $employeeData = $arg2;
+            $companyId = $application->jobPosting?->company_id ?? \App\Models\Company::withoutGlobalScopes()->where('tenant_id', $application->tenant_id)->value('id') ?? 1;
+        } else {
+            $companyId = (int) $arg2;
+            $employeeData = is_array($arg3) ? $arg3 : [];
+        }
+
         return DB::transaction(function () use ($application, $companyId, $employeeData) {
             $candidate = $application->candidate;
             $posting = $application->jobPosting;

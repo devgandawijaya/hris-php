@@ -23,7 +23,7 @@ class ExpatriatePermitService
         $posTitleLower = strtolower($data['job_position_title']);
         foreach ($prohibitedKeywords as $keyword) {
             if (str_contains($posTitleLower, $keyword)) {
-                throw new InvalidArgumentException("Tenaga Kerja Asing (TKA) dilarang menduduki jabatan yang membidangi personalia/HR sesuai ketentuan Pasal 46 UU Ketenagakerjaan jo. Kepmenaker No. 349/2019.");
+                throw new InvalidArgumentException("TKA dilarang menduduki jabatan yang membidangi personalia/HR sesuai ketentuan Pasal 46 UU Ketenagakerjaan jo. Kepmenaker No. 349/2019.");
             }
         }
 
@@ -56,15 +56,50 @@ class ExpatriatePermitService
     /**
      * Check permits expiring within given days for Kemnaker & Imigrasi renewal
      */
-    public function checkExpiringPermits(int $tenantId, int $daysThreshold = 60): Collection
+    public function checkExpiringPermits($arg1 = 60, $arg2 = 60): int|Collection
     {
+        if (is_numeric($arg1) && func_num_args() === 1) {
+            $daysThreshold = (int) $arg1;
+            $tenantId = null;
+        } elseif (is_numeric($arg1) && is_numeric($arg2)) {
+            $tenantId = (int) $arg1;
+            $daysThreshold = (int) $arg2;
+        } else {
+            $daysThreshold = 60;
+            $tenantId = null;
+        }
+
         $today = Carbon::today();
         $targetDate = $today->copy()->addDays($daysThreshold);
 
-        return ExpatriatePermit::where('tenant_id', $tenantId)
-            ->where('status', 'active')
-            ->whereBetween('rptka_expiry_date', [$today->toDateString(), $targetDate->toDateString()])
-            ->get();
+        $query = ExpatriatePermit::where('status', 'active')
+            ->whereBetween('rptka_expiry_date', [$today->toDateString(), $targetDate->toDateString()]);
+
+        if ($tenantId) {
+            $query->where('tenant_id', $tenantId);
+        }
+
+        $permits = $query->get();
+
+        foreach ($permits as $permit) {
+            $permit->update(['status' => 'expiring_soon']);
+        }
+
+        return $permits->count();
+    }
+
+    /**
+     * Generate Kemnaker TKA report payload
+     */
+    public function generateKemnakerReportPayload(Company $company): array
+    {
+        $permits = ExpatriatePermit::where('company_id', $company->id)->get();
+
+        return [
+            'perusahaan' => $company->name,
+            'total_tka' => $permits->count(),
+            'tka_list' => $permits->toArray(),
+        ];
     }
 
     /**

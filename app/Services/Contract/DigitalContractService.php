@@ -42,6 +42,7 @@ class DigitalContractService
         $contract->probation_end_date = !empty($data['probation_end_date']) ? Carbon::parse($data['probation_end_date'])->toDateString() : null;
         $contract->monthly_wage = $wage;
         $contract->status = 'active';
+        $contract->is_digitally_signed = false;
         $contract->contract_body = $contractBody;
         $contract->signer_name = $data['signer_name'] ?? 'Direktur Utama / HR Director';
         $contract->signer_position = $data['signer_position'] ?? 'Direktur Operasional & SDM';

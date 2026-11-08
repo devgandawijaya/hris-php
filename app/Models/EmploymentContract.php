@@ -10,6 +10,10 @@ class EmploymentContract extends Model
 {
     use BelongsToTenant;
 
+    protected $attributes = [
+        'is_digitally_signed' => false,
+    ];
+
     protected $fillable = [
         'tenant_id',
         'employee_id',
