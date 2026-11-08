@@ -1685,7 +1685,7 @@ class DemoCompanySeeder extends Seeder
                     'finance_cleared_at' => now()->subDays(1),
                     'supervisor_status' => 'cleared',
                     'supervisor_notes' => 'Dokumen dan repositori project telah diserahterimakan lengkap.',
-                    'supervisor_cleared_by' => $empAni->id ?? null,
+                    'supervisor_cleared_by' => $ownerUser->id ?? null,
                     'supervisor_cleared_at' => now()->subDays(1),
                     'overall_status' => 'completed',
                     'completed_at' => now(),
@@ -1985,7 +1985,7 @@ class DemoCompanySeeder extends Seeder
 
             // 1. K3 Workplace Incident & BPJS JKK Claim
             $k3Incident = WorkplaceIncident::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'incident_number' => 'INC/K3/2026/0001'],
+                ['tenant_id' => $tenant->id, 'incident_number' => 'INC/K3/2026/SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'incident_date' => now()->subMonths(2)->toDateString(),
@@ -2005,7 +2005,7 @@ class DemoCompanySeeder extends Seeder
             );
 
             BpjsJkkClaim::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'claim_number' => 'JKK-BPJS-2026-0001'],
+                ['tenant_id' => $tenant->id, 'claim_number' => 'JKK-BPJS-2026-SDN-0001'],
                 [
                     'workplace_incident_id' => $k3Incident->id,
                     'stage' => 'tahap_2',
@@ -2055,7 +2055,7 @@ class DemoCompanySeeder extends Seeder
 
             // 3. Surat Perintah Lembur (SPL PP 35/2021)
             OvertimeOrder::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'order_number' => 'SPL/2026/11/0001'],
+                ['tenant_id' => $tenant->id, 'order_number' => 'SPL/2026/11/SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'employee_id' => $empAni->id,
@@ -2090,7 +2090,7 @@ class DemoCompanySeeder extends Seeder
 
             // 5. Forum Lembaga Kerja Sama (LKS) Bipartit
             BipartiteMeeting::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'meeting_number' => 'BIPARTIT/2026/11/0001'],
+                ['tenant_id' => $tenant->id, 'meeting_number' => 'BIPARTIT/2026/11/SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'meeting_date' => now()->subDays(10)->toDateString(),
@@ -2111,7 +2111,7 @@ class DemoCompanySeeder extends Seeder
 
             // 1. Wajib Lapor Ketenagakerjaan Perusahaan (WLTK UU No. 7/1981)
             $wltk = WltkReport::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'report_number' => 'WLTK/2026/0001'],
+                ['tenant_id' => $tenant->id, 'report_number' => 'WLTK/2026/SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'reporting_year' => 2026,
@@ -2149,7 +2149,7 @@ class DemoCompanySeeder extends Seeder
             $posLead = Position::where('department_id', $techDept->id)->first() ?? Position::first();
 
             $vacancy = IjpVacancy::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'vacancy_code' => 'IJP-2026-0001'],
+                ['tenant_id' => $tenant->id, 'vacancy_code' => 'IJP-2026-SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'department_id' => $techDept->id,
@@ -2234,7 +2234,7 @@ class DemoCompanySeeder extends Seeder
 
             // 4. Asset Handover BAST & Automated SSO Revocation
             $bast = AssetHandoverBast::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'bast_number' => 'BAST-ASSET-2026-0001'],
+                ['tenant_id' => $tenant->id, 'bast_number' => 'BAST-ASSET-2026-SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'employee_id' => $empAni->id,
@@ -2298,7 +2298,7 @@ class DemoCompanySeeder extends Seeder
 
             // 5. Audit Kepatuhan Kuota Tenaga Kerja Disabilitas (UU No. 8/2016)
             $disabilityAudit = DisabilityEmploymentAudit::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'audit_code' => 'DISABILITY-AUDIT-2026-0001'],
+                ['tenant_id' => $tenant->id, 'audit_code' => 'DISABILITY-AUDIT-2026-SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'audit_year' => 2026,
@@ -2385,7 +2385,7 @@ class DemoCompanySeeder extends Seeder
 
             // 2. Jaminan Kehilangan Pekerjaan (JKP PP No. 37 Tahun 2021)
             JkpClaimCertification::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'certificate_number' => 'JKP-CERT/2026/0001'],
+                ['tenant_id' => $tenant->id, 'certificate_number' => 'JKP-CERT/2026/SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'employee_id' => $empAni->id,
@@ -2407,7 +2407,7 @@ class DemoCompanySeeder extends Seeder
 
             // 3. Employee Cooperative (Koperasi Karyawan UU No. 25/1992 & UU 13/2003)
             $kopkar = EmployeeCooperative::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'member_number' => 'KOPKAR-2026-0001'],
+                ['tenant_id' => $tenant->id, 'member_number' => 'KOPKAR-2026-SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'employee_id' => $empBudi->id,
@@ -2463,7 +2463,7 @@ class DemoCompanySeeder extends Seeder
 
             // 4. Continuous Shift Roster (Kepmenakertrans No. KEP-233/MEN/2003 24/7)
             $roster = ContinuousShiftRoster::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'roster_code' => 'ROSTER-2026-0001'],
+                ['tenant_id' => $tenant->id, 'roster_code' => 'ROSTER-2026-SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'name' => 'Pola Rotasi 3 Shift 4 Grup Kontinu (24/7 Ops & NOC)',
@@ -2498,7 +2498,7 @@ class DemoCompanySeeder extends Seeder
 
             // 5. Penyelesaian Perselisihan Hubungan Industrial / Mediasi Tripartit (UU No. 2/2004)
             TripartiteIndustrialDispute::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'case_number' => 'PHI-CASE/2026/0001'],
+                ['tenant_id' => $tenant->id, 'case_number' => 'PHI-CASE/2026/SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'dispute_type' => 'perselisihan_phk',
@@ -2605,7 +2605,7 @@ class DemoCompanySeeder extends Seeder
 
             // 3. Satgas PPKS & Fasilitas Ramah Perempuan (Kepmenaker No. 88/2023 & UU TPKS No. 12/2022)
             PpksComplaintCase::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'ticket_number' => 'PPKS-2026-0001'],
+                ['tenant_id' => $tenant->id, 'ticket_number' => 'PPKS-2026-SDN-0001'],
                 [
                     'company_id' => $company->id,
                     'incident_date' => now()->subDays(14)->toDateString(),
@@ -2800,7 +2800,7 @@ class DemoCompanySeeder extends Seeder
 
             // 3. Employee Stock Option Plan (ESOP / RSU) (UU No. 40/2007)
             $esop = EsopGrant::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'grant_number' => 'ESOP-2024-001'],
+                ['tenant_id' => $tenant->id, 'grant_number' => 'ESOP-2024-SDN-001'],
                 [
                     'company_id' => $company->id,
                     'employee_id' => $empBudi->id,
@@ -2971,7 +2971,7 @@ class DemoCompanySeeder extends Seeder
             );
 
             PdpDsarRequest::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'request_number' => 'DSAR-2026-001'],
+                ['tenant_id' => $tenant->id, 'request_number' => 'DSAR-2026-SDN-001'],
                 [
                     'company_id' => $company->id,
                     'employee_id' => $empBudi->id,
@@ -2987,7 +2987,7 @@ class DemoCompanySeeder extends Seeder
             );
 
             PdpBreachIncidentLog::firstOrCreate(
-                ['tenant_id' => $tenant->id, 'incident_number' => 'BREACH-2026-001'],
+                ['tenant_id' => $tenant->id, 'incident_number' => 'BREACH-2026-SDN-001'],
                 [
                     'company_id' => $company->id,
                     'breach_type' => 'unauthorized_access',

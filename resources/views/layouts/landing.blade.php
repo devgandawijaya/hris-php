@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $settings['seo_title'] ?? 'RiHRIS — Software HRIS SaaS Multi-Company Indonesia' }}</title>
+    <title>{{ $settings['seo_title'] ?? 'RiHRIS — Software HRIS SaaS Multi-Company Patuh Regulasi Indonesia' }}</title>
     <meta name="description" content="{{ $settings['seo_description'] ?? 'Platform HRIS SaaS Indonesia: Absensi GPS, Cuti, Payroll, PPh 21 TER, BPJS.' }}">
 
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Tailwind & Alpine Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -33,6 +33,8 @@
             }
         }
     </script>
+    <!-- Alpine Plugins & Core -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -42,13 +44,36 @@
 </head>
 <body class="bg-white text-slate-800 antialiased flex flex-col min-h-screen">
 
-    <!-- Top Navigation Bar (Centered container max-w-landing) -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100" x-data="{ mobileMenuOpen: false }">
+    <!-- Top Announcement Bar: Live Demo Quick Access -->
+    <div class="bg-gradient-to-r from-slate-950 via-red-950 to-slate-950 text-white text-xs py-2 px-4 border-b border-red-900/40 relative z-50">
+        <div class="max-w-[1200px] mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-600 text-white animate-pulse">
+                    LIVE DEMO
+                </span>
+                <span class="text-slate-200 text-xs">
+                    Coba langsung seluruh 20 modul tanpa registrasi: <strong>Super Admin</strong>, <strong>Company Owner</strong>, <strong>HR Manager</strong>, dan <strong>ESS Karyawan</strong>.
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="#demo-access" class="text-xs font-semibold text-red-300 hover:text-white underline underline-offset-2 flex items-center gap-1 transition">
+                    Lihat Akun Demo <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
+                </a>
+                <span class="text-slate-600">|</span>
+                <a href="{{ route('login', ['demo' => 'owner']) }}" class="text-xs font-bold text-amber-300 hover:text-amber-200 flex items-center gap-1 transition">
+                    1-Click Login Owner <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xs" x-data="{ mobileMenuOpen: false }">
         <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <!-- Brand Logo -->
-                <a href="{{ route('landing') }}" class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#991B1B] to-[#DC2626] flex items-center justify-center text-white shadow-md shadow-red-500/20">
+                <a href="{{ route('landing') }}" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#991B1B] to-[#DC2626] flex items-center justify-center text-white shadow-md shadow-red-500/20 group-hover:scale-105 transition transform">
                         <i data-lucide="layers" class="w-6 h-6 stroke-[2.2]"></i>
                     </div>
                     <div>
@@ -58,17 +83,22 @@
                 </a>
 
                 <!-- Desktop Menu -->
-                <nav class="hidden md:flex items-center gap-8">
+                <nav class="hidden lg:flex items-center gap-7">
                     <a href="#features" class="text-sm font-medium text-slate-600 hover:text-[#DC2626] transition">Fitur Utama</a>
-                    <a href="#modules" class="text-sm font-medium text-slate-600 hover:text-[#DC2626] transition">Modul HRIS</a>
+                    <a href="#modules" class="text-sm font-medium text-slate-600 hover:text-[#DC2626] transition">20 Modul HRIS</a>
+                    <a href="#tax-simulator" class="text-sm font-medium text-slate-600 hover:text-[#DC2626] transition flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                        Simulasi PPh 21
+                    </a>
                     <a href="#why-us" class="text-sm font-medium text-slate-600 hover:text-[#DC2626] transition">Kepatuhan Hukum</a>
-                    <a href="#pricing" class="text-sm font-medium text-slate-600 hover:text-[#DC2626] transition">Paket Harga</a>
+                    <a href="#demo-access" class="text-sm font-medium text-slate-600 hover:text-[#DC2626] transition">Akun Demo</a>
+                    <a href="#pricing" class="text-sm font-medium text-slate-600 hover:text-[#DC2626] transition">Harga</a>
                     <a href="#faq" class="text-sm font-medium text-slate-600 hover:text-[#DC2626] transition">FAQ</a>
                     <a href="#contact" class="text-sm font-medium text-slate-600 hover:text-[#DC2626] transition">Kontak</a>
                 </nav>
 
                 <!-- Auth Buttons -->
-                <div class="hidden md:flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-3">
                     @auth
                         @if(auth()->user()->is_super_admin)
                             <a href="{{ route('super.admin.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 transition shadow-sm">
@@ -85,15 +115,19 @@
                         <a href="{{ route('login') }}" class="text-sm font-medium text-slate-700 hover:text-[#DC2626] px-3 py-2 transition">
                             Masuk
                         </a>
+                        <a href="{{ route('login', ['demo' => 'owner']) }}" class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition">
+                            <i data-lucide="key" class="w-3.5 h-3.5 text-red-600"></i>
+                            Coba Akun Demo
+                        </a>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#DC2626] hover:bg-[#991B1B] shadow-sm shadow-red-600/30 transition">
-                            Coba Gratis 14 Hari
+                            Uji Coba 14 Hari
                             <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </a>
                     @endauth
                 </div>
 
                 <!-- Mobile Menu Button -->
-                <button type="button" @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-slate-600 hover:text-slate-900 focus:outline-none">
+                <button type="button" @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 focus:outline-none">
                     <i data-lucide="menu" class="w-6 h-6" x-show="!mobileMenuOpen"></i>
                     <i data-lucide="x" class="w-6 h-6" x-show="mobileMenuOpen" x-cloak></i>
                 </button>
@@ -101,10 +135,12 @@
         </div>
 
         <!-- Mobile Drawer Menu -->
-        <div class="md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-3" x-show="mobileMenuOpen" x-cloak x-transition>
+        <div class="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-3" x-show="mobileMenuOpen" x-cloak x-transition>
             <a href="#features" @click="mobileMenuOpen = false" class="block py-2 text-base font-medium text-slate-700">Fitur Utama</a>
-            <a href="#modules" @click="mobileMenuOpen = false" class="block py-2 text-base font-medium text-slate-700">Modul HRIS</a>
+            <a href="#modules" @click="mobileMenuOpen = false" class="block py-2 text-base font-medium text-slate-700">20 Modul HRIS</a>
+            <a href="#tax-simulator" @click="mobileMenuOpen = false" class="block py-2 text-base font-medium text-slate-700">Simulasi PPh 21 TER</a>
             <a href="#why-us" @click="mobileMenuOpen = false" class="block py-2 text-base font-medium text-slate-700">Kepatuhan Hukum</a>
+            <a href="#demo-access" @click="mobileMenuOpen = false" class="block py-2 text-base font-medium text-slate-700">Akun Demo Instan</a>
             <a href="#pricing" @click="mobileMenuOpen = false" class="block py-2 text-base font-medium text-slate-700">Paket Harga</a>
             <a href="#faq" @click="mobileMenuOpen = false" class="block py-2 text-base font-medium text-slate-700">FAQ</a>
             <a href="#contact" @click="mobileMenuOpen = false" class="block py-2 text-base font-medium text-slate-700">Kontak</a>
@@ -112,8 +148,9 @@
                 @auth
                     <a href="{{ route('company.dashboard') }}" class="w-full text-center py-2.5 rounded-lg text-sm font-medium bg-[#DC2626] text-white">Buka Dashboard</a>
                 @else
+                    <a href="{{ route('login', ['demo' => 'owner']) }}" class="w-full text-center py-2.5 rounded-lg text-xs font-bold bg-red-50 text-red-700 border border-red-200">👑 Masuk Akun Demo Instan</a>
                     <a href="{{ route('login') }}" class="w-full text-center py-2.5 rounded-lg text-sm font-medium border border-slate-300 text-slate-700">Masuk Akun</a>
-                    <a href="{{ route('register') }}" class="w-full text-center py-2.5 rounded-lg text-sm font-semibold bg-[#DC2626] text-white shadow-sm">Coba Gratis 14 Hari</a>
+                    <a href="{{ route('register') }}" class="w-full text-center py-2.5 rounded-lg text-sm font-semibold bg-[#DC2626] text-white shadow-sm">Uji Coba Gratis 14 Hari</a>
                 @endauth
             </div>
         </div>
@@ -124,7 +161,7 @@
         @yield('content')
     </main>
 
-    <!-- Footer (Centered container max-w-landing) -->
+    <!-- Footer -->
     <footer class="bg-slate-900 text-slate-300 pt-16 pb-12 border-t border-slate-800">
         <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-slate-800">
@@ -139,10 +176,14 @@
                     <p class="text-sm text-slate-400 leading-relaxed">
                         {{ $settings['site_tagline'] ?? 'Platform Human Resource Information System terintegrasi multi-perusahaan dengan kalkulasi PPh 21 TER, BPJS, dan kepatuhan hukum ketenagakerjaan Indonesia.' }}
                     </p>
-                    <div class="flex items-center gap-3 text-slate-400 pt-2">
+                    <div class="flex flex-wrap items-center gap-2 text-slate-400 pt-2">
                         <span class="inline-flex items-center gap-1.5 text-xs bg-slate-800 px-3 py-1 rounded-full text-emerald-400 border border-slate-700">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                             100% Indonesian Compliance
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 text-xs bg-slate-800 px-3 py-1 rounded-full text-blue-400 border border-slate-700">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            UU PDP No. 27/2022 Ready
                         </span>
                     </div>
                 </div>
@@ -151,12 +192,13 @@
                 <div>
                     <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-4">Solusi & Modul</h4>
                     <ul class="space-y-2.5 text-sm text-slate-400">
-                        <li><a href="#modules" class="hover:text-white transition">Employee Master Data</a></li>
-                        <li><a href="#modules" class="hover:text-white transition">Presensi GPS & Swafoto</a></li>
-                        <li><a href="#modules" class="hover:text-white transition">Payroll & Slip Gaji PDF</a></li>
-                        <li><a href="#modules" class="hover:text-white transition">Kalkulator PPh 21 TER 2024</a></li>
-                        <li><a href="#modules" class="hover:text-white transition">BPJS Kesehatan & Ketenagakerjaan</a></li>
-                        <li><a href="#modules" class="hover:text-white transition">Uang Kompensasi PKWT PP 35/2021</a></li>
+                        <li><a href="#modules" class="hover:text-white transition">Data Induk Karyawan & Arsip</a></li>
+                        <li><a href="#modules" class="hover:text-white transition">Presensi GPS Geofence & Selfie</a></li>
+                        <li><a href="#tax-simulator" class="hover:text-white transition">Kalkulator PPh 21 TER 2024</a></li>
+                        <li><a href="#modules" class="hover:text-white transition">5 Program BPJS TK & BPJS Kes</a></li>
+                        <li><a href="#modules" class="hover:text-white transition">Digital PKWT e-Seal SHA-256</a></li>
+                        <li><a href="#modules" class="hover:text-white transition">Kompensasi PKWT PP 35/2021</a></li>
+                        <li><a href="#modules" class="hover:text-white transition">K3 SMK3 & Satgas PPKS</a></li>
                     </ul>
                 </div>
 
@@ -164,6 +206,7 @@
                 <div>
                     <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-4">Tautan</h4>
                     <ul class="space-y-2.5 text-sm text-slate-400">
+                        <li><a href="#demo-access" class="hover:text-white transition text-amber-400 font-semibold">⚡ Akses Akun Demo Instan</a></li>
                         <li><a href="#pricing" class="hover:text-white transition">Paket Berlangganan</a></li>
                         <li><a href="#why-us" class="hover:text-white transition">Keunggulan Multi-Tenant</a></li>
                         <li><a href="#faq" class="hover:text-white transition">Pertanyaan Umum (FAQ)</a></li>
@@ -176,9 +219,9 @@
                 <div>
                     <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-200 mb-4">Kantor Pusat</h4>
                     <p class="text-sm text-slate-400 leading-relaxed mb-3">
-                        {{ $settings['contact_address'] ?? 'One Pacific Place Suite 1500, SCBD Jakarta Selatan 12190' }}
+                        {{ $settings['contact_address'] ?? 'One Pacific Place Suite 1500, SCBD Jl. Jenderal Sudirman Kav. 52-53, Jakarta Selatan 12190' }}
                     </p>
-                    <div class="space-y-1.5 text-sm text-slate-400">
+                    <div class="space-y-2 text-sm text-slate-400">
                         <p class="flex items-center gap-2">
                             <i data-lucide="mail" class="w-4 h-4 text-red-500"></i>
                             {{ $settings['contact_email'] ?? 'halo@rihris.id' }}
@@ -187,17 +230,21 @@
                             <i data-lucide="phone" class="w-4 h-4 text-red-500"></i>
                             {{ $settings['contact_phone'] ?? '+62 21 8062 8900' }}
                         </p>
+                        <p class="flex items-center gap-2">
+                            <i data-lucide="message-square" class="w-4 h-4 text-emerald-500"></i>
+                            {{ $settings['contact_whatsapp'] ?? '+62 812 8899 7700' }}
+                        </p>
                     </div>
                 </div>
             </div>
 
             <!-- Bottom Copyright -->
             <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-                <p>&copy; {{ date('Y') }} RiHRIS SaaS Indonesia. Seluruh hak cipta dilindungi undang-undang.</p>
+                <p>&copy; {{ date('Y') }} RiHRIS SaaS Indonesia. Seluruh hak cipta dilindungi undang-undang Republik Indonesia.</p>
                 <div class="flex gap-6">
-                    <a href="#" class="hover:text-slate-400">Kebijakan Privasi</a>
-                    <a href="#" class="hover:text-slate-400">Syarat & Ketentuan</a>
-                    <a href="#" class="hover:text-slate-400">Keamanan Data</a>
+                    <a href="#" class="hover:text-slate-400">Kebijakan Privasi UU PDP</a>
+                    <a href="#" class="hover:text-slate-400">Syarat Layanan (SLA)</a>
+                    <a href="#" class="hover:text-slate-400">Standar Keamanan ISO 27001</a>
                 </div>
             </div>
         </div>
@@ -212,4 +259,3 @@
     </script>
 </body>
 </html>
-
