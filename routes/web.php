@@ -351,6 +351,7 @@ Route::middleware(['auth', 'tenant', 'tenant.access'])->group(function () {
     // 20. Enterprise API & Integrations (Webhooks & WhatsApp)
     Route::prefix('integrations')->name('company.integrations.')->group(function () {
         Route::get('/', [IntegrationController::class, 'index'])->name('index');
+        Route::get('/openapi', [IntegrationController::class, 'openapi'])->name('openapi');
         Route::post('/api-keys', [IntegrationController::class, 'storeApiKey'])->name('api-keys.store');
         Route::post('/api-keys/{apiKey}/revoke', [IntegrationController::class, 'revokeApiKey'])->name('api-keys.revoke');
         Route::post('/webhooks', [IntegrationController::class, 'storeWebhook'])->name('webhooks.store');

@@ -18,9 +18,11 @@ use App\Services\Compliance\CarbonCommuteService;
 use App\Services\Safety\ErgonomicStressService;
 use Carbon\Carbon;
 use InvalidArgumentException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AdvancedEnterpriseCompliancePhase19Test extends TestCase
 {
+    use RefreshDatabase;
     protected Tenant $tenant;
     protected Company $company;
     protected Department $techDept;

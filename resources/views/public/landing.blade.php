@@ -1165,7 +1165,9 @@
                         </div>
                         <div>
                             <div class="text-xs text-slate-500">Email Korespondensi</div>
-                            <div class="text-sm font-semibold text-slate-800">{{ $settings['contact_email'] ?? 'halo@rihris.id' }}</div>
+                            <a href="mailto:{{ $settings['contact_email'] ?? 'hallo@phoebehub.com' }}" class="text-sm font-semibold text-slate-800 hover:text-red-600 transition">
+                                {{ $settings['contact_email'] ?? 'hallo@phoebehub.com' }}
+                            </a>
                         </div>
                     </div>
 
@@ -1180,12 +1182,15 @@
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-red-50 text-[#DC2626] flex items-center justify-center shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                             <i data-lucide="message-square" class="w-5 h-5"></i>
                         </div>
                         <div>
                             <div class="text-xs text-slate-500">WhatsApp Bisnis</div>
-                            <div class="text-sm font-semibold text-slate-800">{{ $settings['contact_whatsapp'] ?? '+62 812 8899 7700' }}</div>
+                            <a href="https://wa.me/6282218866002?text=Halo%20RiHRIS%2C%20saya%20ingin%20konsultasi%20layanan%20HRIS" target="_blank" class="text-sm font-semibold text-emerald-700 hover:text-emerald-800 hover:underline transition flex items-center gap-1.5">
+                                <span>{{ $settings['contact_whatsapp'] ?? '082218866002' }}</span>
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                            </a>
                         </div>
                     </div>
                 </div>

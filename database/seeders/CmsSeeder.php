@@ -312,9 +312,9 @@ class CmsSeeder extends Seeder
         $settings = [
             'site_name' => 'RiHRIS',
             'site_tagline' => 'Human Resource Information System — Multi Company Platform Patuh Regulasi Indonesia',
-            'contact_email' => 'halo@rihris.id',
+            'contact_email' => 'hallo@phoebehub.com',
             'contact_phone' => '+62 21 8062 8900',
-            'contact_whatsapp' => '+62 812 8899 7700',
+            'contact_whatsapp' => '082218866002',
             'contact_address' => 'One Pacific Place Suite 1500, SCBD Jl. Jenderal Sudirman Kav. 52-53, Jakarta Selatan 12190',
             'seo_title' => 'RiHRIS — Software HRIS SaaS Multi-Company Patuh Regulasi Indonesia',
             'seo_description' => 'Aplikasi HRIS SaaS Indonesia: Kelola absensi GPS, cuti, penggajian, PPh 21 TER, BPJS Kesehatan & Ketenagakerjaan dengan akurat.',

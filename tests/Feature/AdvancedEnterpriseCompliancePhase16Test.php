@@ -23,9 +23,11 @@ use App\Services\Attendance\ContinuousShiftRosterService;
 use App\Services\Relations\IndustrialDisputeService;
 use Carbon\Carbon;
 use InvalidArgumentException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AdvancedEnterpriseCompliancePhase16Test extends TestCase
 {
+    use RefreshDatabase;
     protected Tenant $tenant;
     protected Company $company;
     protected Department $techDept;

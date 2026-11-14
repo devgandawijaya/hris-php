@@ -29,9 +29,11 @@ use App\Services\Payroll\VoluntarySeparationService;
 use App\Services\Talent\InternshipApprenticeshipService;
 use Carbon\Carbon;
 use InvalidArgumentException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AdvancedEnterpriseCompliancePhase17Test extends TestCase
 {
+    use RefreshDatabase;
     protected Tenant $tenant;
     protected Company $company;
     protected Department $techDept;

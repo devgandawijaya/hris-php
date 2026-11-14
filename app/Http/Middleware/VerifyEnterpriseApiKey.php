@@ -15,7 +15,7 @@ class VerifyEnterpriseApiKey
         protected TenantManager $tenantManager
     ) {}
 
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ?string $scope = null): Response
     {
         $headerKey = $request->header('X-API-KEY');
         if (!$headerKey && $request->bearerToken()) {
@@ -37,11 +37,27 @@ class VerifyEnterpriseApiKey
             ], 401);
         }
 
+        if ($scope && !$this->hasScope($apiKey, $scope)) {
+            return response()->json([
+                'success' => false,
+                'message' => "Forbidden. This API Key lacks the required scope: '{$scope}'.",
+            ], 403);
+        }
+
         // Set tenant context for this API request
         $this->tenantManager->setCurrentTenant($apiKey->tenant);
         $request->attributes->set('api_key', $apiKey);
 
         return $next($request);
     }
-}
 
+    protected function hasScope($apiKey, string $scope): bool
+    {
+        $permissions = $apiKey->permissions ?? ['*'];
+        if (in_array('*', $permissions)) {
+            return true;
+        }
+
+        return in_array($scope, $permissions);
+    }
+}

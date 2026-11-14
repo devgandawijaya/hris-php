@@ -50,7 +50,7 @@ class FwaService
     public function isWfhOnDate(Employee $employee, string $date): bool
     {
         return FwaSchedule::where('employee_id', $employee->id)
-            ->where('date', Carbon::parse($date)->toDateString())
+            ->whereDate('date', Carbon::parse($date)->toDateString())
             ->where('work_mode', 'wfh')
             ->where('status', 'approved')
             ->exists();
@@ -62,7 +62,7 @@ class FwaService
     public function checkAttendancePolicy(Employee $employee, string $date): array
     {
         $fwa = FwaSchedule::where('employee_id', $employee->id)
-            ->where('date', Carbon::parse($date)->toDateString())
+            ->whereDate('date', Carbon::parse($date)->toDateString())
             ->where('status', 'approved')
             ->first();
 

@@ -84,5 +84,22 @@ class AuthenticationAndRegistrationTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Ringkasan Platform SaaS RiHRIS');
     }
+
+    public function test_tenant_user_can_access_company_dashboard(): void
+    {
+        $this->post('/register', [
+            'company_name' => 'PT Mega Utama',
+            'company_email' => 'admin@megautama.id',
+            'pic_name' => 'Mega Boss',
+            'phone' => '+6281199887766',
+            'password' => 'SecurePass123#',
+            'password_confirmation' => 'SecurePass123#',
+            'terms' => '1',
+        ]);
+
+        $response = $this->get('/dashboard');
+        $response->assertStatus(200);
+        $response->assertSee('Pusat Komando HR');
+    }
 }
 

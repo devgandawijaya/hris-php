@@ -53,5 +53,16 @@ class LandingPageCmsTest extends TestCase
             'company' => 'PT Corporation Internasional',
         ]);
     }
+
+    public function test_landing_page_displays_updated_whatsapp_and_email_contact(): void
+    {
+        CmsSetting::set('contact_email', 'hallo@phoebehub.com');
+        CmsSetting::set('contact_whatsapp', '082218866002');
+
+        $response = $this->get('/');
+        $response->assertStatus(200);
+        $response->assertSee('hallo@phoebehub.com');
+        $response->assertSee('082218866002');
+    }
 }
 

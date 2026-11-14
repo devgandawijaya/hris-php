@@ -20,9 +20,11 @@ use App\Services\Overtime\SplComplianceService;
 use App\Services\Compliance\CompanyRegulationService;
 use App\Services\Relations\BipartiteService;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AdvancedEnterpriseCompliancePhase14Test extends TestCase
 {
+    use RefreshDatabase;
     protected Tenant $tenant;
     protected Company $company;
     protected User $hrManager;

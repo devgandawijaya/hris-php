@@ -24,9 +24,11 @@ use App\Services\Compliance\CobInsuranceService;
 use App\Services\Compliance\P2k3DisnakerService;
 use Carbon\Carbon;
 use InvalidArgumentException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AdvancedEnterpriseCompliancePhase18Test extends TestCase
 {
+    use RefreshDatabase;
     protected Tenant $tenant;
     protected Company $company;
     protected Department $techDept;

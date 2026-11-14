@@ -28,9 +28,11 @@ use App\Services\Offboarding\ExitAssetClearanceService;
 use App\Services\Compliance\DisabilityComplianceAuditService;
 use Carbon\Carbon;
 use InvalidArgumentException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AdvancedEnterpriseCompliancePhase15Test extends TestCase
 {
+    use RefreshDatabase;
     protected Tenant $tenant;
     protected Company $company;
     protected Department $techDept;

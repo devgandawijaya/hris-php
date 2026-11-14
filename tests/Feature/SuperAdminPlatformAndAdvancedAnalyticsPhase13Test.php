@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Session;
 
 class SuperAdminPlatformAndAdvancedAnalyticsPhase13Test extends TestCase
 {
+    use RefreshDatabase;
     protected Tenant $tenant;
     protected Company $company;
     protected User $superAdmin;

@@ -19,9 +19,11 @@ use App\Services\Infrastructure\DisasterRecoveryService;
 use App\Services\Security\ZeroTrustSecurityService;
 use Carbon\Carbon;
 use InvalidArgumentException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AdvancedEnterpriseCompliancePhase20Test extends TestCase
 {
+    use RefreshDatabase;
     protected Tenant $tenant;
     protected Company $company;
     protected Department $secDept;

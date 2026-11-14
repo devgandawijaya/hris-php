@@ -224,7 +224,9 @@
                     <div class="space-y-2 text-sm text-slate-400">
                         <p class="flex items-center gap-2">
                             <i data-lucide="mail" class="w-4 h-4 text-red-500"></i>
-                            {{ $settings['contact_email'] ?? 'halo@rihris.id' }}
+                            <a href="mailto:{{ $settings['contact_email'] ?? 'hallo@phoebehub.com' }}" class="hover:text-white transition">
+                                {{ $settings['contact_email'] ?? 'hallo@phoebehub.com' }}
+                            </a>
                         </p>
                         <p class="flex items-center gap-2">
                             <i data-lucide="phone" class="w-4 h-4 text-red-500"></i>
@@ -232,7 +234,10 @@
                         </p>
                         <p class="flex items-center gap-2">
                             <i data-lucide="message-square" class="w-4 h-4 text-emerald-500"></i>
-                            {{ $settings['contact_whatsapp'] ?? '+62 812 8899 7700' }}
+                            <a href="https://wa.me/6282218866002?text=Halo%20RiHRIS%2C%20saya%20ingin%20konsultasi%20layanan%20HRIS" target="_blank" class="hover:text-emerald-400 transition font-semibold text-emerald-400 flex items-center gap-1">
+                                <span>{{ $settings['contact_whatsapp'] ?? '082218866002' }}</span>
+                                <i data-lucide="external-link" class="w-3 h-3"></i>
+                            </a>
                         </p>
                     </div>
                 </div>
@@ -249,6 +254,14 @@
             </div>
         </div>
     </footer>
+
+    {{-- Floating WhatsApp Bisnis Chat Widget --}}
+    <a href="https://wa.me/6282218866002?text=Halo%20RiHRIS%2C%20saya%20ingin%20konsultasi%20layanan%20HRIS" target="_blank"
+       class="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/30 transition hover:scale-105 group text-xs font-bold">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-300 animate-pulse"></span>
+        <i data-lucide="message-square" class="w-4 h-4"></i>
+        <span>Chat WhatsApp Bisnis: 082218866002</span>
+    </a>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
